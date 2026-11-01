@@ -11,6 +11,11 @@ venv/
 .env
 .env.local
 
+# ---- Cloudflare Workers / uv ----
+.wrangler/
+.dev.vars
+.venv/
+
 # ---- Node / 前端 ----
 node_modules/
 dist/

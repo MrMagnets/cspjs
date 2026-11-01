@@ -50,16 +50,18 @@ cspjs/
 │   ├── API.md                     # 接口详解（请求/响应示例）
 │   └── screenshots/                # 真实运行截图（Edge 自动化截取）
 ├── backend/
-│   ├── requirements.txt
-│   ├── .env.example               # 后端环境变量模板
-│   ├── vercel.json                # 可选：把 FastAPI 部署为 Vercel Function
+│   ├── requirements.txt           # 本地 uvicorn 依赖（pg8000，无 C 扩展）
+│   ├── pyproject.toml             # Workers 依赖（pywrangler / uv 使用）
+│   ├── wrangler.jsonc             # Cloudflare Worker + Hyperdrive 绑定配置
+│   ├── Dockerfile                 # 可选：容器方式本地运行
+│   ├── .env.example               # 本地环境变量模板
 │   ├── smoke_test.py              # 端到端接口冒烟测试（39 个断言）
 │   ├── sql/
 │   │   └── schema.sql             # PostgreSQL 建表 SQL（与模型一一对应）
 │   └── app/
-│       ├── main.py                # FastAPI 入口：CORS、路由挂载、启动建表/播种
-│       ├── config.py              # pydantic-settings 配置（全部可被环境变量覆盖）
-│       ├── database.py            # 引擎 / Session / SQLite 自动降级
+│       ├── main.py                # FastAPI 入口：Worker 适配、CORS、路由挂载
+│       ├── config.py              # pydantic-settings 配置（全部可被环境变量/Worker vars 覆盖）
+│       ├── database.py            # Hyperdrive + pg8000 + NullPool；本地回退 SQLite
 │       ├── models.py              # SQLAlchemy 模型（users/tags/problems/...）
 │       ├── schemas.py             # Pydantic 请求响应模型与校验
 │       ├── security.py            # hash_password / verify_password / JWT 签发解析
@@ -128,7 +130,7 @@ cspjs/
 
 ## 四、快速开始
 
-> 本节是**本地开发 / 演示**的启动方式。正式上线请用第十一节「云托管部署」：前后端分离托管在 Vercel + Render，不需要自己的服务器，也不用一直开着电脑。
+> 本节是**本地开发 / 演示**的启动方式。正式上线请用第十一节「云托管部署」：前端 Cloudflare Pages + 后端 Cloudflare Workers + Neon，不需要自己的服务器，也不用一直开着电脑。
 
 ### 4.1 环境要求
 
@@ -204,12 +206,12 @@ pnpm preview      # http://127.0.0.1:4173
 | 变量 | 默认值 | 说明 |
 | --- | --- | --- |
 | `ENVIRONMENT` | `development` | `production`（或检测到 `VERCEL`）时会拒绝占位符 `JWT_SECRET` 启动 |
-| `DATABASE_URL` | （空） | PostgreSQL 连接串（psycopg2-binary 驱动）；平台注入的 `postgresql://` / `postgres://` 会自动补成 `postgresql+psycopg2://`。未设置时本地自动用 SQLite，生产必须显式注入 |
+| `DATABASE_URL` | （空） | PostgreSQL 连接串（**pg8000** 纯 Python 驱动，兼容 Workers）；平台注入的 `postgresql://` / `postgres://` 会自动补成 `postgresql+pg8000://`。未设置时本地自动用 SQLite。Workers 上不使用该变量，改用 Hyperdrive 绑定 |
 | `ALLOW_SQLITE_FALLBACK` | `true` | 本地无 PG 时降级 SQLite；**云托管必须 `false`**（免费实例磁盘是临时的，重启即丢数据） |
 | `SQLITE_PATH` | `./cspjs.db` | 降级后的 SQLite 文件 |
 | `JWT_SECRET` | `your-secret-here` | **占位符在生产环境会直接拒绝启动**，必须替换为随机长字符串 |
 | `JWT_EXPIRE_MINUTES` | `10080` | token 有效期（7 天） |
-| `CORS_ORIGINS` | `http://localhost:5173,http://127.0.0.1:5173,...` | 逗号分隔的完整 origin（`https://`，无末尾 `/`）。本地开发填 localhost；**前后端分离部署时必须加前端实际域名**（如 `https://cspjs.vercel.app`），否则浏览器报 CORS |
+| `CORS_ORIGINS` | `http://localhost:5173,http://127.0.0.1:5173,...` | 逗号分隔的完整 origin（`https://`，无末尾 `/`）。本地填 localhost；**部署后必须是前端实际域名**（如 `https://cspjs.pages.dev`），否则浏览器报 CORS |
 | `ADMIN_USERNAME` / `ADMIN_PASSWORD` | `admin` / `change-me-admin-password` | 初始化管理员；**部署前必须覆盖为强密码** |
 | `AUTO_SEED` | `true` | 启动时建表 + 播种（幂等）；云托管首次 `true`，确认数据后改 `false` |
 | `SEED_DEMO_STUDENT` | `false` | 是否创建演示学生 `student`；**默认关闭**，开启时必填 `DEMO_STUDENT_PASSWORD` |
@@ -220,7 +222,7 @@ pnpm preview      # http://127.0.0.1:4173
 
 | 变量 | 默认值 | 说明 |
 | --- | --- | --- |
-| `VITE_API_BASE` | `/api` | 后端地址前缀，**构建期内联**。同域部署（Nginx 反代 / 本地 Vite 代理）填 `/api`；**前后端分离部署填后端完整地址且必须带 `/api`**，如 `https://cspjs-api.onrender.com/api`；改完需重新构建/部署 |
+| `VITE_API_BASE` | `/api` | 后端地址前缀，**构建期内联**。同域部署（Nginx 反代 / 本地 Vite 代理）填 `/api`；前后端分离填 Worker 完整地址 + `/api`，如 `https://cspjs-api.<子域>.workers.dev/api`；改完需重新构建/部署 |
 
 ## 六、数据模型
 
@@ -382,43 +384,52 @@ python smoke_test.py http://127.0.0.1:8000
 | 做题统计 | ![统计](docs/screenshots/10-stats.png) |
 | 移动端首页 | ![移动端](docs/screenshots/21-mobile-home.png) |
 
-## 十一、云托管部署（推荐生产方案）
+## 十一、云托管部署（Cloudflare Workers + Neon）
 
-> 适用场景：没有长期在线的 Linux 服务器，也不想为网站一直开着个人电脑。
-> 前端、后端、数据库全部托管在平台上，**本地设备关机不影响访问**，也不需要自己维护 Nginx、systemd 和证书。
+> 适用场景：没有长期在线的服务器，也不想为网站一直开着个人电脑。当前生产方案是
+> **Cloudflare Workers（后端）+ Cloudflare Pages（前端）+ Neon PostgreSQL（数据库）**，
+> 本地设备关机不影响访问，也不需要维护 Nginx、systemd 或证书。
+>
+> 11.4–11.10 的 Render 步骤是历史备选方案，保留供参考；**当前后端部署请直接看 11.11**。
 
 ### 11.1 目标架构
 
 ```text
                          HTTPS
-访客浏览器 ──────────────────────────────► Vercel
-                                          （Vue 3 静态站点 dist/，全球 CDN）
+访客浏览器 ──────────────────────────────► Cloudflare Pages
+                                          （Vue 3 静态产物 dist/，全球 CDN）
                                               │
-                                              │ fetch https://cspjs-api.onrender.com/api/...
-                                              │ 跨域请求，需后端 CORS 放行前端域名
+                                              │ fetch https://cspjs-api.<subdomain>.workers.dev/api/...
+                                              │ 跨域请求，由 Worker 按 CORS_ORIGINS 放行
                                               ▼
-                                    Render Web Service
-                                    （FastAPI + uvicorn，监听 0.0.0.0:$PORT）
+                                    Cloudflare Worker（Python）
+                                    FastAPI + workers.asgi，compatibility_date ≥ 2026-09-08
                                               │
-                                              │ postgresql://（同区域内网连接串）
+                                              │ env.HYPERDRIVE.connectionString（绑定，无明文密码）
                                               ▼
-                                    Render PostgreSQL
-                                    （托管数据库，唯一需要备份的状态）
+                                    Cloudflare Hyperdrive
+                                    （连接池 + 到源库的 TLS）
+                                              │
+                                              │ postgresql://ep-xxx.neon.tech/...
+                                              ▼
+                                    Neon PostgreSQL
+                                    （唯一需要备份的持久化状态）
 ```
 
-- 前端是纯静态产物，不跑 Node 服务端；构建一次后由 CDN 分发。
-- 后端无状态：会话靠 JWT，进程随时可重启；所有业务数据都在 PostgreSQL。
-- 因此**只有数据库需要备份**，前后端都可以随时删除重建。
+- 前端是纯静态产物；后端无状态（JWT 会话），所有业务数据在 Neon。
+- Worker 通过 **Hyperdrive 绑定**访问数据库，代码与仓库里不出现数据库密码。
+- 因此**只有 Neon 需要备份**，前端与 Worker 都可以随时重建。
 
-### 11.2 平台选型
+### 11.2 平台选型（当前主推）
 
-主推组合（下面的步骤以这两家为准）：
-
-| 部分 | 主推 | 免费档要点 |
+| 部分 | 主推 | 说明 |
 | --- | --- | --- |
-| 前端 | **Vercel** | 100 GB/月流量、100 万 CDN 请求；**Hobby 仅限个人非商业用途** |
-| 后端 | **Render Web Service** | 0.1 CPU / 512 MB，15 分钟无流量休眠、唤醒约 1 分钟，750 免费实例小时/月（[官方说明](https://render.com/docs/free)） |
-| 数据库 | **Render PostgreSQL** | 1 GB 存储、单工作区 1 个、**创建 30 天后过期**、无自动备份 |
+| 前端 | **Cloudflare Pages** | 静态托管，带宽不计费；Vercel / Netlify 仍可用，但国内访问不稳定 |
+| 后端 | **Cloudflare Workers（Python）** | 需要 `compatibility_flags: ["python_workers"]`，Hyperdrive 要求 `compatibility_date >= 2026-09-08` |
+| 数据库 | **Neon PostgreSQL** | 免费档有存储/计算上限，但不会像 Render 免费库那样 30 天删库 |
+| 连接 | **Cloudflare Hyperdrive** | 负责连接池与到 Neon 的 TLS，Worker 侧不持有长连接 |
+
+> 后端不再使用 Vercel / Render / psycopg2。原 Render 方案见 11.4–11.10，仅作历史参考。
 
 备选（切换只涉及环境变量与 DNS，代码不用改）：
 
@@ -428,22 +439,27 @@ python smoke_test.py http://127.0.0.1:8000
 | 后端 | Railway / Fly.io | Railway 目前以试用额度 + 按量计费为主，没有永久免费档；Fly.io 需要自己写 `fly.toml`，免费额度经常调整。迁移时只要保证启动命令监听 `0.0.0.0:$PORT` 并配好同样的环境变量 |
 | 数据库 | Neon / Supabase | 免费 PostgreSQL 有存储上限和闲置暂停，但**不会 30 天删库**，适合做长期零成本方案（见 11.8） |
 
-> 成本参考：**完全零成本** = Vercel 免费 + Render 免费 Web Service + Neon 免费 PG（接受冷启动）；
-> **省心** = Render 付费 Web Service（$7/月起）+ Render 付费 PostgreSQL（$6/月起），约 $13/月，无休眠、无 30 天过期。
+> 成本参考：Cloudflare Workers / Pages 与 Neon 都有免费额度，个人刷题站通常可零成本运行；
+> 具体请求数、CPU 时间与存储额度以 Cloudflare、Neon 官网当前定价为准。
 
 ### 11.3 前置准备（只做一次）
 
-1. 把项目推送到 GitHub（公开或私有均可，平台需要授权读取）。
-2. 确认仓库里有 `frontend/pnpm-lock.yaml`（Vercel 据此选择 pnpm 并复现依赖）。
-3. 本地先跑通一次构建：`cd frontend && pnpm build`，确认能产出 `dist/`。
-4. 注册并登录平台，建议直接用 GitHub 账号登录：
-   - Render：<https://dashboard.render.com/register>
-   - Vercel：<https://vercel.com/signup>
-5. 先记下两个目标地址（平台会自动分配默认域名，之后可绑自定义域名）：
-   - 后端：`https://cspjs-api.onrender.com`
-   - 前端：`https://cspjs.vercel.app`
+1. 把项目推送到 GitHub（Cloudflare Pages/Workers 都从仓库构建）。
+2. 安装 Node 20+ 与 [uv](https://docs.astral.sh/uv/)（`pywrangler` 通过 uv 管理 Python 依赖）。
+3. 准备 Neon PostgreSQL 项目，拿到连接串（形如 `postgres://user:pass@ep-xxx.neon.tech/db?sslmode=require`）。
+4. 注册 Cloudflare 账号，安装/登录 Wrangler：
 
-### 11.4 第一步：创建托管 PostgreSQL（Render 控制台）
+   ```bash
+   npx wrangler login
+   ```
+
+5. 记录目标地址：
+   - 后端：`https://cspjs-api.<你的 workers.dev 子域>`
+   - 前端：`https://cspjs.pages.dev`
+
+### 11.4 第一步：创建托管 PostgreSQL（Render 控制台 · 历史方案）
+
+> ⚠️ 后端已迁移到 Cloudflare Workers（见 11.11）。以下 Render 步骤仅作历史参考，新部署请跳过。
 
 1. 打开 <https://dashboard.render.com> → 右上角 **New +** → **Postgres**。
 2. 按下表填写：
@@ -464,9 +480,11 @@ python smoke_test.py http://127.0.0.1:8000
 5. **不需要手动建表**：后端首次启动会 `create_all` 建表并写入演示数据（`AUTO_SEED=true`）。
 
 > 连接串形如 `postgresql://cspjs:密码@dpg-xxxx-a.singapore-postgres.render.com/cspjs`。
-> 项目会自动把 `postgresql://` 规范成 `postgresql+psycopg2://`（[backend/app/database.py](backend/app/database.py) 的 `normalize_database_url`），**不要**手写驱动前缀，也不要把密码提交进仓库。
+> 项目会自动把 `postgresql://` 规范成 `postgresql+pg8000://`（[backend/app/database.py](backend/app/database.py) 的 `normalize_database_url`），**不要**手写驱动前缀，也不要把密码提交进仓库。
 
-### 11.5 第二步：部署后端（Render Web Service）
+### 11.5 第二步：部署后端（Render Web Service · 历史方案）
+
+> ⚠️ 后端已迁移到 Cloudflare Workers（见 11.11）。以下 Render 步骤仅作历史参考，新部署请跳过。
 
 **方式 A：手动创建（推荐第一次照着做）**
 
@@ -504,10 +522,10 @@ python smoke_test.py http://127.0.0.1:8000
 4. 点 **Create Web Service**，在 **Logs** 里确认依次出现：
 
    ```text
-   数据库已连接：postgresql+psycopg2://...
+   数据库已连接：postgresql+pg8000://...
    [seed] 管理员已创建：admin（密码来自 ADMIN_PASSWORD 环境变量）
    [seed] 已写入 21 道演示题目、16 个标签
-   CSP 刷题平台后端已启动，数据库：postgresql+psycopg2://...
+   CSP 刷题平台后端已启动，数据库：postgresql+pg8000://...
    ```
 
 5. 访问 `https://cspjs-api.onrender.com/api/health`，应返回：
@@ -525,64 +543,59 @@ python smoke_test.py http://127.0.0.1:8000
 会同时创建 `cspjs-api`（Web Service）和 `cspjs-db`（PostgreSQL），并自动生成 `JWT_SECRET`；
 创建过程中只需补填 `CORS_ORIGINS` 与 `ADMIN_PASSWORD`。之后同样把 `AUTO_SEED` 改回 `false`。
 
-### 11.6 第三步：部署前端（Vercel）
+### 11.6 第三步：部署前端（Cloudflare Pages）
 
-1. 打开 <https://vercel.com/new> → **Import Git Repository** → 选择本仓库。
-2. 在 **Configure Project** 页面填写：
+1. Cloudflare Dashboard → **Workers & Pages** → **Create** → **Pages** → **Connect to Git**，选择本仓库。
+2. 构建设置：
 
    | 字段 | 填什么 |
    | --- | --- |
-   | **Project Name** | `cspjs`（决定默认域名 `https://cspjs.vercel.app`） |
-   | **Framework Preset** | `Vite`（自动识别） |
-   | **Root Directory** | 点 **Edit** → 选 `frontend` ← **必填**，否则会去构建仓库根目录 |
-   | **Build Command** | `pnpm build`（`frontend/vercel.json` 也已声明，保持一致） |
-   | **Output Directory** | `dist` |
-   | **Install Command** | `pnpm install --frozen-lockfile`（默认） |
-   | **Environment Variables** | `VITE_API_BASE = https://cspjs-api.onrender.com/api` |
+   | **Project name** | `cspjs`（默认域名 `https://cspjs.pages.dev`） |
+   | **Production branch** | `main` |
+   | **Root directory** | `frontend` ← **必填** |
+   | **Build command** | `pnpm build` |
+   | **Build output directory** | `dist` |
+   | **Environment variables** | `VITE_API_BASE = https://cspjs-api.<你的子域>.workers.dev/api` |
 
-   > `VITE_API_BASE` **必须带 `/api` 后缀**（代码里是 `${VITE_API_BASE}/auth/login` 这种拼法）。
-   > 它是**构建期**变量，之后修改必须重新 Deploy 才生效；在 Environment Variables 里至少勾选 **Production**，只勾 Preview 的话线上不会生效。
+   > `VITE_API_BASE` **必须带 `/api` 后缀**，且是**构建期**变量，改完要重新部署。
+   > 如果前端仍用 Vercel，保留 `frontend/vercel.json` 即可（Root Directory 同样填 `frontend`）。
 
-3. 点 **Deploy**，等待 1–2 分钟，得到 `https://cspjs.vercel.app`。
-4. 回到 Render → `cspjs-api` → **Environment**，把 `CORS_ORIGINS` 改成 `https://cspjs.vercel.app`（有多个域名用逗号分隔）→ **Save Changes**。
-5. 打开前端域名，注册/登录、浏览题库、做一套模拟卷，确认读写都正常。
+3. 点 **Save and Deploy**，得到 `https://cspjs.pages.dev`。
+4. 回到 `wrangler.jsonc`，把 `CORS_ORIGINS` 改成 `https://cspjs.pages.dev`，重新 `pywrangler deploy`。
+5. 打开前端，注册/登录、浏览题库、做一套模拟卷，确认读写正常。
 
-> **SPA 路由回退（容易踩坑）**：Vite 是纯前端路由，直接刷新 `/problems/12` 时平台默认会 404。
->
-> - Vercel：由仓库里的 [frontend/vercel.json](frontend/vercel.json) 的 `rewrites` 处理
->   （Vercel 官方文档明确说明 Vite SPA 需要这样配置，见 [Vite on Vercel](https://vercel.com/docs/frameworks/frontend/vite)）；
-> - Netlify / Cloudflare Pages：由 [frontend/public/_redirects](frontend/public/_redirects) 处理（构建时被复制进 `dist`）。
->
-> 如果深链仍然 404，检查 **Root Directory 是否设为 `frontend`**、`vercel.json` 是否在 `frontend/` 下。
-> 另外，若以后在 Vercel 上再加 `/api` 代理，记得把 `/api` 从 `rewrites` 的匹配范围里排除，否则接口请求会被改写成 `index.html`。
+> **SPA 路由回退**：Vite 是纯前端路由，刷新 `/problems/12` 需要回退到 `index.html`。
+> Cloudflare Pages / Netlify 由 [frontend/public/_redirects](frontend/public/_redirects) 处理
+> （构建时复制进 `dist`）；Vercel 由 [frontend/vercel.json](frontend/vercel.json) 的 `rewrites` 处理。
+> 若深链 404，检查 Root Directory 是否为 `frontend`、`_redirects` 是否在 `dist/` 根目录。
 
 ### 11.7 前后端联调注意点
 
 | 主题 | 要点 |
 | --- | --- |
-| CORS | 后端只放行 `CORS_ORIGINS` 里的**完整 origin**（`https://`、不带末尾 `/`）。前端换域名或新增 Vercel 预览域名（`cspjs-git-xxx-你的名字.vercel.app`）后，必须同步更新并重启后端，否则浏览器报 CORS |
-| `VITE_API_BASE` | 构建期内联，必须是 `https://<后端域名>/api`。写成 `http://` 会被浏览器按混合内容拦截，漏掉 `/api` 会 404（末尾多写 `/` 会被前端自动去掉，但不建议） |
-| 预检请求 | 前端带 `Authorization` 头，浏览器会先发 `OPTIONS`；项目的 CORS 中间件已放行所有方法与头，不需要再配 Nginx |
-| SPA 回退 | Vercel 用 `vercel.json`，Netlify/CF Pages 用 `_redirects`（见 11.6 末尾） |
-| 免费休眠 | 后端 15 分钟无请求会休眠，唤醒约 1 分钟；首屏转圈较久属于正常现象，不是故障（见 11.8） |
-| 数据库区域 | 后端与数据库必须同区域才能用 Internal URL；跨区域只能用 External URL，会绕公网且更慢 |
+| CORS | Worker 按 `wrangler.jsonc` 的 `CORS_ORIGINS` 放行完整 origin（`https://`、无末尾 `/`）。前端换域名后要改 `vars` 并重新 `pywrangler deploy` |
+| `VITE_API_BASE` | 构建期内联，必须是 `https://<worker 域名>/api`。写成 `http://` 会被混合内容拦截，漏掉 `/api` 会 404 |
+| 预检请求 | 前端带 `Authorization` 头会先发 `OPTIONS`；`main.py` 的中间件已处理，无需额外配置 |
+| SPA 回退 | Cloudflare Pages / Netlify 用 `_redirects`，Vercel 用 `vercel.json`（见 11.6） |
+| 冷启动 | Worker isolate 会被回收，首次请求需要重新加载 Python/WASM 依赖，慢 1–3 秒属正常 |
+| 数据库区域 | Neon 项目与 Cloudflare Hyperdrive 尽量选相近区域；Hyperdrive 会缓存连接，减少跨区域握手 |
 | 时间与统计 | 后端统一 UTC 存储，页面按浏览器本地时区显示；"今日做题"按 UTC 自然日统计 |
 
 自检命令（把域名换成自己的）：
 
 ```bash
-# 1) 后端存活
-curl -s https://cspjs-api.onrender.com/api/health
+# 1) Worker 存活
+curl -s https://cspjs-api.<你的子域>.workers.dev/api/health
 
 # 2) CORS 是否放行前端域名（应出现 access-control-allow-origin）
-curl -s -D - -o /dev/null -H "Origin: https://cspjs.vercel.app" \
-  "https://cspjs-api.onrender.com/api/problems?page_size=1" | grep -i access-control
+curl -s -D - -o /dev/null -H "Origin: https://cspjs.pages.dev" \
+  "https://cspjs-api.<你的子域>.workers.dev/api/problems?page_size=1" | grep -i access-control
 
 # 3) 前端深链是否回退到 index.html（应返回 200 且是 HTML）
-curl -s -o /dev/null -w "%{http_code}\n" https://cspjs.vercel.app/problems/1
+curl -s -o /dev/null -w "%{http_code}\n" https://cspjs.pages.dev/problems/1
 ```
 
-### 11.8 免费档的真实限制（不美化）
+### 11.8 免费档的真实限制（Render 历史方案 · 不美化）
 
 | 限制 | 具体表现 | 影响 | 应对 |
 | --- | --- | --- | --- |
@@ -608,7 +621,7 @@ curl -s -o /dev/null -w "%{http_code}\n" https://cspjs.vercel.app/problems/1
 > - Render 免费 Web Service 的本地磁盘是**临时的**：即使部署了代码，写进容器的文件在重启/休眠后会消失——所以必须用托管 PostgreSQL，不能靠 SQLite（这正是 `ALLOW_SQLITE_FALLBACK=false` 的意义）。
 > - 演示学生账号默认关闭（`SEED_DEMO_STUDENT=false`）；开启时必须显式提供 `DEMO_STUDENT_PASSWORD`，代码中不保存固定密码。
 
-### 11.9 部署检查清单（上线前逐项确认）
+### 11.9 部署检查清单（Render 历史方案）
 
 - [ ] `JWT_SECRET` 已替换为随机长字符串（不是 `your-secret-here`）
 - [ ] `ALLOW_SQLITE_FALLBACK=false`（避免后端悄悄用临时磁盘 SQLite，重启即丢数据）
@@ -680,50 +693,152 @@ pg_restore --clean --no-owner -d "$DATABASE_URL" cspjs-2026-11-01.dump
 - 登录后立刻 401 → `JWT_SECRET` 是否在重启后变了（多实例必须固定同一个值）；
 - 数据库连接数满 → 免费库上限 100 连接，后端默认连接池很小，异常时重启服务。
 
-### 11.11 备选：后端也部署到 Vercel（Serverless）
+### 11.11 后端部署到 Cloudflare Workers（当前主推）
 
-> 只想把前端放 Vercel、后端继续用 Render 的话跳过本节。这里是把 FastAPI 也搬到 Vercel 的做法：
-> 仓库已带 [backend/vercel.json](backend/vercel.json)，用 `@vercel/python` 把 `app/main.py` 作为单个 Function。
+> 本节是当前生产方案。Render（11.4–11.10）与 Vercel 后端方案均已弃用。
+> 需要的配置文件：[backend/wrangler.jsonc](backend/wrangler.jsonc)、[backend/pyproject.toml](backend/pyproject.toml)。
 
-**步骤**
+**1. 创建 Hyperdrive（连接 Neon）**
 
-1. Vercel → **Add New → Project** → 选仓库，**Root Directory 填 `backend`**（`vercel.json` 与 `requirements.txt` 都在这一层）。
-2. Framework Preset 选 **Other**（不要把 Python 后端当前端项目构建）。
-3. 在 **Settings → Environment Variables**（至少勾选 Production）添加：
+控制台：**Storage & Databases → Hyperdrive → Create**，或在 `backend/` 执行：
 
-   | Key | Value |
-   | --- | --- |
-   | `DATABASE_URL` | 外部 PostgreSQL（Neon / Supabase / Render External URL，通常带 `?sslmode=require`） |
-   | `JWT_SECRET` | 随机长串 |
-   | `ALLOW_SQLITE_FALLBACK` | `false`（Serverless 文件系统是临时的，SQLite 必丢） |
-   | `AUTO_SEED` | 首次 `true`，建表 + 播种成功后改 `false` |
-   | `SEED_DEMO_STUDENT` | `false` |
-   | `CORS_ORIGINS` | `https://<前端实际域名>` |
+```bash
+npx wrangler hyperdrive create cspjs-hyperdrive \
+  --connection-string="postgres://<user>:<password>@<neon-host>/<db>?sslmode=require"
+```
 
-4. Deploy 后访问 `https://<项目>.vercel.app/api/health` 与 `/docs`；再把前端的 `VITE_API_BASE` 改成 `https://<项目>.vercel.app/api` 并重新部署前端。
-5. 确认数据正常后把 `AUTO_SEED` 改回 `false`。
+把输出中的 Hyperdrive ID 填到 `wrangler.jsonc` 的 `hyperdrive[0].id`。
+Neon 密码只存在于 Hyperdrive 配置中，**不要**写进仓库或 Worker 代码。
 
-**配置说明**
+**2. 配置 `wrangler.jsonc`**
 
-- `backend/vercel.json` 的 `builds` 用 `@vercel/python` 构建 `app/main.py`，`routes` 把全部请求交给它；`app/main.py` 里模块级的 `app = FastAPI(...)` 就是入口，改名或包进函数会导致 404。
-- `builds` 是 Vercel 的旧配置（官方仍兼容，但已标记 deprecated）。若新项目不接受它，删掉 `builds`/`routes` 即可：Vercel 会自动识别 `app/main.py` 里的 FastAPI `app`；需要调整超时再用 `functions`：
-
-  ```json
-  {
-    "$schema": "https://openapi.vercel.sh/vercel.json",
-    "functions": { "app/main.py": { "maxDuration": 60 } }
+```jsonc
+{
+  "name": "cspjs-api",
+  "main": "app/main.py",
+  "compatibility_date": "2026-10-31",        // Hyperdrive 要求 ≥ 2026-09-08
+  "compatibility_flags": ["python_workers"],
+  "hyperdrive": [{ "binding": "HYPERDRIVE", "id": "<你的 Hyperdrive ID>" }],
+  "vars": {
+    "ENVIRONMENT": "production",
+    "APP_NAME": "CSP 初赛训练系统",
+    "CORS_ORIGINS": "https://your-frontend.pages.dev",
+    "JWT_EXPIRE_MINUTES": "10080",
+    "MOCK_EXAM_MINUTES": "120"
   }
-  ```
+}
+```
 
-- 如果坚持 Root Directory 用仓库根目录，就要把 `vercel.json` 放到根目录，并把 `src` / `dest` 改成 `backend/app/main.py`。
+`JWT_SECRET` 不能放在 `vars` 里（会明文出现在配置与部署元数据中），必须用 Secret。
 
-**Serverless 注意**
+**3. 安装依赖并在本地跑起来**
 
-- Vercel 已支持 FastAPI lifespan，冷启动时会执行建表 / 播种；但**第一次部署仍建议 `AUTO_SEED=true`**，避免表还没建就有请求进来。
-- 必须用外部 PostgreSQL：Vercel 的文件系统是临时的，SQLite 与上传文件都不持久。Vercel 自家的 Postgres 已并入 Marketplace，可直接接 Neon。
-- 数据库连接：检测到 `VERCEL` 环境变量时，后端会切换为 `NullPool`（每次请求新建连接），避免多实例把托管库的连接数打满；数据库侧建议用带连接池的地址（如 Neon 的 `-pooler` 地址）。
-- Hobby 免费档仍限个人非商业；Function 区域要选离数据库近的（Project → Settings → Functions → Region）。
-- Serverless 会缩容到 0，冷启动比 Render 更频繁，首次请求多等 1–3 秒属正常。
+```bash
+cd backend
+uv sync                       # 根据 pyproject.toml 安装 fastapi/sqlalchemy/pg8000 等
+
+# 本地 pywrangler dev 不会使用线上 Hyperdrive 配置，需要给一个本地/远程连接串：
+export CLOUDFLARE_HYPERDRIVE_LOCAL_CONNECTION_STRING_HYPERDRIVE="postgres://<user>:<password>@localhost:5432/cspjs"
+uv run pywrangler dev         # 本地 Worker：http://localhost:8787
+```
+
+本地 Secret 放在 `backend/.dev.vars`（已在 `.gitignore`），例如 `JWT_SECRET=...`；
+`pywrangler dev` 会读取它。不要提交这个文件。
+
+`pywrangler` 会把 `app/main.py` 作为入口，`Default = asgi.entrypoint(app)` 是 Workers 的 fetch 入口。
+本地没有 `workers` 模块时，`uvicorn app.main:app` 仍然照常可用。
+
+**4. 写入 JWT Secret**
+
+```bash
+cd backend
+uv run pywrangler secret put JWT_SECRET
+# 或 npx wrangler secret put JWT_SECRET
+```
+
+值用 `python -c "import secrets; print(secrets.token_urlsafe(48))"` 生成。
+
+**5. 初始化 Neon 表结构（Workers 不会自动建表）**
+
+Workers 的 ASGI 适配器会为每个请求驱动 lifespan，因此 `main.py` 在 Worker 上**跳过**
+`create_all` / seed。首次部署前，在本机对 Neon 执行一次：
+
+```bash
+export DATABASE_URL="postgres://<user>:<password>@<neon-host>/<db>?sslmode=require"
+cd backend
+ADMIN_PASSWORD='<强密码>' python -m app.seed
+```
+
+也可以直接把 [backend/sql/schema.sql](backend/sql/schema.sql) 拿到 Neon SQL Editor 执行。
+`app.seed` 是幂等的，已有数据时会跳过。
+
+**6. 部署**
+
+```bash
+cd backend
+uv run pywrangler deploy
+```
+
+得到 `https://cspjs-api.<你的子域>.workers.dev`，访问 `/api/health` 应返回：
+
+```json
+{ "status": "ok", "app": "CSP 初赛训练系统", "database": "postgresql", "mock_exam_minutes": 120 }
+```
+
+**7. 前端指向 Worker**
+
+在 Cloudflare Pages（或当前前端托管平台）把构建变量改成：
+
+```bash
+VITE_API_BASE=https://cspjs-api.<你的子域>.workers.dev/api
+```
+
+重新构建并部署前端；同时把 `wrangler.jsonc` 的 `CORS_ORIGINS` 改成前端真实域名，再 `pywrangler deploy`。
+
+#### Hyperdrive 连接串如何传进数据库模块
+
+Workers 没有进程级环境变量，`workers.asgi` 会把绑定放进 ASGI scope：
+
+1. `asgi.entrypoint(app)` 每次请求把 `env` 放进 `request.scope["env"]`；
+2. [database.py](backend/app/database.py) 的 `async def get_db(request: Request)` 读取
+   `request.scope["env"].HYPERDRIVE.connectionString`，用 `pg8000` + `NullPool` 创建 Engine；
+3. Engine 按连接串缓存在当前 isolate（最多 8 个），不跨请求持有连接；
+4. 非数据库配置（JWT_SECRET、CORS_ORIGINS 等）由 [main.py](backend/app/main.py) 的中间件
+   从同一个 `env` 同步到 `settings`，因此 `security.py` 无需改动即可读到 Worker Secret；
+5. 本地 `uvicorn` 没有 `env`，自动回退到 `.env` 的 `DATABASE_URL` 或 SQLite。
+
+#### 迁移注意事项（务必看）
+
+- **驱动**：只能用纯 Python 的 `pg8000`（`postgresql+pg8000://`）。`psycopg2` 是 C 扩展，在 Pyodide/WASM 中无法加载。
+- **Hyperdrive 处理 TLS**：Worker → Hyperdrive 是本地回环，`sslmode` / `channel_binding` 会被 `database.py` 剥离；到 Neon 的 TLS 由 Hyperdrive 负责。
+- **SQLAlchemy**：只支持同步 ORM；Workers 没有 greenlet，不能用 async SQLAlchemy。连接统一 `NullPool`，池化交给 Hyperdrive。
+- **同步端点**：Workers 没有可用的 threading，FastAPI 的同步端点默认走线程池会失败。
+  `main.py` 在 Worker 上把同步端点/依赖包装成协程直接在事件循环执行；长期建议把路由逐步改成 `async def`。
+- **配置来源**：非敏感配置放 `wrangler.jsonc` 的 `vars`；`JWT_SECRET` 用 `wrangler secret put`。不要再往仓库里放 `.env`。
+- **本地与线上差异**：本地用 SQLite/本地 PostgreSQL 验证业务；线上首次请求会建立到 Neon 的连接，冷启动比本地慢。
+- **备份**：Neon 控制台自带 PITR/备份能力，仍建议定期 `pg_dump` 到本地。
+
+#### 清理原 Vercel / Render 遗留
+
+- 已删除 `backend/vercel.json`（后端不再通过 Vercel 构建）。
+- 在 Vercel 控制台删除后端 Project、对应 Environment Variables 与域名绑定；保留即可，但不要再部署。
+- 前端如果仍在 Vercel，`frontend/vercel.json` 先保留；迁移到 Cloudflare Pages 后删除该文件与 Vercel 项目。
+- 不再使用 Render 时可删除根目录 `render.yaml`（当前保留为历史备选）。
+- 删除部署平台上遗留的 `DATABASE_URL`、`JWT_SECRET`、`ALLOW_SQLITE_FALLBACK`、`AUTO_SEED` 等后端环境变量，避免误用。
+- `.wrangler/`、`.dev.vars` 已加入 `.gitignore`，不要提交本地 Worker 状态或密钥文件。
+
+#### Cloudflare Workers 上线检查清单
+
+- [ ] `wrangler.jsonc` 的 `hyperdrive[0].id` 已替换为真实 Hyperdrive ID
+- [ ] `compatibility_date >= 2026-09-08`，且包含 `"python_workers"` compatibility flag
+- [ ] `JWT_SECRET` 已通过 `wrangler secret put` 写入（不在 `vars`、不在仓库）
+- [ ] `CORS_ORIGINS` 已是前端真实域名（`https://`，无末尾 `/`）
+- [ ] Neon 表结构已初始化（`python -m app.seed` 或执行 `schema.sql`），管理员密码已设置
+- [ ] 依赖中没有 `psycopg2`；SQLAlchemy URL 为 `postgresql+pg8000://`
+- [ ] `uv run pywrangler deploy` 成功，`/api/health` 返回 `"database": "postgresql"`
+- [ ] 前端 `VITE_API_BASE` 指向 `https://<worker>/api`，登录/答题可用
+- [ ] Worker 日志无 `HYPERDRIVE` 缺失、`JWT_SECRET 未配置`、连接超时错误
+- [ ] 已删除 `backend/vercel.json`、Vercel 后端项目与旧环境变量
 
 ## 十二、本地开发与演示（仅用于开发 / 课堂演示 / 阶段性展示）
 
