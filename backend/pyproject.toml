@@ -1,16 +1,14 @@
 [project]
 name = "cspjs-api"
 version = "1.0.0"
-description = "CSP Training System Backend"
-requires-python = ">=3.12"
+requires-python = ">=3.13"
 dependencies = [
     "fastapi",
-    "sqlalchemy",
+    "pydantic",
+    "pydantic-settings",
     "pg8000",
     "python-jose",
     "python-multipart",
-    "pydantic",
-    "pydantic-settings",
 ]
 
 [dependency-groups]
@@ -18,5 +16,3 @@ dev = [
     "workers-py",
     "workers-runtime-sdk",
 ]
-
-[tool.uv]

@@ -1,8 +1,0 @@
-fastapi
-uvicorn
-sqlalchemy
-pg8000
-python-jose
-python-multipart
-pydantic
-pydantic-settings
