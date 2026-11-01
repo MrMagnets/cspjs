@@ -7,11 +7,11 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import case, func, select
 from sqlalchemy.orm import Session
 
-from .config import settings
-from .database import get_db
-from .deps import get_current_user
-from .models import MockExam, Problem, ProblemTag, Submission, Tag, User
-from .schemas import (
+from config import settings
+from database import get_db
+from deps import get_current_user
+from models import MockExam, Problem, ProblemTag, Submission, Tag, User
+from schemas import (
     AnswerItemResult,
     MockExamCreate,
     MockExamDetail,
@@ -24,8 +24,8 @@ from .schemas import (
     TagStat,
     TypeStat,
 )
-from .serializers import to_details
-from .services import MOCK_STRUCTURE, is_correct, mock_exam_plan
+from serializers import to_details
+from services import MOCK_STRUCTURE, is_correct, mock_exam_plan
 
 router = APIRouter(prefix="/mock-exams", tags=["模拟考试"])
 

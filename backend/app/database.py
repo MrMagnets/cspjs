@@ -27,7 +27,7 @@ from sqlalchemy.engine import Engine
 from sqlalchemy.orm import DeclarativeBase, Session, sessionmaker
 from sqlalchemy.pool import NullPool
 
-from .config import settings
+from config import settings
 
 logger = logging.getLogger("cspjs.database")
 

@@ -5,10 +5,10 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from .database import get_db
-from .deps import get_current_user, require_admin
-from .models import ProblemTag, Tag, User
-from .schemas import TagIn, TagOut
+from database import get_db
+from deps import get_current_user, require_admin
+from models import ProblemTag, Tag, User
+from schemas import TagIn, TagOut
 
 router = APIRouter(prefix="/tags", tags=["标签"])
 

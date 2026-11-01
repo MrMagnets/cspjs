@@ -5,11 +5,11 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy import func, or_, select
 from sqlalchemy.orm import Session
 
-from .database import get_db
-from .deps import get_current_user, get_optional_user
-from .models import Problem, ProblemList, ProblemListItem, User
-from .schemas import ListItemsIn, ListReorderIn, ProblemListDetail, ProblemListIn, ProblemListSummary
-from .serializers import to_summary
+from database import get_db
+from deps import get_current_user, get_optional_user
+from models import Problem, ProblemList, ProblemListItem, User
+from schemas import ListItemsIn, ListReorderIn, ProblemListDetail, ProblemListIn, ProblemListSummary
+from serializers import to_summary
 
 router = APIRouter(prefix="/problem-lists", tags=["题单"])
 

@@ -7,11 +7,11 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
-from .database import get_db
-from .deps import get_current_user
-from .models import Problem, SubQuestion, User, WrongQuestion, WrongReview
-from .schemas import WrongErrorTypeIn, WrongQuestionOut, WrongReviewIn
-from .services import MASTER_AFTER_CONSECUTIVE_PASS, apply_review_result
+from database import get_db
+from deps import get_current_user
+from models import Problem, SubQuestion, User, WrongQuestion, WrongReview
+from schemas import WrongErrorTypeIn, WrongQuestionOut, WrongReviewIn
+from services import MASTER_AFTER_CONSECUTIVE_PASS, apply_review_result
 
 router = APIRouter(prefix="/wrong-questions", tags=["错题本"])
 

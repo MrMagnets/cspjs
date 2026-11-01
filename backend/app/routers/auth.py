@@ -15,11 +15,11 @@ from fastapi.responses import JSONResponse
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from .database import get_db
-from .deps import get_current_user
-from .models import User
-from .schemas import LoginIn, RegisterIn, UserOut
-from .security import create_access_token, hash_password, verify_password
+from database import get_db
+from deps import get_current_user
+from models import User
+from schemas import LoginIn, RegisterIn, UserOut
+from security import create_access_token, hash_password, verify_password
 
 router = APIRouter(prefix="/auth", tags=["认证"])
 logger = logging.getLogger("cspjs.auth")

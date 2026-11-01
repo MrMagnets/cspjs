@@ -4,7 +4,7 @@ from __future__ import annotations
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from  import models
+import models
 from schemas import (
     ProblemDetail,
     ProblemSummary,

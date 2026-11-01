@@ -31,3 +31,7 @@ Thumbs.db
 
 # ---- 娴嬭瘯浜х墿 ----
 docs/screenshots/small/
+
+# 防止把依赖源码/元数据塞进 app/
+*.dist-info/
+backend/app/bin/

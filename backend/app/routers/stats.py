@@ -7,11 +7,11 @@ from fastapi import APIRouter, Depends
 from sqlalchemy import case, func, select
 from sqlalchemy.orm import Session
 
-from .database import get_db
-from .deps import get_current_user
-from .models import Problem, ProblemTag, Submission, Tag, User, WrongQuestion
-from .schemas import StatsOut, TagStat, TypeStat
-from .services import MASTER_AFTER_CONSECUTIVE_PASS
+from database import get_db
+from deps import get_current_user
+from models import Problem, ProblemTag, Submission, Tag, User, WrongQuestion
+from schemas import StatsOut, TagStat, TypeStat
+from services import MASTER_AFTER_CONSECUTIVE_PASS
 
 router = APIRouter(prefix="/stats", tags=["统计"])
 
