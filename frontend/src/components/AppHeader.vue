@@ -56,10 +56,10 @@ function goLogin() {
   <header class="app-header">
     <div class="header-inner">
       <router-link :to="{ name: 'home' }" class="brand">
-        <img class="brand-mark" src="/icon/icon-192.png" alt="CSP 初赛刷题" width="34" height="34" />
+        <img class="brand-mark" src="/icon/icon-192.png" alt="CSP 初赛训练系统" width="34" height="34" />
         <span class="brand-text">
-          <strong>CSP 初赛刷题</strong>
-          <em>CCF CSP-J/S 第一轮认证</em>
+          <strong>CSP 初赛训练系统</strong>
+          <em>CSP-J/S 刷题平台</em>
         </span>
       </router-link>
 

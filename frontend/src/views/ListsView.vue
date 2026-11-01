@@ -69,7 +69,7 @@ onMounted(load)
   <div class="page">
     <div class="page-title">
       题单
-      <span class="sub">按主题收集已通过审核的题目，按顺序刷题</span>
+      <span class="sub">按顺序练习</span>
       <span class="spacer" />
       <el-button type="primary" @click="openCreate">新建题单</el-button>
     </div>

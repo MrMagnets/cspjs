@@ -40,7 +40,7 @@ async function submit() {
     <div class="auth-card">
       <div class="auth-head">
         <h1>登录</h1>
-        <p>继续你的 CSP 第一轮备考</p>
+        <p>账号登录</p>
       </div>
 
       <el-form ref="formRef" :model="form" :rules="rules" label-position="top" @keyup.enter="submit">
@@ -65,12 +65,6 @@ async function submit() {
         还没有账号？
         <router-link :to="{ name: 'register', query: route.query }">立即注册</router-link>
       </p>
-
-      <div class="demo-tip">
-        <p class="demo-title">演示账号</p>
-        <p>管理员：<code>admin</code> / <code>adminmagnet</code></p>
-        <p>学生：<code>student</code> / <code>student123</code></p>
-      </div>
     </div>
   </div>
 </template>
@@ -121,33 +115,5 @@ async function submit() {
   text-align: center;
   font-size: 13.5px;
   color: var(--muted);
-}
-
-.demo-tip {
-  margin-top: 20px;
-  padding: 12px 14px;
-  background: #f8fafc;
-  border: 1px dashed var(--border);
-  border-radius: 10px;
-  font-size: 12.5px;
-  color: var(--muted);
-  line-height: 1.9;
-}
-
-.demo-tip p {
-  margin: 0;
-}
-
-.demo-title {
-  font-weight: 600;
-  color: #55697a;
-}
-
-.demo-tip code {
-  font-family: var(--mono);
-  background: #eef2f6;
-  padding: 1px 5px;
-  border-radius: 4px;
-  color: #41525f;
 }
 </style>

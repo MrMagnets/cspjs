@@ -26,8 +26,37 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name
 logger = logging.getLogger("cspjs")
 
 
+def _check_security_settings() -> None:
+    """部署前的配置自检：占位符密钥 / 临时 SQLite 绝不允许进生产环境。"""
+    if settings.is_production and settings.allow_sqlite_fallback:
+        raise RuntimeError(
+            "生产环境必须设置 ALLOW_SQLITE_FALLBACK=false：Serverless/云托管的本地磁盘是临时的，"
+            "SQLite 会导致重启即丢数据。"
+        )
+    if settings.is_production and not settings.database_url:
+        raise RuntimeError("生产环境必须设置 DATABASE_URL（托管 PostgreSQL 连接串）。")
+
+    if settings.uses_placeholder_jwt_secret:
+        message = (
+            "JWT_SECRET 仍是占位符 your-secret-here。请设置随机长字符串，例如："
+            'python -c "import secrets; print(secrets.token_urlsafe(48))"'
+        )
+        if settings.is_production:
+            raise RuntimeError(message)
+        logger.warning(message)
+
+    if settings.uses_placeholder_admin_password:
+        logger.warning(
+            "ADMIN_PASSWORD 仍是占位符；首次建库会用它创建管理员，请立即在环境变量中设置强密码"
+        )
+
+    if settings.seed_demo_student and not settings.demo_student_password:
+        logger.warning("SEED_DEMO_STUDENT=true 但未设置 DEMO_STUDENT_PASSWORD，将跳过演示学生账号")
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    _check_security_settings()
     Base.metadata.create_all(bind=engine)
     if settings.auto_seed:
         run_seed()

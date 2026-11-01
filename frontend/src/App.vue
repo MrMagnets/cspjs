@@ -37,11 +37,7 @@ onMounted(() => {
 
     <footer v-if="showFooter" class="app-footer">
       <div class="footer-inner">
-        <span>CSP 初赛刷题 · 面向 CCF CSP-J/S 第一轮认证</span>
-        <span class="dot-sep">·</span>
-        <span>题目由社区贡献，管理员审核后进入公共题库</span>
-        <span class="dot-sep">·</span>
-        <span>刷题数据仅供自测参考</span>
+        <span>CSP 初赛训练系统</span>
       </div>
     </footer>
 

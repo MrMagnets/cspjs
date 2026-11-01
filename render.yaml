@@ -30,6 +30,8 @@ services:
     healthCheckPath: /api/health
     autoDeployTrigger: commit
     envVars:
+      - key: ENVIRONMENT
+        value: production
       - key: PYTHON_VERSION
         value: "3.12.7"
       - key: ALLOW_SQLITE_FALLBACK

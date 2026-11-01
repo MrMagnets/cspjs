@@ -16,4 +16,4 @@ Start-Process -FilePath 'pnpm' -ArgumentList 'dev' -WorkingDirectory (Join-Path 
 Write-Host ''
 Write-Host '后端接口文档：http://127.0.0.1:8000/docs' -ForegroundColor Green
 Write-Host '前端页面：    http://127.0.0.1:5173' -ForegroundColor Green
-Write-Host '管理员账号：  admin / adminmagnet'
+Write-Host '管理员账号：  admin（密码见 backend/.env 的 ADMIN_PASSWORD）'

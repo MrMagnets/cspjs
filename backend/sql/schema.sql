@@ -118,8 +118,9 @@ CREATE TABLE IF NOT EXISTS submissions (
 CREATE INDEX IF NOT EXISTS ix_submissions_user_time ON submissions (user_id, submitted_at);
 CREATE INDEX IF NOT EXISTS ix_submissions_mock_exam ON submissions (mock_exam_id);
 
--- 管理员账号（密码 adminmagnet 的 SHA-256），由 app/seed.py 自动写入，
--- 也可手动执行：
+-- 管理员账号由 app/seed.py 在首次启动时按 ADMIN_PASSWORD 环境变量写入，
+-- 这里只给出「手动建库」时的示例（把占位符替换成真实密码的 SHA-256）。
+-- 计算方式：python -c "import hashlib;print(hashlib.sha256('你的密码'.encode()).hexdigest())"
 INSERT INTO users (username, password_hash, role)
-SELECT 'admin', '<SHA256(adminmagnet)>', 'admin'
+SELECT 'admin', '<SHA256(ADMIN_PASSWORD)>', 'admin'
 WHERE NOT EXISTS (SELECT 1 FROM users WHERE username = 'admin');

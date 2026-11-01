@@ -137,7 +137,7 @@ router.beforeEach(async (to) => {
   if (to.meta.guestOnly && auth.isLoggedIn) {
     return { name: 'home' }
   }
-  document.title = to.meta.title ? `${to.meta.title} · CSP 初赛刷题` : 'CSP 初赛刷题'
+  document.title = to.meta.title ? `${to.meta.title} · CSP 初赛训练系统` : 'CSP 初赛训练系统'
   return true
 })
 

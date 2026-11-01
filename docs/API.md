@@ -44,7 +44,7 @@
 ### POST /auth/login
 
 ```json
-{ "username": "admin", "password": "adminmagnet" }
+{ "username": "admin", "password": "<在 ADMIN_PASSWORD 中设置的密码>" }
 ```
 
 ### GET /auth/me

@@ -36,7 +36,9 @@ def ensure_admin(db: Session) -> User:
         db.commit()
         db.refresh(admin)
         # 不在日志里打印密码：云平台的构建/运行日志对团队成员可见
-        print(f"[seed] 管理员已创建：{settings.admin_username}（密码来自 ADMIN_PASSWORD）")
+        print(f"[seed] 管理员已创建：{settings.admin_username}（密码来自 ADMIN_PASSWORD 环境变量）")
+        if settings.uses_placeholder_admin_password:
+            print("[seed] 警告：当前使用占位管理员密码，请立即通过 python -m app.passwd 重置")
     elif admin.role != "admin":
         admin.role = "admin"
         db.commit()
@@ -377,29 +379,37 @@ def seed() -> None:
             created.append(problem)
         db.flush()
 
-        # 演示学生账号与题单：云托管可用 SEED_DEMO_STUDENT=false 关闭，避免已知密码账号上线
+        # 演示学生账号与题单：默认关闭；开启时必须显式提供 DEMO_STUDENT_PASSWORD，
+        # 避免任何「已知密码」账号随代码上线。
         if settings.seed_demo_student:
-            student = db.scalar(select(User).where(User.username == "student"))
-            if student is None:
-                student = User(username="student", password_hash=hash_password("student123"), role="user")
-                db.add(student)
-                db.flush()
+            if not settings.demo_student_password:
+                print("[seed] 已开启 SEED_DEMO_STUDENT，但未设置 DEMO_STUDENT_PASSWORD，跳过演示学生账号")
+            else:
+                student = db.scalar(select(User).where(User.username == "student"))
+                if student is None:
+                    student = User(
+                        username="student",
+                        password_hash=hash_password(settings.demo_student_password),
+                        role="user",
+                    )
+                    db.add(student)
+                    db.flush()
 
-            plist = ProblemList(
-                title="初赛必刷 10 题",
-                description="覆盖进制、位运算、排序、递归与程序阅读的基础题单。",
-                creator_id=student.id,
-                is_public=True,
-            )
-            db.add(plist)
-            db.flush()
-            for order_no, problem in enumerate(created[:10], start=1):
-                db.add(ProblemListItem(list_id=plist.id, problem_id=problem.id, order_no=order_no))
+                plist = ProblemList(
+                    title="初赛必刷 10 题",
+                    description="覆盖进制、位运算、排序、递归与程序阅读的基础题单。",
+                    creator_id=student.id,
+                    is_public=True,
+                )
+                db.add(plist)
+                db.flush()
+                for order_no, problem in enumerate(created[:10], start=1):
+                    db.add(ProblemListItem(list_id=plist.id, problem_id=problem.id, order_no=order_no))
 
         db.commit()
         print(f"[seed] 已写入 {len(created)} 道演示题目、{len(tags)} 个标签")
-        if settings.seed_demo_student:
-            print("[seed] 演示学生账号：student（密码见 README；生产环境请设置 SEED_DEMO_STUDENT=false）")
+        if settings.seed_demo_student and settings.demo_student_password:
+            print("[seed] 演示学生账号：student（密码来自 DEMO_STUDENT_PASSWORD）")
     finally:
         db.close()
 

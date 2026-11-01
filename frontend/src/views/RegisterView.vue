@@ -94,10 +94,6 @@ async function submit() {
         已有账号？
         <router-link :to="{ name: 'login', query: route.query }">直接登录</router-link>
       </p>
-
-      <p class="notice">
-        密码经哈希后存储，平台不会保存明文。题目投稿需管理员审核后才会公开。
-      </p>
     </div>
   </div>
 </template>
@@ -148,13 +144,5 @@ async function submit() {
   text-align: center;
   font-size: 13.5px;
   color: var(--muted);
-}
-
-.notice {
-  margin: 16px 0 0;
-  font-size: 12px;
-  line-height: 1.8;
-  color: #8a99a8;
-  text-align: center;
 }
 </style>

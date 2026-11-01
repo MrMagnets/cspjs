@@ -76,7 +76,7 @@ onMounted(load)
   <div class="page">
     <div class="page-title">
       标签管理
-      <span class="sub">知识点标签用于统计诊断，来源标签用于分类检索</span>
+      <span class="sub">知识点 / 来源</span>
     </div>
 
     <div class="card create-card">

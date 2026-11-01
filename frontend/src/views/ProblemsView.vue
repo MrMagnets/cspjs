@@ -159,7 +159,7 @@ onMounted(async () => {
   <div class="page">
     <div class="page-title">
       题库
-      <span class="sub">共 {{ total }} 道已通过审核的题目</span>
+      <span class="sub">共 {{ total }} 道题目</span>
       <span class="spacer" />
       <el-button type="primary" @click="router.push({ name: 'problem-create' })">投稿题目</el-button>
     </div>

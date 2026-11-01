@@ -1,4 +1,4 @@
-# CSP 初赛刷题 · CCF CSP-J/S 第一轮认证刷题平台
+# CSP 初赛训练系统 · CSP-J/S 第一轮认证
 
 面向 CCF CSP-J/S 第一轮认证（初赛）考生的 Web 刷题平台：社区贡献题目 → 管理员审核 → 公共题库 → 作答诊断 → 错题复习 → 模拟组卷。
 
@@ -20,7 +20,7 @@
 
 **第一版（必须完成，已全部实现）**
 
-- 注册 / 登录 / JWT 鉴权，SHA-256 密码存储，初始化管理员 `admin / adminmagnet`
+- 注册 / 登录 / JWT 鉴权，SHA-256 密码存储，管理员密码由 `ADMIN_PASSWORD` 环境变量决定
 - 三种题型投稿（单选 / 阅读程序 / 完善程序），阅读与完善题支持多条小题
 - 管理员审核：待审列表 → 查看完整内容（题干、选项、正确答案、解析）→ 通过 / 驳回（必填原因）
 - 驳回后作者可修改并重新提交（状态回到 `pending`）；管理员投稿直接通过
@@ -66,7 +66,7 @@ cspjs/
 │       ├── deps.py                # get_current_user / get_optional_user / require_admin
 │       ├── serializers.py         # ORM → 响应模型（含标签、答案可见性控制）
 │       ├── services.py            # 判分归一化、错题间隔调度、模拟考试分值结构
-│       ├── seed.py                # 管理员、标签、21 道演示题、公开题单
+│       ├── seed.py                # 管理员、标签、21 道演示题
 │       ├── passwd.py              # 运维脚本：重置用户密码（SHA-256）
 │       └── routers/
 │           ├── auth.py            # 注册 / 登录 / 当前用户
@@ -150,7 +150,7 @@ pip install -r requirements.txt
 # 2) 准备数据库（二选一）
 #    A. PostgreSQL（推荐，符合技术栈）
 createdb cspjs
-cp .env.example .env    # 修改 DATABASE_URL
+cp .env.example .env    # 填 DATABASE_URL；留空则本地自动用 SQLite
 #    B. 不装 PostgreSQL：保持 ALLOW_SQLITE_FALLBACK=true，自动使用 ./cspjs.db
 
 # 3) 启动（首次启动自动建表 + 写入管理员与演示数据）
@@ -186,16 +186,16 @@ pnpm preview      # http://127.0.0.1:4173
 ./scripts/dev.sh
 ```
 
-### 4.5 演示账号
+### 4.5 初始账号
 
 | 角色 | 用户名 | 密码 | 说明 |
 | --- | --- | --- | --- |
-| 管理员 | `admin` | `adminmagnet` | 由 seed 写入，可审核 / 编辑任意题目 / 管理标签 |
-| 学生 | `student` | `student123` | 演示账号，拥有一个公开题单 |
+| 管理员 | `admin` | 由 `ADMIN_PASSWORD` 决定（默认占位符 `change-me-admin-password`） | 首次播种写入；部署后请立即改为强密码 |
 
 演示数据包含 **21 道已通过题目**（16 道单选 + 3 道阅读程序 + 2 道完善程序）与 16 个标签，足够直接开始一场 20 题的模拟考试。
 
-> 云托管部署时请设置 `SEED_DEMO_STUDENT=false`：只播种管理员与题库，不创建已知密码的演示学生账号（见 11.5）。
+> 演示学生账号默认**不创建**。需要时设置 `SEED_DEMO_STUDENT=true`，并显式提供 `DEMO_STUDENT_PASSWORD`（代码里不保存任何固定密码）。
+> 部署到公网时必须覆盖 `ADMIN_PASSWORD`、`JWT_SECRET`，并保持 `SEED_DEMO_STUDENT=false`（见 11.9）。
 
 ## 五、环境变量
 
@@ -203,15 +203,17 @@ pnpm preview      # http://127.0.0.1:4173
 
 | 变量 | 默认值 | 说明 |
 | --- | --- | --- |
-| `DATABASE_URL` | `postgresql+psycopg://postgres:postgres@localhost:5432/cspjs` | PostgreSQL 连接串；平台注入的 `postgresql://` / `postgres://` 会自动补成 `postgresql+psycopg://` |
+| `ENVIRONMENT` | `development` | `production`（或检测到 `VERCEL`）时会拒绝占位符 `JWT_SECRET` 启动 |
+| `DATABASE_URL` | （空） | PostgreSQL 连接串（psycopg2-binary 驱动）；平台注入的 `postgresql://` / `postgres://` 会自动补成 `postgresql+psycopg2://`。未设置时本地自动用 SQLite，生产必须显式注入 |
 | `ALLOW_SQLITE_FALLBACK` | `true` | 本地无 PG 时降级 SQLite；**云托管必须 `false`**（免费实例磁盘是临时的，重启即丢数据） |
 | `SQLITE_PATH` | `./cspjs.db` | 降级后的 SQLite 文件 |
-| `JWT_SECRET` | `change-me-in-production-please` | **生产必须替换为随机长字符串** |
+| `JWT_SECRET` | `your-secret-here` | **占位符在生产环境会直接拒绝启动**，必须替换为随机长字符串 |
 | `JWT_EXPIRE_MINUTES` | `10080` | token 有效期（7 天） |
 | `CORS_ORIGINS` | `http://localhost:5173,http://127.0.0.1:5173,...` | 逗号分隔的完整 origin（`https://`，无末尾 `/`）。本地开发填 localhost；**前后端分离部署时必须加前端实际域名**（如 `https://cspjs.vercel.app`），否则浏览器报 CORS |
-| `ADMIN_USERNAME` / `ADMIN_PASSWORD` | `admin` / `adminmagnet` | 初始化管理员；云托管首次部署请用强密码覆盖 `ADMIN_PASSWORD` |
+| `ADMIN_USERNAME` / `ADMIN_PASSWORD` | `admin` / `change-me-admin-password` | 初始化管理员；**部署前必须覆盖为强密码** |
 | `AUTO_SEED` | `true` | 启动时建表 + 播种（幂等）；云托管首次 `true`，确认数据后改 `false` |
-| `SEED_DEMO_STUDENT` | `true` | 是否创建演示学生 `student` 与示例题单；**云托管设为 `false`**，避免已知密码账号上线 |
+| `SEED_DEMO_STUDENT` | `false` | 是否创建演示学生 `student`；**默认关闭**，开启时必填 `DEMO_STUDENT_PASSWORD` |
+| `DEMO_STUDENT_PASSWORD` | 空 | 演示学生密码，仅 `SEED_DEMO_STUDENT=true` 时使用 |
 | `MOCK_EXAM_MINUTES` | `120` | 模拟考试时长 |
 
 ### 前端（`frontend/.env`，见 `.env.example`）
@@ -462,7 +464,7 @@ python smoke_test.py http://127.0.0.1:8000
 5. **不需要手动建表**：后端首次启动会 `create_all` 建表并写入演示数据（`AUTO_SEED=true`）。
 
 > 连接串形如 `postgresql://cspjs:密码@dpg-xxxx-a.singapore-postgres.render.com/cspjs`。
-> 项目会自动把 `postgresql://` 规范成 `postgresql+psycopg://`（[backend/app/database.py](backend/app/database.py) 的 `normalize_database_url`），**不要**手写驱动前缀，也不要把密码提交进仓库。
+> 项目会自动把 `postgresql://` 规范成 `postgresql+psycopg2://`（[backend/app/database.py](backend/app/database.py) 的 `normalize_database_url`），**不要**手写驱动前缀，也不要把密码提交进仓库。
 
 ### 11.5 第二步：部署后端（Render Web Service）
 
@@ -488,6 +490,7 @@ python smoke_test.py http://127.0.0.1:8000
 
    | Key | Value | 说明 |
    | --- | --- | --- |
+   | `ENVIRONMENT` | `production` | 生产环境会拒绝占位符 JWT_SECRET |
    | `DATABASE_URL` | 11.4 复制的 **Internal Database URL** | 平台注入的 `postgresql://` 即可 |
    | `JWT_SECRET` | 随机长串：`python -c "import secrets;print(secrets.token_urlsafe(48))"` | 不要用默认值 |
    | `ALLOW_SQLITE_FALLBACK` | `false` | 禁止降级到临时磁盘 SQLite |
@@ -495,22 +498,22 @@ python smoke_test.py http://127.0.0.1:8000
    | `SEED_DEMO_STUDENT` | `false` | 不创建已知密码的演示学生账号 |
    | `CORS_ORIGINS` | `https://cspjs.vercel.app` | 前端域名，多个用英文逗号分隔 |
    | `PYTHON_VERSION` | `3.12.7` | 固定 Python 版本，避免平台默认版本漂移 |
-   | `ADMIN_PASSWORD` | 自己设定的强密码 | 首次播种时生效，覆盖默认 `adminmagnet` |
+   | `ADMIN_PASSWORD` | 自己设定的强密码 | 首次播种时生效；未设置则使用占位符并触发启动告警 |
    | `MOCK_EXAM_MINUTES` | `120` | 可选 |
 
 4. 点 **Create Web Service**，在 **Logs** 里确认依次出现：
 
    ```text
-   数据库已连接：postgresql+psycopg://...
-   [seed] 管理员已创建：admin（密码来自 ADMIN_PASSWORD）
+   数据库已连接：postgresql+psycopg2://...
+   [seed] 管理员已创建：admin（密码来自 ADMIN_PASSWORD 环境变量）
    [seed] 已写入 21 道演示题目、16 个标签
-   CSP 刷题平台后端已启动，数据库：postgresql+psycopg://...
+   CSP 刷题平台后端已启动，数据库：postgresql+psycopg2://...
    ```
 
 5. 访问 `https://cspjs-api.onrender.com/api/health`，应返回：
 
    ```json
-   { "status": "ok", "app": "CCF CSP 第一轮认证刷题平台", "database": "postgresql", "mock_exam_minutes": 120 }
+   { "status": "ok", "app": "CSP 初赛训练系统", "database": "postgresql", "mock_exam_minutes": 120 }
    ```
 
 6. 打开 `https://cspjs-api.onrender.com/docs` 能看到 Swagger 文档即部署成功。
@@ -603,14 +606,14 @@ curl -s -o /dev/null -w "%{http_code}\n" https://cspjs.vercel.app/problems/1
 > 还有两个容易忽略的点：
 > - **Render 免费实例没有 Shell / SSH**，不能在控制台执行命令；改密码、备份、跑脚本都要在本机用 External Database URL 完成（见 11.10）。
 > - Render 免费 Web Service 的本地磁盘是**临时的**：即使部署了代码，写进容器的文件在重启/休眠后会消失——所以必须用托管 PostgreSQL，不能靠 SQLite（这正是 `ALLOW_SQLITE_FALLBACK=false` 的意义）。
-> - 首次播种在 `SEED_DEMO_STUDENT=true`（默认）时会创建 `student / student123` 这个**已知密码**账号；云托管必须设为 `false`，否则任何人都能拿它登录和投稿。
+> - 演示学生账号默认关闭（`SEED_DEMO_STUDENT=false`）；开启时必须显式提供 `DEMO_STUDENT_PASSWORD`，代码中不保存固定密码。
 
 ### 11.9 部署检查清单（上线前逐项确认）
 
-- [ ] `JWT_SECRET` 已替换为随机长字符串（不是 `change-me-in-production-please`）
+- [ ] `JWT_SECRET` 已替换为随机长字符串（不是 `your-secret-here`）
 - [ ] `ALLOW_SQLITE_FALLBACK=false`（避免后端悄悄用临时磁盘 SQLite，重启即丢数据）
 - [ ] `AUTO_SEED` 首次启动为 `true`，确认建表与播种成功后已改回 `false`
-- [ ] `SEED_DEMO_STUDENT=false`（不要保留 `student / student123` 这类已知密码账号）
+- [ ] `SEED_DEMO_STUDENT=false`（不要保留任何已知密码的演示账号）
 - [ ] 管理员默认密码已修改（用 `ADMIN_PASSWORD` 首次注入，或部署后用 `python -m app.passwd` 重置，见 11.10）
 - [ ] `CORS_ORIGINS` 包含前端实际域名（含 `https://`、无末尾 `/`；有预览域名则一并加入）
 - [ ] `VITE_API_BASE` 指向后端实际地址且带 `/api`，修改后已重新部署
@@ -884,7 +887,7 @@ pnpm preview --port 8080        # 需要的话再用第二条隧道暴露前端
 
 - 演示前可 `python -m app.seed --reset && python -m app.seed` 得到干净数据；演示后同样清空，避免把演示账号带到正式环境。
 - 虚拟机磁盘快照比 Nginx 配置更重要：演示前先打快照。
-- 默认密码 `adminmagnet` 在演示环境也必须改，哪怕只开一天。
+- 默认管理员密码是占位符，部署后必须通过 `ADMIN_PASSWORD` 或 `python -m app.passwd` 修改，哪怕只开一天。
 - 宿主机睡眠 / 虚拟机挂起会让站点立刻不可用；这是选择本地方案必须接受的代价。
 
 ## 十三、已知取舍

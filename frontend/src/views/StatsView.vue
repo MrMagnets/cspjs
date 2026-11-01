@@ -45,7 +45,7 @@ onMounted(async () => {
   <div class="page">
     <div class="page-title">
       做题统计
-      <span class="sub">数据来自普通练习记录，模拟考试成绩单独统计</span>
+      <span class="sub">练习数据统计</span>
       <span class="spacer" />
       <el-button size="small" @click="router.push({ name: 'mock-exams' })">去模拟考试</el-button>
     </div>

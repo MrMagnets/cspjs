@@ -18,25 +18,25 @@ const wrongTotal = ref(0)
 const entries = [
   {
     title: '题库浏览',
-    desc: '按题型、标签、年份筛选真题与社区题目',
+    desc: '按题型、标签、年份筛选',
     to: { name: 'problems' },
     mark: '题',
   },
   {
     title: '题单',
-    desc: '自建或收藏题单，按顺序逐题突破',
+    desc: '按顺序逐题练习',
     to: { name: 'lists' },
     mark: '单',
   },
   {
     title: '错题本',
-    desc: '按 1 / 3 / 7 天间隔复习，连续答对两次即掌握',
+    desc: '间隔重复复习',
     to: { name: 'wrong-book' },
     mark: '错',
   },
   {
     title: '模拟考试',
-    desc: '15 单选 + 3 阅读 + 2 完善，限时 120 分钟',
+    desc: '20 题，限时 120 分钟',
     to: { name: 'mock-exams' },
     mark: '考',
   },
@@ -66,26 +66,19 @@ onMounted(async () => {
   <div class="page">
     <section class="hero">
       <div class="hero-content">
-        <p class="eyebrow">CCF CSP-J / CSP-S 第一轮认证</p>
-        <h1>把初赛的每一个知识点<br />练成条件反射</h1>
-        <p class="hero-desc">
-          社区贡献题目 · 管理员审核 · 知识点诊断 · 模拟组卷。选择题为主，纯刷题不跑代码，
-          打开就能练。
-        </p>
+        <p class="eyebrow">CSP-J/S 第一轮认证</p>
+        <h1>CSP-J/S 初赛训练</h1>
+        <p class="hero-desc">覆盖单项选择、阅读程序、完善程序三类题型。</p>
         <div class="hero-actions">
           <el-button type="primary" size="large" @click="router.push({ name: 'problems' })">
-            开始刷题
+            开始训练
           </el-button>
           <el-button size="large" @click="router.push({ name: auth.isLoggedIn ? 'mock-exams' : 'login' })">
             模拟考试
           </el-button>
         </div>
         <div class="hero-meta">
-          <span>{{ total }} 道公开题目</span>
-          <span class="dot-sep">·</span>
-          <span>三种题型全覆盖</span>
-          <span class="dot-sep">·</span>
-          <span>KaTeX 公式渲染</span>
+          <span>{{ total }} 道题目</span>
         </div>
       </div>
 
@@ -95,10 +88,8 @@ onMounted(async () => {
           {{ auth.isLoggedIn ? dueCount : '—' }}<small v-if="auth.isLoggedIn">题</small>
         </p>
         <p class="rc-desc">
-          <template v-if="auth.isLoggedIn">
-            共 {{ wrongTotal }} 道错题在册，按间隔重复巩固
-          </template>
-          <template v-else>登录后自动记录错题并生成复习计划</template>
+          <template v-if="auth.isLoggedIn">共 {{ wrongTotal }} 道错题</template>
+          <template v-else>登录后查看复习计划</template>
         </p>
         <el-button
           type="primary"
@@ -131,8 +122,8 @@ onMounted(async () => {
       </div>
       <EmptyState
         v-if="!loading && !latest.length"
-        title="题库还没有公开题目"
-        description="登录后投稿第一道题，管理员审核通过即可公开"
+        title="题库还没有题目"
+        description="登录后可投稿题目"
         action-text="去投稿"
         @action="router.push({ name: 'problem-create' })"
       />

@@ -23,9 +23,9 @@ const history = ref([])
 const historyLoading = ref(false)
 
 const STRUCTURE = [
-  { label: '单项选择', count: 15, score: 30, desc: '每题 2 分，覆盖基础语法与算法常识' },
-  { label: '阅读程序', count: 3, score: 40, desc: '每大题 3 小题，按小题均分' },
-  { label: '完善程序', count: 2, score: 30, desc: '每大题 5 小题，按小题均分' },
+  { label: '单项选择', count: 15, score: 30, desc: '每题 2 分' },
+  { label: '阅读程序', count: 3, score: 40, desc: '3 小题，按小题均分' },
+  { label: '完善程序', count: 2, score: 30, desc: '5 小题，按小题均分' },
 ]
 
 // ---------------- 考试中 ----------------
@@ -257,17 +257,13 @@ onBeforeUnmount(stopTimer)
   <div v-if="!running" class="page">
     <div class="page-title">
       模拟考试
-      <span class="sub">按真实初赛结构组卷，限时 120 分钟，自动判分</span>
+      <span class="sub">20 题 · 120 分钟</span>
     </div>
 
     <section class="intro card">
       <div class="intro-main">
         <h1>CSP 第一轮模拟卷</h1>
-        <p>
-          从已通过审核的题目池中随机抽题：15 道单项选择 + 3 道阅读程序 + 2 道完善程序，
-          共 20 道大题，满分 100 分。交卷后展示逐题解析与知识点得分率，
-          成绩单独统计，不混入普通做题数据。
-        </p>
+        <p>15 道单项选择 + 3 道阅读程序 + 2 道完善程序，满分 100 分。</p>
 
         <div class="structure">
           <div v-for="item in STRUCTURE" :key="item.label" class="structure-item">
@@ -286,9 +282,7 @@ onBeforeUnmount(stopTimer)
             开始考试
           </el-button>
         </div>
-        <p class="intro-tip">
-          开始后立即计时，中途离开会保留本机草稿；题库中题目不足时无法组卷。
-        </p>
+        <p class="intro-tip">开始后立即计时，中途离开会保留本机草稿。</p>
       </div>
 
       <aside class="intro-side">

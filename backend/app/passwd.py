@@ -4,11 +4,11 @@ Render 免费实例没有 shell，无法在控制台执行命令，因此在本�
 「External Database URL」连库执行即可：
 
     # PowerShell
-    $env:DATABASE_URL = "postgresql://user:pass@xxx.render.com/cspjs?sslmode=require"
+    $env:DATABASE_URL = "postgresql://<user>:<password>@<host>/<db>?sslmode=require"
     python -m app.passwd --username admin
 
     # bash
-    DATABASE_URL="postgresql://..." python -m app.passwd --username admin
+    DATABASE_URL="postgresql://<user>:<password>@<host>/<db>" python -m app.passwd --username admin
 
 也支持非交互：
     python -m app.passwd --username admin --password '新的强密码'

@@ -6,12 +6,15 @@
 from __future__ import annotations
 
 import json
+import os
 import sys
 import urllib.error
 import urllib.parse
 import urllib.request
 
 BASE = sys.argv[1] if len(sys.argv) > 1 else "http://127.0.0.1:8000"
+ADMIN_USERNAME = os.environ.get("ADMIN_USERNAME", "admin")
+ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "change-me-admin-password")
 passed = 0
 
 
@@ -40,7 +43,10 @@ def main() -> None:
     call("GET", "/api/health")
 
     print("2) 管理员登录 + 注册普通用户")
-    admin = call("POST", "/api/auth/login", {"username": "admin", "password": "adminmagnet"})
+    admin = call(
+        "POST", "/api/auth/login",
+        {"username": ADMIN_USERNAME, "password": ADMIN_PASSWORD},
+    )
     admin_tok = admin["access_token"]
     username = "tester_smoke"
     reg = call(
