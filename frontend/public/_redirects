@@ -1,2 +1,0 @@
-# SPA fallback for Netlify / Cloudflare Pages (Vercel uses vercel.json)
-/api/*  https://cspjs-api-hf.3625099190.workers.dev/api/:splat  200
