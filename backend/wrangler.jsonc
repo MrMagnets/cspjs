@@ -1,0 +1,23 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "cspjs-api-hf",
+  "main": "app/main.py",
+  "compatibility_date": "2026-10-31",
+  "compatibility_flags": ["python_workers"],
+  "hyperdrive": [
+    {
+      "binding": "HYPERDRIVE",
+      "id": "f113ccf23d6b46ecac68ea1c9c5cc548"
+    }
+  ],
+  "vars": {
+    "ENVIRONMENT": "production",
+    "APP_NAME": "CSP Training System",
+    "CORS_ORIGINS": "https://cspjs.pages.dev",
+    "JWT_EXPIRE_MINUTES": "10080",
+    "MOCK_EXAM_MINUTES": "120"
+  },
+  "observability": {
+    "enabled": true
+  }
+}

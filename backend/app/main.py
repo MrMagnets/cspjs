@@ -1,24 +1,30 @@
-"""FastAPI 应用入口。
+"""FastAPI 应用入口（Cloudflare Workers + 本地开发双模式）。
 
-启动：
-    cd backend
-    uvicorn app.main:app --reload --port 8000
-接口文档：http://127.0.0.1:8000/docs
+Workers
+-------
+- 通过 ``from workers import asgi`` 提供的 ASGI 适配器把 FastAPI 挂到 Worker 上；
+- 文件末尾的 ``Default = asgi.entrypoint(app)`` 是 Workers 的入口；
+- Worker 的绑定（Hyperdrive、Secrets、Vars）不在进程环境里，而是在 ASGI
+  ``scope["env"]`` 中。中间件会把其中的运行时配置同步到 ``settings``，数据库依赖则直接
+  从 ``scope["env"].HYPERDRIVE`` 读取连接串（见 database.py）。
+- Workers 不支持 threading：FastAPI 对 ``def`` 端点默认使用线程池，这里在 Worker 上
+  把同步端点/依赖包装成协程，直接在事件循环里执行（pg8000 的 socket 操作本身是异步的）。
 
-Serverless（Vercel）：
-    由 backend/vercel.json 的 @vercel/python 构建器加载本文件，
-    入口是下面的模块级变量 `app`（ASGI 应用），不要改名或包进函数。
+本地开发
+--------
+仍然使用 ``uvicorn app.main:app``；此时没有 ``workers`` 模块，不会导出 ``Default``，
+CORS / lifespan / 线程池行为与普通 FastAPI 应用一致。
 """
 from __future__ import annotations
 
 import logging
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
+from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse, Response
 
 from .config import settings
-from .database import Base, engine
+from .database import Base, dialect_name_for_request, engine
 from .routers import auth, mock_exams, problem_lists, problems, stats, tags, wrong_questions
 from .seed import seed as run_seed
 
@@ -26,74 +32,184 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name
 logger = logging.getLogger("cspjs")
 
 
-def _check_security_settings() -> None:
-    """部署前的配置自检：占位符密钥 / 临时 SQLite 绝不允许进生产环境。"""
-    if settings.is_production and settings.allow_sqlite_fallback:
-        raise RuntimeError(
-            "生产环境必须设置 ALLOW_SQLITE_FALLBACK=false：Serverless/云托管的本地磁盘是临时的，"
-            "SQLite 会导致重启即丢数据。"
-        )
-    if settings.is_production and not settings.database_url:
-        raise RuntimeError("生产环境必须设置 DATABASE_URL（托管 PostgreSQL 连接串）。")
+def _is_workers() -> bool:
+    """Pyodide 运行时一定能 import js；本地 CPython 没有。"""
+    try:
+        import js  # noqa: F401
+
+        return True
+    except Exception:  # noqa: BLE001
+        return False
+
+
+IS_WORKERS = _is_workers()
+
+# Worker 的 vars / secrets → pydantic settings 字段（数据库连接串单独处理）
+_STR_SETTINGS = {
+    "JWT_SECRET": "jwt_secret",
+    "CORS_ORIGINS": "cors_origins",
+    "ENVIRONMENT": "environment",
+    "APP_NAME": "app_name",
+    "ADMIN_USERNAME": "admin_username",
+}
+_INT_SETTINGS = {
+    "JWT_EXPIRE_MINUTES": "jwt_expire_minutes",
+    "MOCK_EXAM_MINUTES": "mock_exam_minutes",
+}
+
+
+def _env_value(env, key: str):
+    try:
+        return getattr(env, key, None)
+    except Exception:  # noqa: BLE001 - Pyodide JsProxy 对缺失属性可能抛错
+        return None
+
+
+def _apply_workers_env(env) -> None:
+    """把 env 上的 vars / secrets 应用到全局 settings。
+
+    settings 是进程内单例，security.py 等模块在使用时读取它，因此这里在每次请求
+    前同步即可（同一个 isolate 内值通常不变）。
+    """
+    for env_key, attr in _STR_SETTINGS.items():
+        value = _env_value(env, env_key)
+        if value is None or value == "":
+            continue
+        setattr(settings, attr, str(value))
+
+    for env_key, attr in _INT_SETTINGS.items():
+        value = _env_value(env, env_key)
+        if value is None or value == "":
+            continue
+        try:
+            setattr(settings, attr, int(value))
+        except (TypeError, ValueError):
+            logger.warning("环境变量 %s 不是合法整数，已忽略", env_key)
 
     if settings.uses_placeholder_jwt_secret:
-        message = (
-            "JWT_SECRET 仍是占位符 your-secret-here。请设置随机长字符串，例如："
-            'python -c "import secrets; print(secrets.token_urlsafe(48))"'
-        )
-        if settings.is_production:
-            raise RuntimeError(message)
-        logger.warning(message)
-
-    if settings.uses_placeholder_admin_password:
-        logger.warning(
-            "ADMIN_PASSWORD 仍是占位符；首次建库会用它创建管理员，请立即在环境变量中设置强密码"
+        raise RuntimeError(
+            "JWT_SECRET 未配置。请执行 `npx wrangler secret put JWT_SECRET` "
+            "或 `uv run pywrangler secret put JWT_SECRET`。"
         )
 
-    if settings.seed_demo_student and not settings.demo_student_password:
-        logger.warning("SEED_DEMO_STUDENT=true 但未设置 DEMO_STUDENT_PASSWORD，将跳过演示学生账号")
+
+def _cors_headers(origin: str) -> dict[str, str]:
+    return {
+        "Access-Control-Allow-Origin": origin,
+        "Access-Control-Allow-Methods": "GET, POST, PUT, PATCH, DELETE, OPTIONS",
+        "Access-Control-Allow-Headers": "Authorization, Content-Type, Accept",
+        "Access-Control-Max-Age": "86400",
+        "Vary": "Origin",
+    }
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    _check_security_settings()
-    Base.metadata.create_all(bind=engine)
-    if settings.auto_seed:
-        run_seed()
-    # 只打印隐藏密码后的连接串，避免把数据库密码写进平台日志
-    logger.info(
-        "CSP 刷题平台后端已启动，数据库：%s",
-        engine.url.render_as_string(hide_password=True),
-    )
+    # Workers 的 ASGI 适配器会为每个请求驱动一次 lifespan；绝不能在这里建表/播种。
+    if not IS_WORKERS:
+        Base.metadata.create_all(bind=engine)
+        if settings.auto_seed:
+            run_seed()
+        if settings.uses_placeholder_jwt_secret:
+            logger.warning("JWT_SECRET 仍是占位符，仅可用于本地开发")
+        if settings.uses_placeholder_admin_password:
+            logger.warning("ADMIN_PASSWORD 仍是占位符，请尽快设置强密码")
     yield
 
 
-# 全局 ASGI 应用：uvicorn、gunicorn 与 Vercel 的 @vercel/python 都通过这个变量加载。
-# 必须保持模块级 `app`，不要改成别的名字或包进函数/if 语句里。
 app = FastAPI(
     title=settings.app_name,
-    description="CCF CSP-J/S 第一轮认证刷题平台后端 API",
+    description="CSP-J/S 初赛训练系统后端 API",
     version="1.0.0",
     lifespan=lifespan,
 )
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=settings.cors_origin_list,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+
+@app.middleware("http")
+async def runtime_env_and_cors(request: Request, call_next):
+    """同步 Worker 环境，并处理动态 CORS（CORS_ORIGINS 来自 env）。"""
+    env = request.scope.get("env")
+    if env is not None:
+        try:
+            _apply_workers_env(env)
+        except RuntimeError as exc:
+            logger.error("Worker 配置错误：%s", exc)
+            return JSONResponse({"detail": "服务配置错误，请检查环境变量"}, status_code=500)
+
+    origin = request.headers.get("origin")
+    allowed = settings.cors_origin_list
+
+    if request.method == "OPTIONS" and origin:
+        headers = _cors_headers(origin) if origin in allowed else {}
+        return Response(status_code=204, headers=headers)
+
+    response = await call_next(request)
+    if origin and origin in allowed:
+        response.headers.update(_cors_headers(origin))
+    return response
+
 
 for module in (auth, tags, problems, problem_lists, wrong_questions, stats, mock_exams):
     app.include_router(module.router, prefix=settings.api_prefix)
 
 
 @app.get("/api/health", tags=["系统"])
-def health():
+def health(request: Request):
     return {
         "status": "ok",
         "app": settings.app_name,
-        "database": engine.dialect.name,
+        "database": dialect_name_for_request(request),
         "mock_exam_minutes": settings.mock_exam_minutes,
     }
+
+
+def _install_workers_sync_shim(fastapi_app: FastAPI) -> None:
+    """Workers 不支持 threading：把同步端点/依赖改成在事件循环中直接执行。
+
+    FastAPI 对 ``def`` 端点使用 ``run_in_threadpool``，在 Pyodide 里会失败。
+    这里在路由注册完成后，把 Dependant 树里非生成器的同步 callable 包成协程，
+    并重建 route.app，使 FastAPI 直接 await 它们。
+    """
+    if not IS_WORKERS:
+        return
+
+    import inspect
+
+    from fastapi.dependencies.models import Dependant
+    from fastapi.routing import APIRoute, request_response
+
+    def wrap(dependant: Dependant) -> None:
+        for sub in dependant.dependencies:
+            wrap(sub)
+
+        call = dependant.call
+        if call is None:
+            return
+        if inspect.iscoroutinefunction(call) or inspect.isasyncgenfunction(call):
+            return
+        if inspect.isgeneratorfunction(call):
+            return
+
+        async def _async_call(*args, __call=call, **kwargs):
+            return __call(*args, **kwargs)
+
+        dependant.call = _async_call
+
+    for route in fastapi_app.routes:
+        if isinstance(route, APIRoute):
+            wrap(route.dependant)
+            # get_request_handler() 在创建时就把 is_coroutine 捕获进闭包，
+            # 因此包装完 dependant 后必须重建 route.app。
+            route.app = request_response(route.get_route_handler())
+
+
+_install_workers_sync_shim(app)
+
+# Workers 入口。本地没有 workers 模块时保持为普通 FastAPI 应用（uvicorn app.main:app）。
+try:
+    from workers import asgi
+except ModuleNotFoundError:  # pragma: no cover - 本地开发
+    asgi = None
+
+if asgi is not None:
+    Default = asgi.entrypoint(app)
