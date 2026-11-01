@@ -82,8 +82,24 @@ export async function request(path, { method = 'GET', body, params, headers = {}
     if (response.status === 401 && token) {
       unauthorizedHandler?.()
     }
-    throw new ApiError(normalizeError(payload, response.status), response.status, payload)
+    const message = payload
+      ? normalizeError(payload, response.status)
+      : `请求失败（HTTP ${response.status}）：${text.slice(0, 200)}`
+    throw new ApiError(message, response.status, payload)
   }
+
+  if (payload === null) {
+    // 例如代理链路返回 200 + text/plain（Bad Gateway/Method Not Allowed），
+    // 不能让调用方拿到 null 再去读 access_token。
+    throw new ApiError(
+      `服务返回了非 JSON 响应（HTTP ${response.status}，Content-Type: ${
+        response.headers.get('content-type') || 'unknown'
+      }）`,
+      response.status,
+      text.slice(0, 500),
+    )
+  }
+
   return payload
 }
 

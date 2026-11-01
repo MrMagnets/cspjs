@@ -26,6 +26,9 @@ export const useAuthStore = defineStore('auth', {
 
   actions: {
     setSession(payload) {
+      if (!payload || !payload.access_token) {
+        throw new Error('登录响应缺少 access_token，请检查 API 代理')
+      }
       this.token = payload.access_token
       this.user = payload.user
       localStorage.setItem(TOKEN_KEY, payload.access_token)
