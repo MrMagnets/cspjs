@@ -1,0 +1,52 @@
+# Render Blueprint：一键创建「FastAPI Web Service + PostgreSQL」
+#
+# 用法：Render Dashboard → New → Blueprint → 选择本仓库 → Apply
+# 创建过程中会提示填写 CORS_ORIGINS（前端域名）与 ADMIN_PASSWORD（管理员密码）。
+#
+# ⚠️ 免费档限制（官方文档：https://render.com/docs/free）
+#   - 免费 Web Service 15 分钟无流量会休眠，首次访问约需 1 分钟唤醒
+#   - 免费 PostgreSQL 创建 30 天后过期；过期后 14 天宽限期内可升级付费，之后连同数据删除
+#   - 免费 PostgreSQL 仅 1 个/工作区、1 GB 存储、不支持自动备份
+# 到期前请在控制台把数据库升级为付费实例，或改用 Neon / Supabase 等外部 PG，
+# 并把下面的 DATABASE_URL 换成手动填写的连接串。
+
+databases:
+  - name: cspjs-db
+    databaseName: cspjs
+    user: cspjs
+    plan: free
+    region: singapore
+    postgresMajorVersion: "16"
+
+services:
+  - type: web
+    name: cspjs-api
+    runtime: python
+    plan: free
+    region: singapore
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /api/health
+    autoDeployTrigger: commit
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.12.7"
+      - key: ALLOW_SQLITE_FALLBACK
+        value: "false"
+      # 首次部署设为 true 以建表 + 写入演示数据；确认数据正常后改为 false
+      - key: AUTO_SEED
+        value: "true"
+      # 生产环境不要创建「已知密码」的演示学生账号
+      - key: SEED_DEMO_STUDENT
+        value: "false"
+      - key: JWT_SECRET
+        generateValue: true
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: CORS_ORIGINS
+        sync: false
+      - key: DATABASE_URL
+        fromDatabase:
+          name: cspjs-db
+          property: connectionString
