@@ -52,6 +52,7 @@ cspjs/
 ├── backend/
 │   ├── requirements.txt
 │   ├── .env.example               # 后端环境变量模板
+│   ├── vercel.json                # 可选：把 FastAPI 部署为 Vercel Function
 │   ├── smoke_test.py              # 端到端接口冒烟测试（39 个断言）
 │   ├── sql/
 │   │   └── schema.sql             # PostgreSQL 建表 SQL（与模型一一对应）
@@ -83,7 +84,8 @@ cspjs/
     ├── .env.example
     ├── index.html
     ├── public/
-    │   └── _redirects             # Netlify / Cloudflare Pages 的 SPA 回退
+    │   ├── _redirects             # Netlify / Cloudflare Pages 的 SPA 回退
+    │   └── icon/                  # 站点图标（favicon.ico / PNG），构建后位于 /icon/
     └── src/
         ├── main.js                # 应用装配（Element Plus 中文包、KaTeX/高亮样式）
         ├── App.vue                # 布局 + 全局 ConfirmDialog 挂载
@@ -674,6 +676,51 @@ pg_restore --clean --no-owner -d "$DATABASE_URL" cspjs-2026-11-01.dump
 - 浏览器 CORS 报错 → 逐字符比对 `Origin` 与 `CORS_ORIGINS`；
 - 登录后立刻 401 → `JWT_SECRET` 是否在重启后变了（多实例必须固定同一个值）；
 - 数据库连接数满 → 免费库上限 100 连接，后端默认连接池很小，异常时重启服务。
+
+### 11.11 备选：后端也部署到 Vercel（Serverless）
+
+> 只想把前端放 Vercel、后端继续用 Render 的话跳过本节。这里是把 FastAPI 也搬到 Vercel 的做法：
+> 仓库已带 [backend/vercel.json](backend/vercel.json)，用 `@vercel/python` 把 `app/main.py` 作为单个 Function。
+
+**步骤**
+
+1. Vercel → **Add New → Project** → 选仓库，**Root Directory 填 `backend`**（`vercel.json` 与 `requirements.txt` 都在这一层）。
+2. Framework Preset 选 **Other**（不要把 Python 后端当前端项目构建）。
+3. 在 **Settings → Environment Variables**（至少勾选 Production）添加：
+
+   | Key | Value |
+   | --- | --- |
+   | `DATABASE_URL` | 外部 PostgreSQL（Neon / Supabase / Render External URL，通常带 `?sslmode=require`） |
+   | `JWT_SECRET` | 随机长串 |
+   | `ALLOW_SQLITE_FALLBACK` | `false`（Serverless 文件系统是临时的，SQLite 必丢） |
+   | `AUTO_SEED` | 首次 `true`，建表 + 播种成功后改 `false` |
+   | `SEED_DEMO_STUDENT` | `false` |
+   | `CORS_ORIGINS` | `https://<前端实际域名>` |
+
+4. Deploy 后访问 `https://<项目>.vercel.app/api/health` 与 `/docs`；再把前端的 `VITE_API_BASE` 改成 `https://<项目>.vercel.app/api` 并重新部署前端。
+5. 确认数据正常后把 `AUTO_SEED` 改回 `false`。
+
+**配置说明**
+
+- `backend/vercel.json` 的 `builds` 用 `@vercel/python` 构建 `app/main.py`，`routes` 把全部请求交给它；`app/main.py` 里模块级的 `app = FastAPI(...)` 就是入口，改名或包进函数会导致 404。
+- `builds` 是 Vercel 的旧配置（官方仍兼容，但已标记 deprecated）。若新项目不接受它，删掉 `builds`/`routes` 即可：Vercel 会自动识别 `app/main.py` 里的 FastAPI `app`；需要调整超时再用 `functions`：
+
+  ```json
+  {
+    "$schema": "https://openapi.vercel.sh/vercel.json",
+    "functions": { "app/main.py": { "maxDuration": 60 } }
+  }
+  ```
+
+- 如果坚持 Root Directory 用仓库根目录，就要把 `vercel.json` 放到根目录，并把 `src` / `dest` 改成 `backend/app/main.py`。
+
+**Serverless 注意**
+
+- Vercel 已支持 FastAPI lifespan，冷启动时会执行建表 / 播种；但**第一次部署仍建议 `AUTO_SEED=true`**，避免表还没建就有请求进来。
+- 必须用外部 PostgreSQL：Vercel 的文件系统是临时的，SQLite 与上传文件都不持久。Vercel 自家的 Postgres 已并入 Marketplace，可直接接 Neon。
+- 数据库连接：检测到 `VERCEL` 环境变量时，后端会切换为 `NullPool`（每次请求新建连接），避免多实例把托管库的连接数打满；数据库侧建议用带连接池的地址（如 Neon 的 `-pooler` 地址）。
+- Hobby 免费档仍限个人非商业；Function 区域要选离数据库近的（Project → Settings → Functions → Region）。
+- Serverless 会缩容到 0，冷启动比 Render 更频繁，首次请求多等 1–3 秒属正常。
 
 ## 十二、本地开发与演示（仅用于开发 / 课堂演示 / 阶段性展示）
 

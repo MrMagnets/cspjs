@@ -4,6 +4,10 @@
     cd backend
     uvicorn app.main:app --reload --port 8000
 接口文档：http://127.0.0.1:8000/docs
+
+Serverless（Vercel）：
+    由 backend/vercel.json 的 @vercel/python 构建器加载本文件，
+    入口是下面的模块级变量 `app`（ASGI 应用），不要改名或包进函数。
 """
 from __future__ import annotations
 
@@ -35,6 +39,8 @@ async def lifespan(app: FastAPI):
     yield
 
 
+# 全局 ASGI 应用：uvicorn、gunicorn 与 Vercel 的 @vercel/python 都通过这个变量加载。
+# 必须保持模块级 `app`，不要改成别的名字或包进函数/if 语句里。
 app = FastAPI(
     title=settings.app_name,
     description="CCF CSP-J/S 第一轮认证刷题平台后端 API",

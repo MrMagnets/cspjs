@@ -56,7 +56,7 @@ function goLogin() {
   <header class="app-header">
     <div class="header-inner">
       <router-link :to="{ name: 'home' }" class="brand">
-        <span class="brand-mark">C</span>
+        <img class="brand-mark" src="/icon/icon-192.png" alt="CSP 初赛刷题" width="34" height="34" />
         <span class="brand-text">
           <strong>CSP 初赛刷题</strong>
           <em>CCF CSP-J/S 第一轮认证</em>
@@ -147,14 +147,9 @@ function goLogin() {
   width: 34px;
   height: 34px;
   border-radius: 10px;
-  background: linear-gradient(135deg, var(--brand), #2f8f78);
-  color: #fff;
-  font-family: var(--mono);
-  font-weight: 700;
-  font-size: 18px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+  display: block;
+  object-fit: cover;
+  flex: 0 0 auto;
   box-shadow: 0 3px 10px rgba(31, 111, 92, 0.25);
 }
 

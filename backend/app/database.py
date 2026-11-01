@@ -10,9 +10,11 @@
 from __future__ import annotations
 
 import logging
+import os
 
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import DeclarativeBase, sessionmaker
+from sqlalchemy.pool import NullPool
 
 from .config import settings
 
@@ -48,6 +50,10 @@ def _make_engine(url: str):
     elif url.startswith("postgresql"):
         # 无本地 PG 时快速失败并可降级 SQLite，而不是长时间等待
         kwargs["connect_args"] = {"connect_timeout": 5}
+    if os.environ.get("VERCEL"):
+        # Serverless 下每个函数实例都可能长期存活，但并发实例数量不可控：
+        # 用 NullPool 避免每个实例各持有一批连接，把托管 PG 的连接数打满。
+        kwargs["poolclass"] = NullPool
     return create_engine(url, **kwargs)
 
 
