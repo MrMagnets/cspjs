@@ -4,11 +4,12 @@ version = "1.0.0"
 requires-python = ">=3.13"
 dependencies = [
     "fastapi",
-    "pydantic",
-    "pydantic-settings",
+    "sqlalchemy",
     "pg8000",
     "python-jose",
     "python-multipart",
+    "pydantic",
+    "pydantic-settings",
 ]
 
 [dependency-groups]
