@@ -37,13 +37,13 @@ from typing import TYPE_CHECKING
 from typing import Union
 from uuid import UUID as _python_UUID
 
-from .base import MySQLCompiler
-from .base import MySQLDialect
-from .base import MySQLExecutionContext
-from .mariadb import MariaDBDialect
-from ... import sql
-from ... import util
-from ...sql import sqltypes
+from base import MySQLCompiler
+from base import MySQLDialect
+from base import MySQLExecutionContext
+from mariadb import MariaDBDialect
+from .. import sql
+from .. import util
+from ..sql import sqltypes
 
 if TYPE_CHECKING:
     from ...engine.base import Connection

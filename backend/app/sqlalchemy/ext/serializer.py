@@ -72,15 +72,15 @@ from io import BytesIO
 import pickle
 import re
 
-from .. import Column
-from .. import Table
-from ..engine import Engine
-from ..orm import class_mapper
-from ..orm.interfaces import MapperProperty
-from ..orm.mapper import Mapper
-from ..orm.session import Session
-from ..util import b64decode
-from ..util import b64encode
+from . import Column
+from . import Table
+from .engine import Engine
+from .orm import class_mapper
+from .orm.interfaces import MapperProperty
+from .orm.mapper import Mapper
+from .orm.session import Session
+from .util import b64decode
+from .util import b64encode
 
 __all__ = ["Serializer", "Deserializer", "dumps", "loads"]
 

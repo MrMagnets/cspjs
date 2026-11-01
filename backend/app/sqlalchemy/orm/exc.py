@@ -16,11 +16,11 @@ from typing import Type
 from typing import TYPE_CHECKING
 from typing import TypeVar
 
-from .util import _mapper_property_as_plain_name
-from .. import exc as sa_exc
-from .. import util
-from ..exc import MultipleResultsFound  # noqa
-from ..exc import NoResultFound  # noqa
+from util import _mapper_property_as_plain_name
+from . import exc as sa_exc
+from . import util
+from .exc import MultipleResultsFound  # noqa
+from .exc import NoResultFound  # noqa
 
 if TYPE_CHECKING:
     from .interfaces import LoaderStrategy

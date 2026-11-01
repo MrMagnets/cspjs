@@ -34,17 +34,17 @@ from typing import TypeVar
 from typing import Union
 import weakref
 
-from . import attributes
-from . import interfaces
-from .descriptor_props import SynonymProperty
-from .properties import ColumnProperty
-from .util import _metadata_for_cls
-from .util import class_mapper
-from .. import exc
-from .. import inspection
-from .. import util
-from ..sql.schema import _get_table_key
-from ..util.typing import CallableReference
+from  import attributes
+from  import interfaces
+from descriptor_props import SynonymProperty
+from properties import ColumnProperty
+from util import _metadata_for_cls
+from util import class_mapper
+from . import exc
+from . import inspection
+from . import util
+from .sql.schema import _get_table_key
+from .util.typing import CallableReference
 
 if TYPE_CHECKING:
     from .relationships import RelationshipProperty

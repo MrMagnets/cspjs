@@ -20,37 +20,37 @@ from typing import TYPE_CHECKING
 from typing import TypeVar
 from typing import Union
 
-from . import coercions
-from . import operators
-from . import roles
-from .base import _NoArg
-from .coercions import _document_text_coercion
-from .elements import AggregateOrderBy
-from .elements import BindParameter
-from .elements import BooleanClauseList
-from .elements import Case
-from .elements import Cast
-from .elements import CollationClause
-from .elements import CollectionAggregate
-from .elements import ColumnClause
-from .elements import ColumnElement
-from .elements import DMLTargetCopy
-from .elements import Extract
-from .elements import False_
-from .elements import FunctionFilter
-from .elements import Label
-from .elements import Null
-from .elements import OrderByList
-from .elements import Over
-from .elements import TextClause
-from .elements import True_
-from .elements import TryCast
-from .elements import TString
-from .elements import Tuple
-from .elements import TypeCoerce
-from .elements import UnaryExpression
-from .elements import WithinGroup
-from .functions import FunctionElement
+from  import coercions
+from  import operators
+from  import roles
+from base import _NoArg
+from coercions import _document_text_coercion
+from elements import AggregateOrderBy
+from elements import BindParameter
+from elements import BooleanClauseList
+from elements import Case
+from elements import Cast
+from elements import CollationClause
+from elements import CollectionAggregate
+from elements import ColumnClause
+from elements import ColumnElement
+from elements import DMLTargetCopy
+from elements import Extract
+from elements import False_
+from elements import FunctionFilter
+from elements import Label
+from elements import Null
+from elements import OrderByList
+from elements import Over
+from elements import TextClause
+from elements import True_
+from elements import TryCast
+from elements import TString
+from elements import Tuple
+from elements import TypeCoerce
+from elements import UnaryExpression
+from elements import WithinGroup
+from functions import FunctionElement
 
 if typing.TYPE_CHECKING:
     from ._typing import _ByArgument

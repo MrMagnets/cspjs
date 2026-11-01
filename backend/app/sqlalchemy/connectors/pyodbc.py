@@ -16,15 +16,15 @@ from typing import Optional
 from typing import Tuple
 from typing import Union
 
-from . import Connector
-from .. import ExecutionContext
-from .. import pool
-from .. import util
-from ..engine import ConnectArgsType
-from ..engine import Connection
-from ..engine import interfaces
-from ..engine import URL
-from ..sql.type_api import TypeEngine
+from  import Connector
+from . import ExecutionContext
+from . import pool
+from . import util
+from .engine import ConnectArgsType
+from .engine import Connection
+from .engine import interfaces
+from .engine import URL
+from .sql.type_api import TypeEngine
 
 if typing.TYPE_CHECKING:
     from ..engine.interfaces import DBAPIModule

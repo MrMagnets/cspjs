@@ -142,8 +142,8 @@ from typing import Type
 from typing import TypeVar
 from typing import Union
 
-from ..orm.collections import collection
-from ..orm.collections import collection_adapter
+from .orm.collections import collection
+from .orm.collections import collection_adapter
 
 _T = TypeVar("_T")
 OrderingFunc = Callable[[int, Sequence[_T]], object]

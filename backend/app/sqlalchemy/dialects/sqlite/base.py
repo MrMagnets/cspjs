@@ -1048,38 +1048,38 @@ from typing import Callable
 from typing import Optional
 from typing import TYPE_CHECKING
 
-from .json import JSON
-from .json import JSONB
-from .json import JSONIndexType
-from .json import JSONPathType
-from ... import exc
-from ... import schema as sa_schema
-from ... import sql
-from ... import text
-from ... import types as sqltypes
-from ... import util
-from ...engine import default
-from ...engine import processors
-from ...engine import reflection
-from ...engine.reflection import ReflectionDefaults
-from ...sql import coercions
-from ...sql import compiler
-from ...sql import ddl as sa_ddl
-from ...sql import elements
-from ...sql import roles
-from ...sql import schema
-from ...types import BLOB  # noqa
-from ...types import BOOLEAN  # noqa
-from ...types import CHAR  # noqa
-from ...types import DECIMAL  # noqa
-from ...types import FLOAT  # noqa
-from ...types import INTEGER  # noqa
-from ...types import NUMERIC  # noqa
-from ...types import REAL  # noqa
-from ...types import SMALLINT  # noqa
-from ...types import TEXT  # noqa
-from ...types import TIMESTAMP  # noqa
-from ...types import VARCHAR  # noqa
+from json import JSON
+from json import JSONB
+from json import JSONIndexType
+from json import JSONPathType
+from .. import exc
+from .. import schema as sa_schema
+from .. import sql
+from .. import text
+from .. import types as sqltypes
+from .. import util
+from ..engine import default
+from ..engine import processors
+from ..engine import reflection
+from ..engine.reflection import ReflectionDefaults
+from ..sql import coercions
+from ..sql import compiler
+from ..sql import ddl as sa_ddl
+from ..sql import elements
+from ..sql import roles
+from ..sql import schema
+from ..types import BLOB  # noqa
+from ..types import BOOLEAN  # noqa
+from ..types import CHAR  # noqa
+from ..types import DECIMAL  # noqa
+from ..types import FLOAT  # noqa
+from ..types import INTEGER  # noqa
+from ..types import NUMERIC  # noqa
+from ..types import REAL  # noqa
+from ..types import SMALLINT  # noqa
+from ..types import TEXT  # noqa
+from ..types import TIMESTAMP  # noqa
+from ..types import VARCHAR  # noqa
 
 if TYPE_CHECKING:
     from ...engine.interfaces import DBAPIConnection

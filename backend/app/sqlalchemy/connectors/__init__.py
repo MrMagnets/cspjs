@@ -6,7 +6,7 @@
 # the MIT License: https://www.opensource.org/licenses/mit-license.php
 
 
-from ..engine.interfaces import Dialect
+from .engine.interfaces import Dialect
 
 
 class Connector(Dialect):

@@ -37,68 +37,68 @@ from typing import TypeVar
 from typing import Union
 import weakref
 
-from . import attributes  # noqa
-from . import exc as orm_exc
-from ._typing import _O
-from ._typing import insp_is_aliased_class
-from ._typing import insp_is_mapper
-from ._typing import prop_is_relationship
-from .base import _class_to_mapper as _class_to_mapper
-from .base import _MappedAnnotationBase
-from .base import _never_set as _never_set  # noqa: F401
-from .base import _none_only_set as _none_only_set  # noqa: F401
-from .base import _none_set as _none_set  # noqa: F401
-from .base import attribute_str as attribute_str  # noqa: F401
-from .base import class_mapper as class_mapper
-from .base import DynamicMapped
-from .base import InspectionAttr as InspectionAttr
-from .base import instance_str as instance_str  # noqa: F401
-from .base import Mapped
-from .base import object_mapper as object_mapper
-from .base import object_state as object_state  # noqa: F401
-from .base import opt_manager_of_class
-from .base import ORMDescriptor
-from .base import state_attribute_str as state_attribute_str  # noqa: F401
-from .base import state_class_str as state_class_str  # noqa: F401
-from .base import state_str as state_str  # noqa: F401
-from .base import Unmapped
-from .base import WriteOnlyMapped
-from .interfaces import CriteriaOption
-from .interfaces import MapperProperty as MapperProperty
-from .interfaces import ORMColumnsClauseRole
-from .interfaces import ORMEntityColumnsClauseRole
-from .interfaces import ORMFromClauseRole
-from .path_registry import PathRegistry as PathRegistry
-from .. import event
-from .. import exc as sa_exc
-from .. import inspection
-from .. import sql
-from .. import util
-from ..engine.result import result_tuple
-from ..sql import coercions
-from ..sql import expression
-from ..sql import lambdas
-from ..sql import roles
-from ..sql import util as sql_util
-from ..sql import visitors
-from ..sql._typing import is_selectable
-from ..sql.annotation import SupportsCloneAnnotations
-from ..sql.base import WriteableColumnCollection
-from ..sql.cache_key import HasCacheKey
-from ..sql.cache_key import MemoizedHasCacheKey
-from ..sql.elements import ColumnElement
-from ..sql.elements import KeyedColumnElement
-from ..sql.schema import MetaData
-from ..sql.selectable import FromClause
-from ..sql.selectable import GenerativeSelect
-from ..util.langhelpers import MemoizedSlots
-from ..util.typing import de_stringify_annotation as _de_stringify_annotation
-from ..util.typing import eval_name_only as _eval_name_only
-from ..util.typing import fixup_container_fwd_refs
-from ..util.typing import GenericProtocol
-from ..util.typing import is_origin_of_cls
-from ..util.typing import TupleAny
-from ..util.typing import Unpack
+from  import attributes  # noqa
+from  import exc as orm_exc
+from _typing import _O
+from _typing import insp_is_aliased_class
+from _typing import insp_is_mapper
+from _typing import prop_is_relationship
+from base import _class_to_mapper as _class_to_mapper
+from base import _MappedAnnotationBase
+from base import _never_set as _never_set  # noqa: F401
+from base import _none_only_set as _none_only_set  # noqa: F401
+from base import _none_set as _none_set  # noqa: F401
+from base import attribute_str as attribute_str  # noqa: F401
+from base import class_mapper as class_mapper
+from base import DynamicMapped
+from base import InspectionAttr as InspectionAttr
+from base import instance_str as instance_str  # noqa: F401
+from base import Mapped
+from base import object_mapper as object_mapper
+from base import object_state as object_state  # noqa: F401
+from base import opt_manager_of_class
+from base import ORMDescriptor
+from base import state_attribute_str as state_attribute_str  # noqa: F401
+from base import state_class_str as state_class_str  # noqa: F401
+from base import state_str as state_str  # noqa: F401
+from base import Unmapped
+from base import WriteOnlyMapped
+from interfaces import CriteriaOption
+from interfaces import MapperProperty as MapperProperty
+from interfaces import ORMColumnsClauseRole
+from interfaces import ORMEntityColumnsClauseRole
+from interfaces import ORMFromClauseRole
+from path_registry import PathRegistry as PathRegistry
+from . import event
+from . import exc as sa_exc
+from . import inspection
+from . import sql
+from . import util
+from .engine.result import result_tuple
+from .sql import coercions
+from .sql import expression
+from .sql import lambdas
+from .sql import roles
+from .sql import util as sql_util
+from .sql import visitors
+from .sql._typing import is_selectable
+from .sql.annotation import SupportsCloneAnnotations
+from .sql.base import WriteableColumnCollection
+from .sql.cache_key import HasCacheKey
+from .sql.cache_key import MemoizedHasCacheKey
+from .sql.elements import ColumnElement
+from .sql.elements import KeyedColumnElement
+from .sql.schema import MetaData
+from .sql.selectable import FromClause
+from .sql.selectable import GenerativeSelect
+from .util.langhelpers import MemoizedSlots
+from .util.typing import de_stringify_annotation as _de_stringify_annotation
+from .util.typing import eval_name_only as _eval_name_only
+from .util.typing import fixup_container_fwd_refs
+from .util.typing import GenericProtocol
+from .util.typing import is_origin_of_cls
+from .util.typing import TupleAny
+from .util.typing import Unpack
 
 if typing.TYPE_CHECKING:
     from ._typing import _EntityType

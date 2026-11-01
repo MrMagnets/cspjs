@@ -18,25 +18,25 @@ from typing import Tuple
 from typing import TYPE_CHECKING
 from typing import TypeVar
 
-from . import exc as async_exc
-from ... import util
-from ...engine import Result
-from ...engine._result_cy import _RowData
-from ...engine.result import _NO_ROW
-from ...engine.result import _R
-from ...engine.result import _WithKeys
-from ...engine.result import FilterResult
-from ...engine.result import FrozenResult
-from ...engine.result import ResultMetaData
-from ...engine.row import Row
-from ...engine.row import RowMapping
-from ...sql.base import _generative
-from ...util import deprecated
-from ...util.concurrency import greenlet_spawn
-from ...util.typing import Self
-from ...util.typing import TupleAny
-from ...util.typing import TypeVarTuple
-from ...util.typing import Unpack
+from  import exc as async_exc
+from .. import util
+from ..engine import Result
+from ..engine._result_cy import _RowData
+from ..engine.result import _NO_ROW
+from ..engine.result import _R
+from ..engine.result import _WithKeys
+from ..engine.result import FilterResult
+from ..engine.result import FrozenResult
+from ..engine.result import ResultMetaData
+from ..engine.row import Row
+from ..engine.row import RowMapping
+from ..sql.base import _generative
+from ..util import deprecated
+from ..util.concurrency import greenlet_spawn
+from ..util.typing import Self
+from ..util.typing import TupleAny
+from ..util.typing import TypeVarTuple
+from ..util.typing import Unpack
 
 if TYPE_CHECKING:
     from ...engine import CursorResult

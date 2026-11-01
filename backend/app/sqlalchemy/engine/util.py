@@ -13,11 +13,11 @@ from typing import Optional
 from typing import Protocol
 from typing import TypeVar
 
-from ._util_cy import _distill_params_20 as _distill_params_20  # noqa: F401
-from ._util_cy import _distill_raw_params as _distill_raw_params  # noqa: F401
-from .. import exc
-from .. import util
-from ..util.typing import Self
+from _util_cy import _distill_params_20 as _distill_params_20  # noqa: F401
+from _util_cy import _distill_raw_params as _distill_raw_params  # noqa: F401
+from . import exc
+from . import util
+from .util.typing import Self
 
 _C = TypeVar("_C", bound=Callable[[], Any])
 

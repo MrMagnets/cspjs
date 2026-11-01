@@ -6,25 +6,25 @@
 # the MIT License: https://www.opensource.org/licenses/mit-license.php
 # mypy: ignore-errors
 
-from .. import fixtures
-from ..assertions import eq_
-from ..provision import get_temp_table_name
-from ... import bindparam
-from ... import Column
-from ... import func
-from ... import inspect
-from ... import Integer
-from ... import literal
-from ... import MetaData
-from ... import select
-from ... import String
-from ... import testing
-from ...schema import CreateTableAs
-from ...schema import CreateView
-from ...schema import DropTable
-from ...schema import DropView
-from ...schema import Table
-from ...testing import config
+from . import fixtures
+from .assertions import eq_
+from .provision import get_temp_table_name
+from .. import bindparam
+from .. import Column
+from .. import func
+from .. import inspect
+from .. import Integer
+from .. import literal
+from .. import MetaData
+from .. import select
+from .. import String
+from .. import testing
+from ..schema import CreateTableAs
+from ..schema import CreateView
+from ..schema import DropTable
+from ..schema import DropView
+from ..schema import Table
+from ..testing import config
 
 
 class TableViaSelectTest(fixtures.TablesTest):

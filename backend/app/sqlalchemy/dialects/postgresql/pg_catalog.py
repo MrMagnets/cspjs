@@ -12,22 +12,22 @@ from typing import Optional
 from typing import Sequence
 from typing import TYPE_CHECKING
 
-from .array import ARRAY
-from .types import OID
-from .types import REGCLASS
-from ... import Column
-from ... import func
-from ... import MetaData
-from ... import Table
-from ...types import BigInteger
-from ...types import Boolean
-from ...types import CHAR
-from ...types import Float
-from ...types import Integer
-from ...types import SmallInteger
-from ...types import String
-from ...types import Text
-from ...types import TypeDecorator
+from array import ARRAY
+from types import OID
+from types import REGCLASS
+from .. import Column
+from .. import func
+from .. import MetaData
+from .. import Table
+from ..types import BigInteger
+from ..types import Boolean
+from ..types import CHAR
+from ..types import Float
+from ..types import Integer
+from ..types import SmallInteger
+from ..types import String
+from ..types import Text
+from ..types import TypeDecorator
 
 if TYPE_CHECKING:
     from ...engine.interfaces import Dialect

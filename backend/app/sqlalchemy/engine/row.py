@@ -24,11 +24,11 @@ from typing import Sequence
 from typing import Tuple
 from typing import TYPE_CHECKING
 
-from ._row_cy import BaseRow as BaseRow
-from ..sql import util as sql_util
-from ..util import deprecated
-from ..util.typing import TypeVarTuple
-from ..util.typing import Unpack
+from _row_cy import BaseRow as BaseRow
+from .sql import util as sql_util
+from .util import deprecated
+from .util.typing import TypeVarTuple
+from .util.typing import Unpack
 
 if TYPE_CHECKING:
     from typing import Tuple as _RowBase

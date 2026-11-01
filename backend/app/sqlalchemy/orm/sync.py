@@ -14,9 +14,9 @@ between instances based on join conditions.
 
 from __future__ import annotations
 
-from . import exc
-from . import util as orm_util
-from .base import PassiveFlag
+from  import exc
+from  import util as orm_util
+from base import PassiveFlag
 
 
 def _populate(

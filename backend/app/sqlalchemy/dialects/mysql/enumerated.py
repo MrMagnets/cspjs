@@ -15,12 +15,12 @@ from typing import Type
 from typing import TYPE_CHECKING
 from typing import Union
 
-from .types import _StringType
-from ... import exc
-from ... import sql
-from ... import util
-from ...sql import sqltypes
-from ...sql import type_api
+from types import _StringType
+from .. import exc
+from .. import sql
+from .. import util
+from ..sql import sqltypes
+from ..sql import type_api
 
 if TYPE_CHECKING:
     from ...engine.interfaces import Dialect

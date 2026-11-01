@@ -25,37 +25,37 @@ from typing import Type
 from typing import TypeVar
 from typing import Union
 
-from . import util as orm_util
-from ._typing import insp_is_attribute
-from ._typing import insp_is_mapper
-from ._typing import insp_is_mapper_property
-from .attributes import QueryableAttribute
-from .base import entity_str
-from .base import InspectionAttr
-from .interfaces import LoaderOption
-from .path_registry import _AbstractEntityRegistry
-from .path_registry import _ACCEPTED_TOKENS
-from .path_registry import _COLUMN_TOKEN
-from .path_registry import _DEFAULT_TOKEN
-from .path_registry import _RELATIONSHIP_TOKEN
-from .path_registry import _StrPathToken
-from .path_registry import _TokenRegistry
-from .path_registry import _WILDCARD_TOKEN
-from .path_registry import path_is_property
-from .path_registry import PathRegistry
-from .util import _orm_full_deannotate
-from .util import AliasedInsp
-from .. import exc as sa_exc
-from .. import inspect
-from .. import util
-from ..sql import and_
-from ..sql import cache_key
-from ..sql import coercions
-from ..sql import roles
-from ..sql import traversals
-from ..sql import visitors
-from ..sql.base import _generative
-from ..util.typing import Self
+from  import util as orm_util
+from _typing import insp_is_attribute
+from _typing import insp_is_mapper
+from _typing import insp_is_mapper_property
+from attributes import QueryableAttribute
+from base import entity_str
+from base import InspectionAttr
+from interfaces import LoaderOption
+from path_registry import _AbstractEntityRegistry
+from path_registry import _ACCEPTED_TOKENS
+from path_registry import _COLUMN_TOKEN
+from path_registry import _DEFAULT_TOKEN
+from path_registry import _RELATIONSHIP_TOKEN
+from path_registry import _StrPathToken
+from path_registry import _TokenRegistry
+from path_registry import _WILDCARD_TOKEN
+from path_registry import path_is_property
+from path_registry import PathRegistry
+from util import _orm_full_deannotate
+from util import AliasedInsp
+from . import exc as sa_exc
+from . import inspect
+from . import util
+from .sql import and_
+from .sql import cache_key
+from .sql import coercions
+from .sql import roles
+from .sql import traversals
+from .sql import visitors
+from .sql.base import _generative
+from .util.typing import Self
 
 _FN = TypeVar("_FN", bound="Callable[..., Any]")
 

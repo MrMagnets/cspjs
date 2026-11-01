@@ -35,13 +35,13 @@ from typing import Type
 from typing import Union
 import weakref
 
-from .attr import _ClsLevelDispatch
-from .attr import _EmptyListener
-from .attr import _InstanceLevelDispatch
-from .attr import _JoinedListener
-from .registry import _ET
-from .registry import _EventKey
-from .. import util
+from attr import _ClsLevelDispatch
+from attr import _EmptyListener
+from attr import _InstanceLevelDispatch
+from attr import _JoinedListener
+from registry import _ET
+from registry import _EventKey
+from . import util
 
 _registrars: MutableMapping[str, List[Type[_HasEventsDispatch[Any]]]] = (
     util.defaultdict(list)

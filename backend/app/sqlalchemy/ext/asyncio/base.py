@@ -28,9 +28,9 @@ from typing import Tuple
 from typing import TypeVar
 import weakref
 
-from . import exc as async_exc
-from ... import util
-from ...util.typing import Self
+from  import exc as async_exc
+from .. import util
+from ..util.typing import Self
 
 _T = TypeVar("_T", bound=Any)
 _T_co = TypeVar("_T_co", bound=Any, covariant=True)

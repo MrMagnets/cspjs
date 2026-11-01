@@ -9,8 +9,8 @@ from collections import OrderedDict
 from contextlib import contextmanager
 from typing import IO, Dict, Iterable, Iterator, Mapping, Optional, Tuple, Union
 
-from .parser import Binding, parse_stream
-from .variables import parse_variables
+from parser import Binding, parse_stream
+from variables import parse_variables
 
 # A type alias for a string path to be used for the paths in this file.
 # These paths may flow to `open()` and `os.replace()`.

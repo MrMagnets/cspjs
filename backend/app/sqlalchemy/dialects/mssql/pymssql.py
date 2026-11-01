@@ -25,11 +25,11 @@ pymssql is a Python module that provides a Python DBAPI interface around
 
 import re
 
-from .base import MSDialect
-from .base import MSIdentifierPreparer
-from ... import types as sqltypes
-from ... import util
-from ...engine import processors
+from base import MSDialect
+from base import MSIdentifierPreparer
+from .. import types as sqltypes
+from .. import util
+from ..engine import processors
 
 
 class _MSNumeric_pymssql(sqltypes.Numeric):

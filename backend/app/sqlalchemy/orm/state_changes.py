@@ -22,8 +22,8 @@ from typing import Tuple
 from typing import TypeVar
 from typing import Union
 
-from .. import exc as sa_exc
-from .. import util
+from . import exc as sa_exc
+from . import util
 
 _F = TypeVar("_F", bound=Callable[..., Any])
 

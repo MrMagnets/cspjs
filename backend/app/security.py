@@ -11,7 +11,7 @@ from datetime import datetime, timedelta, timezone
 
 from jose import JWTError, jwt
 
-from .config import settings
+from config import settings
 
 
 def hash_password(raw_password: str) -> str:

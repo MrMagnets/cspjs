@@ -13,29 +13,29 @@ from typing import Optional
 from typing import Sequence
 from typing import Union
 
-from .._typing import _OnConflictIndexElementsT
-from .._typing import _OnConflictIndexWhereT
-from .._typing import _OnConflictSetT
-from .._typing import _OnConflictWhereT
-from ... import exc
-from ... import util
-from ...sql import coercions
-from ...sql import roles
-from ...sql import schema
-from ...sql._typing import _DMLTableArgument
-from ...sql.base import ColumnCollection
-from ...sql.base import ReadOnlyColumnCollection
-from ...sql.base import SyntaxExtension
-from ...sql.dml import _DMLColumnElement
-from ...sql.dml import Insert as StandardInsert
-from ...sql.elements import ClauseElement
-from ...sql.elements import ColumnElement
-from ...sql.elements import KeyedColumnElement
-from ...sql.elements import TextClause
-from ...sql.expression import alias
-from ...sql.sqltypes import NULLTYPE
-from ...sql.visitors import InternalTraversal
-from ...util.typing import Self
+from ._typing import _OnConflictIndexElementsT
+from ._typing import _OnConflictIndexWhereT
+from ._typing import _OnConflictSetT
+from ._typing import _OnConflictWhereT
+from .. import exc
+from .. import util
+from ..sql import coercions
+from ..sql import roles
+from ..sql import schema
+from ..sql._typing import _DMLTableArgument
+from ..sql.base import ColumnCollection
+from ..sql.base import ReadOnlyColumnCollection
+from ..sql.base import SyntaxExtension
+from ..sql.dml import _DMLColumnElement
+from ..sql.dml import Insert as StandardInsert
+from ..sql.elements import ClauseElement
+from ..sql.elements import ColumnElement
+from ..sql.elements import KeyedColumnElement
+from ..sql.elements import TextClause
+from ..sql.expression import alias
+from ..sql.sqltypes import NULLTYPE
+from ..sql.visitors import InternalTraversal
+from ..util.typing import Self
 
 __all__ = ("Insert", "insert")
 

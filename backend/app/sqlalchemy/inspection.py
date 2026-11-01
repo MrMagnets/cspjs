@@ -43,7 +43,7 @@ from typing import Type
 from typing import TypeVar
 from typing import Union
 
-from . import exc
+from  import exc
 
 _T = TypeVar("_T", bound=Any)
 _TCov = TypeVar("_TCov", bound=Any, covariant=True)

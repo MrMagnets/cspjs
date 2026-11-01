@@ -48,20 +48,20 @@ from typing import TYPE_CHECKING
 from typing import TypeVar
 from typing import Union
 
-from .base import Connection
-from .base import Engine
-from .. import exc
-from .. import inspection
-from .. import sql
-from .. import util
-from ..sql import operators
-from ..sql import schema as sa_schema
-from ..sql.cache_key import _ad_hoc_cache_key_from_args
-from ..sql.elements import quoted_name
-from ..sql.elements import TextClause
-from ..sql.type_api import TypeEngine
-from ..sql.visitors import InternalTraversal
-from ..util import topological
+from base import Connection
+from base import Engine
+from . import exc
+from . import inspection
+from . import sql
+from . import util
+from .sql import operators
+from .sql import schema as sa_schema
+from .sql.cache_key import _ad_hoc_cache_key_from_args
+from .sql.elements import quoted_name
+from .sql.elements import TextClause
+from .sql.type_api import TypeEngine
+from .sql.visitors import InternalTraversal
+from .util import topological
 
 if TYPE_CHECKING:
     from .interfaces import Dialect

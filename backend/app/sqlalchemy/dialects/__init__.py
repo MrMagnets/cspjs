@@ -13,7 +13,7 @@ from typing import Optional
 from typing import Type
 from typing import TYPE_CHECKING
 
-from .. import util
+from . import util
 
 if TYPE_CHECKING:
     from ..engine.interfaces import Dialect

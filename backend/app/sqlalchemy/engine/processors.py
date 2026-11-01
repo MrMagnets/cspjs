@@ -22,12 +22,12 @@ from typing import Pattern
 from typing import TypeVar
 from typing import Union
 
-from ._processors_cy import int_to_boolean as int_to_boolean  # noqa: F401
-from ._processors_cy import str_to_date as str_to_date  # noqa: F401
-from ._processors_cy import str_to_datetime as str_to_datetime  # noqa: F401
-from ._processors_cy import str_to_time as str_to_time  # noqa: F401
-from ._processors_cy import to_float as to_float  # noqa: F401
-from ._processors_cy import to_str as to_str  # noqa: F401
+from _processors_cy import int_to_boolean as int_to_boolean  # noqa: F401
+from _processors_cy import str_to_date as str_to_date  # noqa: F401
+from _processors_cy import str_to_datetime as str_to_datetime  # noqa: F401
+from _processors_cy import str_to_time as str_to_time  # noqa: F401
+from _processors_cy import to_float as to_float  # noqa: F401
+from _processors_cy import to_str as to_str  # noqa: F401
 
 if True:
     from ._processors_cy import (  # noqa: F401

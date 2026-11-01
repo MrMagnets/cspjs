@@ -55,13 +55,13 @@ from typing import Sequence
 from typing import TYPE_CHECKING
 from typing import Union
 
-from .base import MySQLCompiler
-from .base import MySQLDialect
-from .base import MySQLExecutionContext
-from .base import MySQLIdentifierPreparer
-from .mariadb import MariaDBDialect
-from .types import BIT
-from ... import util
+from base import MySQLCompiler
+from base import MySQLDialect
+from base import MySQLExecutionContext
+from base import MySQLIdentifierPreparer
+from mariadb import MariaDBDialect
+from types import BIT
+from .. import util
 
 if TYPE_CHECKING:
 

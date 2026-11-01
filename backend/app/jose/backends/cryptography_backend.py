@@ -13,9 +13,9 @@ from cryptography.hazmat.primitives.serialization import load_pem_private_key, l
 from cryptography.utils import int_to_bytes
 from cryptography.x509 import load_pem_x509_certificate
 
-from ..constants import ALGORITHMS
-from ..exceptions import JWEError, JWKError
-from ..utils import (
+from .constants import ALGORITHMS
+from .exceptions import JWEError, JWKError
+from .utils import (
     base64_to_long,
     base64url_decode,
     base64url_encode,
@@ -24,8 +24,8 @@ from ..utils import (
     is_ssh_key,
     long_to_base64,
 )
-from . import get_random_bytes
-from .base import Key
+from  import get_random_bytes
+from base import Key
 
 _binding = None
 

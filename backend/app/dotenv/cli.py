@@ -17,8 +17,8 @@ except ImportError:
     )
     sys.exit(1)
 
-from .main import DotEnv, dotenv_values, set_key, unset_key
-from .version import __version__
+from main import DotEnv, dotenv_values, set_key, unset_key
+from version import __version__
 
 
 def enumerate_env() -> Optional[str]:

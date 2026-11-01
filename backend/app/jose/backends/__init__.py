@@ -23,4 +23,4 @@ try:
 except ImportError:
     from jose.backends.native import HMACKey  # noqa: F401
 
-from .base import DIRKey  # noqa: F401
+from base import DIRKey  # noqa: F401

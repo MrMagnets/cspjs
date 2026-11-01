@@ -28,42 +28,42 @@ from typing import TYPE_CHECKING
 from typing import TypeVar
 from typing import Union
 
-from . import attributes
-from . import exc as orm_exc
-from .base import _DeclarativeMapped
-from .base import class_mapper
-from .base import Unmapped
-from .descriptor_props import CompositeProperty
-from .descriptor_props import ConcreteInheritedProperty
-from .descriptor_props import SynonymProperty
-from .interfaces import _AttributeOptions
-from .interfaces import _DataclassDefaultsDontSet
-from .interfaces import _DEFAULT_ATTRIBUTE_OPTIONS
-from .interfaces import _IntrospectsAnnotations
-from .interfaces import _MapsColumns
-from .interfaces import MapperProperty
-from .interfaces import PropComparator
-from .interfaces import StrategizedProperty
-from .path_registry import _COLUMN_TOKEN
-from .relationships import RelationshipProperty
-from .util import de_stringify_annotation
-from .. import exc as sa_exc
-from .. import ForeignKey
-from .. import log
-from .. import util
-from ..sql import coercions
-from ..sql import roles
-from ..sql.base import _NoArg
-from ..sql.schema import Column
-from ..sql.schema import SchemaConst
-from ..sql.type_api import TypeEngine
-from ..util.typing import de_optionalize_union_types
-from ..util.typing import includes_none
-from ..util.typing import is_a_type
-from ..util.typing import is_fwd_ref
-from ..util.typing import is_pep593
-from ..util.typing import is_pep695
-from ..util.typing import Self
+from  import attributes
+from  import exc as orm_exc
+from base import _DeclarativeMapped
+from base import class_mapper
+from base import Unmapped
+from descriptor_props import CompositeProperty
+from descriptor_props import ConcreteInheritedProperty
+from descriptor_props import SynonymProperty
+from interfaces import _AttributeOptions
+from interfaces import _DataclassDefaultsDontSet
+from interfaces import _DEFAULT_ATTRIBUTE_OPTIONS
+from interfaces import _IntrospectsAnnotations
+from interfaces import _MapsColumns
+from interfaces import MapperProperty
+from interfaces import PropComparator
+from interfaces import StrategizedProperty
+from path_registry import _COLUMN_TOKEN
+from relationships import RelationshipProperty
+from util import de_stringify_annotation
+from . import exc as sa_exc
+from . import ForeignKey
+from . import log
+from . import util
+from .sql import coercions
+from .sql import roles
+from .sql.base import _NoArg
+from .sql.schema import Column
+from .sql.schema import SchemaConst
+from .sql.type_api import TypeEngine
+from .util.typing import de_optionalize_union_types
+from .util.typing import includes_none
+from .util.typing import is_a_type
+from .util.typing import is_fwd_ref
+from .util.typing import is_pep593
+from .util.typing import is_pep695
+from .util.typing import Self
 
 if TYPE_CHECKING:
     from typing import ForwardRef

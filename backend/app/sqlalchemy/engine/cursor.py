@@ -31,29 +31,29 @@ from typing import Tuple
 from typing import TYPE_CHECKING
 from typing import Union
 
-from .result import IteratorResult
-from .result import MergedResult
-from .result import Result
-from .result import ResultMetaData
-from .result import SimpleResultMetaData
-from .result import tuplegetter
-from .row import Row
-from .. import exc
-from .. import util
-from ..sql import elements
-from ..sql import sqltypes
-from ..sql import util as sql_util
-from ..sql.base import _generative
-from ..sql.compiler import ResultColumnsEntry
-from ..sql.compiler import RM_NAME
-from ..sql.compiler import RM_OBJECTS
-from ..sql.compiler import RM_RENDERED_NAME
-from ..sql.compiler import RM_TYPE
-from ..sql.type_api import TypeEngine
-from ..util.typing import Self
-from ..util.typing import TupleAny
-from ..util.typing import TypeVarTuple
-from ..util.typing import Unpack
+from result import IteratorResult
+from result import MergedResult
+from result import Result
+from result import ResultMetaData
+from result import SimpleResultMetaData
+from result import tuplegetter
+from row import Row
+from . import exc
+from . import util
+from .sql import elements
+from .sql import sqltypes
+from .sql import util as sql_util
+from .sql.base import _generative
+from .sql.compiler import ResultColumnsEntry
+from .sql.compiler import RM_NAME
+from .sql.compiler import RM_OBJECTS
+from .sql.compiler import RM_RENDERED_NAME
+from .sql.compiler import RM_TYPE
+from .sql.type_api import TypeEngine
+from .util.typing import Self
+from .util.typing import TupleAny
+from .util.typing import TypeVarTuple
+from .util.typing import Unpack
 
 if typing.TYPE_CHECKING:
     from .base import Connection

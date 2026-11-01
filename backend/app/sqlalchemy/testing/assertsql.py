@@ -14,10 +14,10 @@ import contextlib
 import itertools
 import re
 
-from .. import event
-from ..engine import url
-from ..engine.default import DefaultDialect
-from ..schema import BaseDDLElement
+from . import event
+from .engine import url
+from .engine.default import DefaultDialect
+from .schema import BaseDDLElement
 
 
 class AssertRule:

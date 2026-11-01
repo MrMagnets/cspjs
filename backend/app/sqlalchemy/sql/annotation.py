@@ -34,13 +34,13 @@ from typing import Type
 from typing import TYPE_CHECKING
 from typing import TypeVar
 
-from . import operators
-from .cache_key import HasCacheKey
-from .visitors import anon_map
-from .visitors import ExternallyTraversible
-from .visitors import InternalTraversal
-from .. import util
-from ..util.typing import Self
+from  import operators
+from cache_key import HasCacheKey
+from visitors import anon_map
+from visitors import ExternallyTraversible
+from visitors import InternalTraversal
+from . import util
+from .util.typing import Self
 
 if TYPE_CHECKING:
     from .base import _EntityNamespace

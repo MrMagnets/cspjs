@@ -15,23 +15,23 @@ from typing import Tuple
 from typing import TYPE_CHECKING
 from typing import Union
 
-from ... import exc
-from ... import util
-from ...sql import coercions
-from ...sql import roles
-from ...sql._typing import _DMLTableArgument
-from ...sql.base import _exclusive_against
-from ...sql.base import ColumnCollection
-from ...sql.base import ReadOnlyColumnCollection
-from ...sql.base import SyntaxExtension
-from ...sql.dml import Insert as StandardInsert
-from ...sql.elements import ClauseElement
-from ...sql.elements import KeyedColumnElement
-from ...sql.expression import alias
-from ...sql.selectable import NamedFromClause
-from ...sql.sqltypes import NULLTYPE
-from ...sql.visitors import InternalTraversal
-from ...util.typing import Self
+from .. import exc
+from .. import util
+from ..sql import coercions
+from ..sql import roles
+from ..sql._typing import _DMLTableArgument
+from ..sql.base import _exclusive_against
+from ..sql.base import ColumnCollection
+from ..sql.base import ReadOnlyColumnCollection
+from ..sql.base import SyntaxExtension
+from ..sql.dml import Insert as StandardInsert
+from ..sql.elements import ClauseElement
+from ..sql.elements import KeyedColumnElement
+from ..sql.expression import alias
+from ..sql.selectable import NamedFromClause
+from ..sql.sqltypes import NULLTYPE
+from ..sql.visitors import InternalTraversal
+from ..util.typing import Self
 
 if TYPE_CHECKING:
     from ...sql._typing import _LimitOffsetType

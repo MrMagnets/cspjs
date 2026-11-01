@@ -10,12 +10,12 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from .asyncio import AsyncAdapt_dbapi_connection
-from .asyncio import AsyncAdapt_dbapi_cursor
-from .asyncio import AsyncAdapt_dbapi_ss_cursor
-from .pyodbc import PyODBCConnector
-from ..connectors.asyncio import AsyncAdapt_dbapi_module
-from ..util.concurrency import await_
+from asyncio import AsyncAdapt_dbapi_connection
+from asyncio import AsyncAdapt_dbapi_cursor
+from asyncio import AsyncAdapt_dbapi_ss_cursor
+from pyodbc import PyODBCConnector
+from .connectors.asyncio import AsyncAdapt_dbapi_module
+from .util.concurrency import await_
 
 if TYPE_CHECKING:
     from ..engine.interfaces import ConnectArgsType

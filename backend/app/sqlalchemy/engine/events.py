@@ -17,16 +17,16 @@ from typing import Tuple
 from typing import Type
 from typing import Union
 
-from .base import Connection
-from .base import Engine
-from .interfaces import ConnectionEventsTarget
-from .interfaces import DBAPIConnection
-from .interfaces import DBAPICursor
-from .interfaces import Dialect
-from .. import event
-from .. import exc
-from ..util.typing import TupleAny
-from ..util.typing import Unpack
+from base import Connection
+from base import Engine
+from interfaces import ConnectionEventsTarget
+from interfaces import DBAPIConnection
+from interfaces import DBAPICursor
+from interfaces import Dialect
+from . import event
+from . import exc
+from .util.typing import TupleAny
+from .util.typing import Unpack
 
 if typing.TYPE_CHECKING:
     from .interfaces import _CoreMultiExecuteParams

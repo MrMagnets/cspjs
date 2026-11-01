@@ -31,17 +31,17 @@ from typing import TypeVar
 from typing import Union
 
 from sqlalchemy.util.typing import _MatchedOnType
-from .base import SchemaEventTarget
-from .cache_key import CacheConst
-from .cache_key import NO_CACHE
-from .operators import _OPERATOR_CLASSES
-from .operators import ColumnOperators
-from .operators import custom_op
-from .operators import OperatorClass
-from .visitors import Visitable
-from .. import exc
-from .. import util
-from ..util.typing import Self
+from base import SchemaEventTarget
+from cache_key import CacheConst
+from cache_key import NO_CACHE
+from operators import _OPERATOR_CLASSES
+from operators import ColumnOperators
+from operators import custom_op
+from operators import OperatorClass
+from visitors import Visitable
+from . import exc
+from . import util
+from .util.typing import Self
 
 # these are back-assigned by sqltypes.
 if typing.TYPE_CHECKING:

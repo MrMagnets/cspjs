@@ -24,8 +24,8 @@ from typing import Tuple
 from typing import Type
 from typing import Union
 
-from .util import compat
-from .util import preloaded as _preloaded
+from util import compat
+from util import preloaded as _preloaded
 
 if typing.TYPE_CHECKING:
     from .engine.interfaces import _AnyExecuteParams

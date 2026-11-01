@@ -46,52 +46,52 @@ from typing import TypeVar
 from typing import Union
 import weakref
 
-from . import attributes
-from . import exc as orm_exc
-from . import instrumentation
-from . import loading
-from . import properties
-from . import util as orm_util
-from ._typing import _O
-from .base import _class_to_mapper
-from .base import _parse_mapper_argument
-from .base import _state_mapper
-from .base import PassiveFlag
-from .base import state_str
-from .interfaces import _MappedAttribute
-from .interfaces import EXT_SKIP
-from .interfaces import InspectionAttr
-from .interfaces import MapperProperty
-from .interfaces import ORMEntityColumnsClauseRole
-from .interfaces import ORMFromClauseRole
-from .interfaces import StrategizedProperty
-from .path_registry import PathRegistry
-from .. import event
-from .. import exc as sa_exc
-from .. import inspection
-from .. import log
-from .. import schema
-from .. import sql
-from .. import util
-from ..event import dispatcher
-from ..event import EventTarget
-from ..sql import base as sql_base
-from ..sql import coercions
-from ..sql import expression
-from ..sql import operators
-from ..sql import roles
-from ..sql import TableClause
-from ..sql import util as sql_util
-from ..sql import visitors
-from ..sql.cache_key import MemoizedHasCacheKey
-from ..sql.elements import KeyedColumnElement
-from ..sql.schema import Column
-from ..sql.schema import Table
-from ..sql.selectable import LABEL_STYLE_TABLENAME_PLUS_COL
-from ..util import HasMemoized
-from ..util import HasMemoized_ro_memoized_attribute
-from ..util.typing import TupleAny
-from ..util.typing import Unpack
+from  import attributes
+from  import exc as orm_exc
+from  import instrumentation
+from  import loading
+from  import properties
+from  import util as orm_util
+from _typing import _O
+from base import _class_to_mapper
+from base import _parse_mapper_argument
+from base import _state_mapper
+from base import PassiveFlag
+from base import state_str
+from interfaces import _MappedAttribute
+from interfaces import EXT_SKIP
+from interfaces import InspectionAttr
+from interfaces import MapperProperty
+from interfaces import ORMEntityColumnsClauseRole
+from interfaces import ORMFromClauseRole
+from interfaces import StrategizedProperty
+from path_registry import PathRegistry
+from . import event
+from . import exc as sa_exc
+from . import inspection
+from . import log
+from . import schema
+from . import sql
+from . import util
+from .event import dispatcher
+from .event import EventTarget
+from .sql import base as sql_base
+from .sql import coercions
+from .sql import expression
+from .sql import operators
+from .sql import roles
+from .sql import TableClause
+from .sql import util as sql_util
+from .sql import visitors
+from .sql.cache_key import MemoizedHasCacheKey
+from .sql.elements import KeyedColumnElement
+from .sql.schema import Column
+from .sql.schema import Table
+from .sql.selectable import LABEL_STYLE_TABLENAME_PLUS_COL
+from .util import HasMemoized
+from .util import HasMemoized_ro_memoized_attribute
+from .util.typing import TupleAny
+from .util.typing import Unpack
 
 if TYPE_CHECKING:
     from ._typing import _IdentityKeyType

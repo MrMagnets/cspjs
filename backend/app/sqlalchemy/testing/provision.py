@@ -12,18 +12,18 @@ import collections
 import contextlib
 import logging
 
-from . import config
-from . import engines
-from . import util
-from .. import exc
-from .. import inspect
-from ..engine import Connection
-from ..engine import Engine
-from ..engine import url as sa_url
-from ..schema import sort_tables_and_constraints
-from ..sql import ddl
-from ..sql import schema
-from ..util import decorator
+from  import config
+from  import engines
+from  import util
+from . import exc
+from . import inspect
+from .engine import Connection
+from .engine import Engine
+from .engine import url as sa_url
+from .schema import sort_tables_and_constraints
+from .sql import ddl
+from .sql import schema
+from .util import decorator
 
 log = logging.getLogger(__name__)
 

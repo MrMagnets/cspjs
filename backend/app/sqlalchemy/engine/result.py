@@ -31,27 +31,27 @@ from typing import Tuple
 from typing import TYPE_CHECKING
 from typing import Union
 
-from ._result_cy import _InterimRowType
-from ._result_cy import _NO_ROW as _NO_ROW
-from ._result_cy import _R as _R
-from ._result_cy import _RowData
-from ._result_cy import _T
-from ._result_cy import _UniqueFilterType as _UniqueFilterType
-from ._result_cy import BaseResultInternal
-from ._util_cy import tuplegetter as tuplegetter
-from .row import Row
-from .row import RowMapping
-from .. import exc
-from .. import util
-from ..sql.base import _generative
-from ..sql.base import InPlaceGenerative
-from ..util import deprecated
-from ..util import NONE_SET
-from ..util.typing import Never
-from ..util.typing import Self
-from ..util.typing import TupleAny
-from ..util.typing import TypeVarTuple
-from ..util.typing import Unpack
+from _result_cy import _InterimRowType
+from _result_cy import _NO_ROW as _NO_ROW
+from _result_cy import _R as _R
+from _result_cy import _RowData
+from _result_cy import _T
+from _result_cy import _UniqueFilterType as _UniqueFilterType
+from _result_cy import BaseResultInternal
+from _util_cy import tuplegetter as tuplegetter
+from row import Row
+from row import RowMapping
+from . import exc
+from . import util
+from .sql.base import _generative
+from .sql.base import InPlaceGenerative
+from .util import deprecated
+from .util import NONE_SET
+from .util.typing import Never
+from .util.typing import Self
+from .util.typing import TupleAny
+from .util.typing import TypeVarTuple
+from .util.typing import Unpack
 
 if typing.TYPE_CHECKING:
     from typing import Type

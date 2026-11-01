@@ -132,16 +132,16 @@ from typing import Optional
 from typing import TYPE_CHECKING
 from typing import Union
 
-from .base import SQLiteExecutionContext
-from .pysqlite import SQLiteDialect_pysqlite
-from ... import pool
-from ... import util
-from ...connectors.asyncio import AsyncAdapt_dbapi_connection
-from ...connectors.asyncio import AsyncAdapt_dbapi_cursor
-from ...connectors.asyncio import AsyncAdapt_dbapi_module
-from ...connectors.asyncio import AsyncAdapt_dbapi_ss_cursor
-from ...connectors.asyncio import AsyncAdapt_terminate
-from ...util.concurrency import await_
+from base import SQLiteExecutionContext
+from pysqlite import SQLiteDialect_pysqlite
+from .. import pool
+from .. import util
+from ..connectors.asyncio import AsyncAdapt_dbapi_connection
+from ..connectors.asyncio import AsyncAdapt_dbapi_cursor
+from ..connectors.asyncio import AsyncAdapt_dbapi_module
+from ..connectors.asyncio import AsyncAdapt_dbapi_ss_cursor
+from ..connectors.asyncio import AsyncAdapt_terminate
+from ..util.concurrency import await_
 
 if TYPE_CHECKING:
     from ...connectors.asyncio import AsyncIODBAPIConnection

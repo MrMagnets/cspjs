@@ -15,9 +15,9 @@ from enum import Enum
 from typing import Optional
 from typing import Union
 
-from ... import types
-from ...sql.operators import OperatorClass
-from ...types import Float
+from .. import types
+from ..sql.operators import OperatorClass
+from ..types import Float
 
 
 class VectorIndexType(Enum):

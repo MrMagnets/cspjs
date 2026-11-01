@@ -37,16 +37,16 @@ from typing import Optional
 from typing import TYPE_CHECKING
 from typing import Union
 
-from .pymysql import _connection_ping_reconnects_true
-from .pymysql import MySQLDialect_pymysql
-from ... import util
-from ...connectors.asyncio import AsyncAdapt_dbapi_connection
-from ...connectors.asyncio import AsyncAdapt_dbapi_cursor
-from ...connectors.asyncio import AsyncAdapt_dbapi_module
-from ...connectors.asyncio import AsyncAdapt_dbapi_ss_cursor
-from ...connectors.asyncio import AsyncAdapt_terminate
-from ...util import langhelpers
-from ...util.concurrency import await_
+from pymysql import _connection_ping_reconnects_true
+from pymysql import MySQLDialect_pymysql
+from .. import util
+from ..connectors.asyncio import AsyncAdapt_dbapi_connection
+from ..connectors.asyncio import AsyncAdapt_dbapi_cursor
+from ..connectors.asyncio import AsyncAdapt_dbapi_module
+from ..connectors.asyncio import AsyncAdapt_dbapi_ss_cursor
+from ..connectors.asyncio import AsyncAdapt_terminate
+from ..util import langhelpers
+from ..util.concurrency import await_
 
 if TYPE_CHECKING:
 

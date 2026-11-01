@@ -43,36 +43,36 @@ from typing import TYPE_CHECKING
 from typing import Union
 import weakref
 
-from . import characteristics
-from . import cursor as _cursor
-from . import interfaces
-from . import reflection
-from .base import Connection
-from .interfaces import CacheStats
-from .interfaces import DBAPICursor
-from .interfaces import Dialect
-from .interfaces import ExecuteStyle
-from .interfaces import ExecutionContext
-from .reflection import ObjectKind
-from .reflection import ObjectScope
-from .. import event
-from .. import exc
-from .. import pool
-from .. import util
-from ..sql import compiler
-from ..sql import dml
-from ..sql import expression
-from ..sql import type_api
-from ..sql import util as sql_util
-from ..sql._typing import is_tuple_type
-from ..sql.base import _NoArg
-from ..sql.compiler import AggregateOrderByStyle
-from ..sql.compiler import DDLCompiler
-from ..sql.compiler import InsertmanyvaluesSentinelOpts
-from ..sql.compiler import SQLCompiler
-from ..sql.elements import quoted_name
-from ..util.typing import TupleAny
-from ..util.typing import Unpack
+from  import characteristics
+from  import cursor as _cursor
+from  import interfaces
+from  import reflection
+from base import Connection
+from interfaces import CacheStats
+from interfaces import DBAPICursor
+from interfaces import Dialect
+from interfaces import ExecuteStyle
+from interfaces import ExecutionContext
+from reflection import ObjectKind
+from reflection import ObjectScope
+from . import event
+from . import exc
+from . import pool
+from . import util
+from .sql import compiler
+from .sql import dml
+from .sql import expression
+from .sql import type_api
+from .sql import util as sql_util
+from .sql._typing import is_tuple_type
+from .sql.base import _NoArg
+from .sql.compiler import AggregateOrderByStyle
+from .sql.compiler import DDLCompiler
+from .sql.compiler import InsertmanyvaluesSentinelOpts
+from .sql.compiler import SQLCompiler
+from .sql.elements import quoted_name
+from .util.typing import TupleAny
+from .util.typing import Unpack
 
 if typing.TYPE_CHECKING:
     from .base import Engine

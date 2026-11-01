@@ -63,44 +63,44 @@ from typing import TypeGuard
 from typing import TypeVar
 from typing import Union
 
-from . import coercions
-from . import ddl
-from . import roles
-from . import type_api
-from . import visitors
-from ._annotated_cols import _ColCC_co
-from ._annotated_cols import _extract_columns_from_class
-from ._annotated_cols import _TC_co
-from ._annotated_cols import Named
-from ._annotated_cols import TypedColumns
-from ._typing import _T
-from .base import _DefaultDescriptionTuple
-from .base import _NoArg
-from .base import _NoneName
-from .base import _SentinelColumnCharacterization
-from .base import _SentinelDefaultCharacterization
-from .base import DedupeColumnCollection
-from .base import DialectKWArgs
-from .base import Executable
-from .base import SchemaEventTarget as SchemaEventTarget
-from .base import SchemaVisitable as SchemaVisitable
-from .base import WriteableColumnCollection
-from .coercions import _document_text_coercion
-from .ddl import CheckFirst
-from .elements import ClauseElement
-from .elements import ColumnClause
-from .elements import ColumnElement
-from .elements import quoted_name
-from .elements import TextClause
-from .selectable import TableClause
-from .type_api import to_instance
-from .visitors import ExternallyTraversible
-from .. import event
-from .. import exc
-from .. import inspection
-from .. import util
-from ..util import HasMemoized
-from ..util.typing import Self
+from  import coercions
+from  import ddl
+from  import roles
+from  import type_api
+from  import visitors
+from _annotated_cols import _ColCC_co
+from _annotated_cols import _extract_columns_from_class
+from _annotated_cols import _TC_co
+from _annotated_cols import Named
+from _annotated_cols import TypedColumns
+from _typing import _T
+from base import _DefaultDescriptionTuple
+from base import _NoArg
+from base import _NoneName
+from base import _SentinelColumnCharacterization
+from base import _SentinelDefaultCharacterization
+from base import DedupeColumnCollection
+from base import DialectKWArgs
+from base import Executable
+from base import SchemaEventTarget as SchemaEventTarget
+from base import SchemaVisitable as SchemaVisitable
+from base import WriteableColumnCollection
+from coercions import _document_text_coercion
+from ddl import CheckFirst
+from elements import ClauseElement
+from elements import ColumnClause
+from elements import ColumnElement
+from elements import quoted_name
+from elements import TextClause
+from selectable import TableClause
+from type_api import to_instance
+from visitors import ExternallyTraversible
+from . import event
+from . import exc
+from . import inspection
+from . import util
+from .util import HasMemoized
+from .util.typing import Self
 
 if typing.TYPE_CHECKING:
     from ._typing import _AutoIncrementType

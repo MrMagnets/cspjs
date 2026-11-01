@@ -29,10 +29,10 @@ from typing import Optional
 from typing import TYPE_CHECKING
 from typing import Union
 
-from .base import MySQLDialect
-from .mysqldb import MySQLDialect_mysqldb
-from .types import BIT
-from ... import util
+from base import MySQLDialect
+from mysqldb import MySQLDialect_mysqldb
+from types import BIT
+from .. import util
 
 if TYPE_CHECKING:
     from ...engine.base import Connection

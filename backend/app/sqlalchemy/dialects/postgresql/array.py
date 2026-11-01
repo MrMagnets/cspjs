@@ -17,14 +17,14 @@ from typing import TYPE_CHECKING
 from typing import TypeVar
 from typing import Union
 
-from .operators import CONTAINED_BY
-from .operators import CONTAINS
-from .operators import OVERLAP
-from ... import types as sqltypes
-from ... import util
-from ...sql import expression
-from ...sql import operators
-from ...sql.visitors import InternalTraversal
+from operators import CONTAINED_BY
+from operators import CONTAINS
+from operators import OVERLAP
+from .. import types as sqltypes
+from .. import util
+from ..sql import expression
+from ..sql import operators
+from ..sql.visitors import InternalTraversal
 
 if TYPE_CHECKING:
     from ...engine.interfaces import Dialect

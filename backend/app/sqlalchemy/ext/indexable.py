@@ -234,9 +234,9 @@ from typing import TYPE_CHECKING
 from typing import TypeVar
 from typing import Union
 
-from .. import inspect
-from ..ext.hybrid import hybrid_property
-from ..orm.attributes import flag_modified
+from . import inspect
+from .ext.hybrid import hybrid_property
+from .orm.attributes import flag_modified
 
 if TYPE_CHECKING:
     from ..sql import SQLColumnExpression

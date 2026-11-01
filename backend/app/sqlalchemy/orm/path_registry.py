@@ -27,13 +27,13 @@ from typing import Tuple
 from typing import TYPE_CHECKING
 from typing import Union
 
-from . import base as orm_base
-from ._typing import insp_is_mapper_property
-from .. import exc
-from .. import inspection
-from .. import util
-from ..sql import visitors
-from ..sql.cache_key import HasCacheKey
+from  import base as orm_base
+from _typing import insp_is_mapper_property
+from . import exc
+from . import inspection
+from . import util
+from .sql import visitors
+from .sql.cache_key import HasCacheKey
 
 if TYPE_CHECKING:
     from typing import TypeGuard

@@ -30,22 +30,22 @@ from typing import Tuple
 from typing import TypeVar
 from typing import Union
 
-from . import coercions
-from . import roles
-from . import util as sql_util
-from .base import _generative
-from .base import _NoArg
-from .base import DialectKWArgs
-from .base import Executable
-from .base import NO_ARG
-from .base import SchemaVisitor
-from .elements import ClauseElement
-from .selectable import SelectBase
-from .selectable import TableClause
-from .. import exc
-from .. import util
-from ..util import topological
-from ..util.typing import Self
+from  import coercions
+from  import roles
+from  import util as sql_util
+from base import _generative
+from base import _NoArg
+from base import DialectKWArgs
+from base import Executable
+from base import NO_ARG
+from base import SchemaVisitor
+from elements import ClauseElement
+from selectable import SelectBase
+from selectable import TableClause
+from . import exc
+from . import util
+from .util import topological
+from .util.typing import Self
 
 if typing.TYPE_CHECKING:
     from .compiler import Compiled

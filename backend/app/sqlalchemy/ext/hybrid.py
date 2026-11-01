@@ -1162,18 +1162,18 @@ from typing import TYPE_CHECKING
 from typing import TypeVar
 from typing import Union
 
-from .. import exc
-from .. import util
-from ..orm import attributes
-from ..orm import InspectionAttrExtensionType
-from ..orm import interfaces
-from ..orm import ORMDescriptor
-from ..orm.attributes import QueryableAttribute
-from ..sql import roles
-from ..sql._typing import is_has_clause_element
-from ..sql.elements import ColumnElement
-from ..sql.elements import SQLCoreOperations
-from ..util.typing import Self
+from . import exc
+from . import util
+from .orm import attributes
+from .orm import InspectionAttrExtensionType
+from .orm import interfaces
+from .orm import ORMDescriptor
+from .orm.attributes import QueryableAttribute
+from .sql import roles
+from .sql._typing import is_has_clause_element
+from .sql.elements import ColumnElement
+from .sql.elements import SQLCoreOperations
+from .util.typing import Self
 
 if TYPE_CHECKING:
     from ..orm.interfaces import MapperProperty

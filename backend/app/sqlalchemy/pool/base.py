@@ -29,11 +29,11 @@ from typing import TYPE_CHECKING
 from typing import Union
 import weakref
 
-from .. import event
-from .. import exc
-from .. import log
-from .. import util
-from ..util.typing import Self
+from . import event
+from . import exc
+from . import log
+from . import util
+from .util.typing import Self
 
 if TYPE_CHECKING:
     from ..engine.interfaces import DBAPIConnection

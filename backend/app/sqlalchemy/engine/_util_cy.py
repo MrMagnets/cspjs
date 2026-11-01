@@ -14,8 +14,8 @@ from typing import Optional
 from typing import Tuple
 from typing import TYPE_CHECKING
 
-from .. import exc
-from ..util import warn_deprecated
+from . import exc
+from .util import warn_deprecated
 
 if TYPE_CHECKING:
     from .interfaces import _CoreAnyExecuteParams

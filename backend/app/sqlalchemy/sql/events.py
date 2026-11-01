@@ -10,8 +10,8 @@ from __future__ import annotations
 from typing import Any
 from typing import TYPE_CHECKING
 
-from .base import SchemaEventTarget
-from .. import event
+from base import SchemaEventTarget
+from . import event
 
 if TYPE_CHECKING:
     from .schema import Column

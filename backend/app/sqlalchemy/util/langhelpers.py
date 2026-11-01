@@ -51,9 +51,9 @@ from typing import Union
 import warnings
 import weakref
 
-from . import _collections
-from . import compat
-from .. import exc
+from  import _collections
+from  import compat
+from . import exc
 
 _T = TypeVar("_T")
 _T_co = TypeVar("_T_co", covariant=True)

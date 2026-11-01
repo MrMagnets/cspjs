@@ -58,8 +58,8 @@ import contextlib
 import gc
 from unittest import mock
 
-from .. import exc
-from ..util import concurrency
+from . import exc
+from .util import concurrency
 
 
 class _InstrumentedAwaitable:

@@ -33,62 +33,62 @@ from typing import TypeVar
 from typing import Union
 import weakref
 
-from . import attributes
-from . import clsregistry
-from . import instrumentation
-from . import interfaces
-from . import mapperlib
-from ._orm_constructors import composite
-from ._orm_constructors import deferred
-from ._orm_constructors import mapped_column
-from ._orm_constructors import relationship
-from ._orm_constructors import synonym
-from ._orm_constructors import unmapped_column
-from .attributes import InstrumentedAttribute
-from .base import _inspect_mapped_class
-from .base import _is_mapped_class
-from .base import Mapped
-from .base import ORMDescriptor
-from .decl_base import _add_attribute
-from .decl_base import _declarative_constructor
-from .decl_base import _DeclarativeMapperConfig
-from .decl_base import _DeclMappedClassProtocol
-from .decl_base import _DeferredDeclarativeConfig
-from .decl_base import _del_attribute
-from .decl_base import _get_immediate_cls_attr
-from .decl_base import _ORMClassConfigurator
-from .decl_base import MappedClassProtocol
-from .descriptor_props import Composite
-from .descriptor_props import Synonym
-from .descriptor_props import Synonym as _orm_synonym
-from .mapper import Mapper
-from .properties import MappedColumn
-from .relationships import RelationshipProperty
-from .state import InstanceState
-from .. import event
-from .. import exc
-from .. import inspection
-from .. import util
-from ..event import dispatcher
-from ..event import EventTarget
-from ..sql import sqltypes
-from ..sql._annotated_cols import _TC
-from ..sql.base import _NoArg
-from ..sql.elements import SQLCoreOperations
-from ..sql.schema import MetaData
-from ..sql.selectable import FromClause
-from ..util import hybridmethod
-from ..util import hybridproperty
-from ..util import typing as compat_typing
-from ..util import TypingOnly
-from ..util.typing import CallableReference
-from ..util.typing import de_optionalize_union_types
-from ..util.typing import GenericProtocol
-from ..util.typing import is_generic
-from ..util.typing import is_literal
-from ..util.typing import LITERAL_TYPES
-from ..util.typing import Self
-from ..util.typing import TypeAliasType
+from  import attributes
+from  import clsregistry
+from  import instrumentation
+from  import interfaces
+from  import mapperlib
+from _orm_constructors import composite
+from _orm_constructors import deferred
+from _orm_constructors import mapped_column
+from _orm_constructors import relationship
+from _orm_constructors import synonym
+from _orm_constructors import unmapped_column
+from attributes import InstrumentedAttribute
+from base import _inspect_mapped_class
+from base import _is_mapped_class
+from base import Mapped
+from base import ORMDescriptor
+from decl_base import _add_attribute
+from decl_base import _declarative_constructor
+from decl_base import _DeclarativeMapperConfig
+from decl_base import _DeclMappedClassProtocol
+from decl_base import _DeferredDeclarativeConfig
+from decl_base import _del_attribute
+from decl_base import _get_immediate_cls_attr
+from decl_base import _ORMClassConfigurator
+from decl_base import MappedClassProtocol
+from descriptor_props import Composite
+from descriptor_props import Synonym
+from descriptor_props import Synonym as _orm_synonym
+from mapper import Mapper
+from properties import MappedColumn
+from relationships import RelationshipProperty
+from state import InstanceState
+from . import event
+from . import exc
+from . import inspection
+from . import util
+from .event import dispatcher
+from .event import EventTarget
+from .sql import sqltypes
+from .sql._annotated_cols import _TC
+from .sql.base import _NoArg
+from .sql.elements import SQLCoreOperations
+from .sql.schema import MetaData
+from .sql.selectable import FromClause
+from .util import hybridmethod
+from .util import hybridproperty
+from .util import typing as compat_typing
+from .util import TypingOnly
+from .util.typing import CallableReference
+from .util.typing import de_optionalize_union_types
+from .util.typing import GenericProtocol
+from .util.typing import is_generic
+from .util.typing import is_literal
+from .util.typing import LITERAL_TYPES
+from .util.typing import Self
+from .util.typing import TypeAliasType
 
 if TYPE_CHECKING:
     from ._typing import _O

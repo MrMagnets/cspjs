@@ -9,8 +9,8 @@ from __future__ import annotations
 from typing import Any
 from typing import TYPE_CHECKING
 
-from ... import types as sqltypes
-from ...sql.sqltypes import _T_JSON
+from .. import types as sqltypes
+from ..sql.sqltypes import _T_JSON
 
 if TYPE_CHECKING:
     from ...engine.interfaces import Dialect

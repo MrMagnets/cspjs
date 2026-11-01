@@ -26,18 +26,18 @@ from typing import TYPE_CHECKING
 from typing import TypeVar
 from typing import Union
 
-from .operators import ADJACENT_TO
-from .operators import CONTAINED_BY
-from .operators import CONTAINS
-from .operators import NOT_EXTEND_LEFT_OF
-from .operators import NOT_EXTEND_RIGHT_OF
-from .operators import OVERLAP
-from .operators import STRICTLY_LEFT_OF
-from .operators import STRICTLY_RIGHT_OF
-from ... import types as sqltypes
-from ...sql import operators
-from ...sql.operators import OperatorClass
-from ...sql.type_api import TypeEngine
+from operators import ADJACENT_TO
+from operators import CONTAINED_BY
+from operators import CONTAINS
+from operators import NOT_EXTEND_LEFT_OF
+from operators import NOT_EXTEND_RIGHT_OF
+from operators import OVERLAP
+from operators import STRICTLY_LEFT_OF
+from operators import STRICTLY_RIGHT_OF
+from .. import types as sqltypes
+from ..sql import operators
+from ..sql.operators import OperatorClass
+from ..sql.type_api import TypeEngine
 
 if TYPE_CHECKING:
     from ...sql.elements import ColumnElement

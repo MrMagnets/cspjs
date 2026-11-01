@@ -38,22 +38,22 @@ from typing import TYPE_CHECKING
 from typing import TypeVar
 from typing import Union
 
-from .. import event
-from .. import exc
-from .. import inspect
-from .. import util
-from ..orm import PassiveFlag
-from ..orm._typing import OrmExecuteOptionsParameter
-from ..orm.interfaces import ORMOption
-from ..orm.mapper import Mapper
-from ..orm.query import Query
-from ..orm.session import _BindArguments
-from ..orm.session import _PKIdentityArgument
-from ..orm.session import Session
-from ..util.typing import Self
-from ..util.typing import TupleAny
-from ..util.typing import TypeVarTuple
-from ..util.typing import Unpack
+from . import event
+from . import exc
+from . import inspect
+from . import util
+from .orm import PassiveFlag
+from .orm._typing import OrmExecuteOptionsParameter
+from .orm.interfaces import ORMOption
+from .orm.mapper import Mapper
+from .orm.query import Query
+from .orm.session import _BindArguments
+from .orm.session import _PKIdentityArgument
+from .orm.session import Session
+from .util.typing import Self
+from .util.typing import TupleAny
+from .util.typing import TypeVarTuple
+from .util.typing import Unpack
 
 if TYPE_CHECKING:
     from ..engine.base import Connection

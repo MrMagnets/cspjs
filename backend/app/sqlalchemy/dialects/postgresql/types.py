@@ -15,11 +15,11 @@ from typing import Type
 from typing import TYPE_CHECKING
 from uuid import UUID as _python_UUID
 
-from .bitstring import BitString
-from ...sql import sqltypes
-from ...sql import type_api
-from ...sql.type_api import TypeEngine
-from ...types import OperatorClass
+from bitstring import BitString
+from ..sql import sqltypes
+from ..sql import type_api
+from ..sql.type_api import TypeEngine
+from ..types import OperatorClass
 
 if TYPE_CHECKING:
     from ...engine.interfaces import Dialect

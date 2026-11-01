@@ -16,9 +16,9 @@ import shutil
 import sys
 import tempfile
 
-from .base import TestBase
-from .. import config
-from ..assertions import eq_
+from base import TestBase
+from . import config
+from .assertions import eq_
 
 try:
     from mypy import version

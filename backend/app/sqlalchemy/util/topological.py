@@ -19,8 +19,8 @@ from typing import Set
 from typing import Tuple
 from typing import TypeVar
 
-from .. import util
-from ..exc import CircularDependencyError
+from . import util
+from .exc import CircularDependencyError
 
 _T = TypeVar("_T", bound=Any)
 

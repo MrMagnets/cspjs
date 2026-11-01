@@ -44,25 +44,25 @@ from typing import TypeGuard
 from typing import TypeVar
 from typing import Union
 
-from . import roles
-from . import visitors
-from .cache_key import HasCacheKey  # noqa
-from .cache_key import MemoizedHasCacheKey  # noqa
-from .traversals import HasCopyInternals  # noqa
-from .visitors import ClauseVisitor
-from .visitors import ExtendedInternalTraversal
-from .visitors import ExternallyTraversible
-from .visitors import InternalTraversal
-from .. import event
-from .. import exc
-from .. import util
-from ..util import EMPTY_DICT
-from ..util import HasMemoized as HasMemoized
-from ..util import hybridmethod
-from ..util import warn_deprecated
-from ..util.typing import Self
-from ..util.typing import TypeVarTuple
-from ..util.typing import Unpack
+from  import roles
+from  import visitors
+from cache_key import HasCacheKey  # noqa
+from cache_key import MemoizedHasCacheKey  # noqa
+from traversals import HasCopyInternals  # noqa
+from visitors import ClauseVisitor
+from visitors import ExtendedInternalTraversal
+from visitors import ExternallyTraversible
+from visitors import InternalTraversal
+from . import event
+from . import exc
+from . import util
+from .util import EMPTY_DICT
+from .util import HasMemoized as HasMemoized
+from .util import hybridmethod
+from .util import warn_deprecated
+from .util.typing import Self
+from .util.typing import TypeVarTuple
+from .util.typing import Unpack
 
 if TYPE_CHECKING:
     from . import coercions

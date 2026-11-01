@@ -24,10 +24,10 @@ import sys
 
 from sqlalchemy import select
 
-from .config import settings
-from .database import SessionLocal, engine, normalize_database_url
-from .models import User
-from .security import hash_password
+from config import settings
+from database import SessionLocal, engine, normalize_database_url
+from models import User
+from security import hash_password
 
 
 def main(argv: list[str] | None = None) -> int:

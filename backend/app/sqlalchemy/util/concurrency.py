@@ -21,8 +21,8 @@ from typing import TYPE_CHECKING
 from typing import TypeGuard
 from typing import TypeVar
 
-from .langhelpers import memoized_property
-from .. import exc
+from langhelpers import memoized_property
+from . import exc
 
 _T = TypeVar("_T")
 

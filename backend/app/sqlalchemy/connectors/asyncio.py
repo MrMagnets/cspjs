@@ -26,11 +26,11 @@ from typing import Tuple
 from typing import Type
 from typing import TYPE_CHECKING
 
-from ..engine import AdaptedConnection
-from ..exc import EmulatedDBAPIException
-from ..util import EMPTY_DICT
-from ..util.concurrency import await_
-from ..util.concurrency import in_greenlet
+from .engine import AdaptedConnection
+from .exc import EmulatedDBAPIException
+from .util import EMPTY_DICT
+from .util.concurrency import await_
+from .util.concurrency import in_greenlet
 
 if TYPE_CHECKING:
     from ..engine.interfaces import _DBAPICursorDescription

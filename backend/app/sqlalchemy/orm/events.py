@@ -24,27 +24,27 @@ from typing import TypeVar
 from typing import Union
 import weakref
 
-from . import decl_api
-from . import instrumentation
-from . import interfaces
-from . import mapperlib
-from .attributes import QueryableAttribute
-from .base import _mapper_or_none
-from .base import NO_KEY
-from .instrumentation import ClassManager
-from .instrumentation import InstrumentationFactory
-from .query import BulkDelete
-from .query import BulkUpdate
-from .query import Query
-from .scoping import scoped_session
-from .session import Session
-from .session import sessionmaker
-from .. import event
-from .. import exc
-from .. import util
-from ..event import EventTarget
-from ..event.registry import _ET
-from ..util.compat import inspect_getfullargspec
+from  import decl_api
+from  import instrumentation
+from  import interfaces
+from  import mapperlib
+from attributes import QueryableAttribute
+from base import _mapper_or_none
+from base import NO_KEY
+from instrumentation import ClassManager
+from instrumentation import InstrumentationFactory
+from query import BulkDelete
+from query import BulkUpdate
+from query import Query
+from scoping import scoped_session
+from session import Session
+from session import sessionmaker
+from . import event
+from . import exc
+from . import util
+from .event import EventTarget
+from .event.registry import _ET
+from .util.compat import inspect_getfullargspec
 
 if TYPE_CHECKING:
     from weakref import ReferenceType

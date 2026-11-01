@@ -31,19 +31,19 @@ from typing import TYPE_CHECKING
 from typing import TypeVar
 from typing import Union
 
-from . import attributes
-from . import exc as orm_exc
-from . import relationships
-from . import util as orm_util
-from .base import PassiveFlag
-from .query import Query
-from .session import object_session
-from .writeonly import _AbstractCollectionWriter
-from .writeonly import _WriteOnlyAttributeImpl
-from .writeonly import _WriteOnlyLoader
-from .writeonly import WriteOnlyHistory
-from .. import util
-from ..engine import result
+from  import attributes
+from  import exc as orm_exc
+from  import relationships
+from  import util as orm_util
+from base import PassiveFlag
+from query import Query
+from session import object_session
+from writeonly import _AbstractCollectionWriter
+from writeonly import _WriteOnlyAttributeImpl
+from writeonly import _WriteOnlyLoader
+from writeonly import WriteOnlyHistory
+from . import util
+from .engine import result
 
 if TYPE_CHECKING:
     from . import QueryableAttribute

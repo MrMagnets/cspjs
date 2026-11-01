@@ -13,27 +13,27 @@ from typing import overload
 from typing import TYPE_CHECKING
 from typing import Union
 
-from . import coercions
-from . import roles
-from ._annotated_cols import _KeyColCC_co
-from ._annotated_cols import HasRowPos
-from ._typing import _ColumnsClauseArgument
-from ._typing import _no_kw
-from .elements import ColumnClause
-from .selectable import Alias
-from .selectable import CompoundSelect
-from .selectable import Exists
-from .selectable import FromClause
-from .selectable import Join
-from .selectable import Lateral
-from .selectable import LateralFromClause
-from .selectable import NamedFromClause
-from .selectable import Select
-from .selectable import TableClause
-from .selectable import TableSample
-from .selectable import Values
-from ..util.typing import TupleAny
-from ..util.typing import Unpack
+from  import coercions
+from  import roles
+from _annotated_cols import _KeyColCC_co
+from _annotated_cols import HasRowPos
+from _typing import _ColumnsClauseArgument
+from _typing import _no_kw
+from elements import ColumnClause
+from selectable import Alias
+from selectable import CompoundSelect
+from selectable import Exists
+from selectable import FromClause
+from selectable import Join
+from selectable import Lateral
+from selectable import LateralFromClause
+from selectable import NamedFromClause
+from selectable import Select
+from selectable import TableClause
+from selectable import TableSample
+from selectable import Values
+from .util.typing import TupleAny
+from .util.typing import Unpack
 
 if TYPE_CHECKING:
     from ._typing import _FromClauseArgument

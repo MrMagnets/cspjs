@@ -33,8 +33,8 @@ from typing import TypeVar
 from typing import Union
 import weakref
 
-from .. import exc
-from .. import util
+from . import exc
+from . import util
 
 if typing.TYPE_CHECKING:
     from .attr import RefCollection

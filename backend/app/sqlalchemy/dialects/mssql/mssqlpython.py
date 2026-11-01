@@ -50,10 +50,10 @@ from typing import Optional
 from typing import TYPE_CHECKING
 from typing import Union
 
-from .base import MSDialect
-from .pyodbc import _ms_numeric_pyodbc
-from ... import util
-from ...sql import sqltypes
+from base import MSDialect
+from pyodbc import _ms_numeric_pyodbc
+from .. import util
+from ..sql import sqltypes
 
 if TYPE_CHECKING:
     from ... import pool

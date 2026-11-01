@@ -33,17 +33,17 @@ from typing import TypedDict
 from typing import TypeVar
 from typing import Union
 
-from .. import util
-from ..event import EventTarget
-from ..pool import Pool
-from ..pool import PoolProxiedConnection as PoolProxiedConnection
-from ..sql.compiler import Compiled as Compiled
-from ..sql.compiler import Compiled  # noqa
-from ..sql.compiler import TypeCompiler as TypeCompiler
-from ..sql.compiler import TypeCompiler  # noqa
-from ..util import immutabledict
-from ..util.concurrency import await_
-from ..util.typing import NotRequired
+from . import util
+from .event import EventTarget
+from .pool import Pool
+from .pool import PoolProxiedConnection as PoolProxiedConnection
+from .sql.compiler import Compiled as Compiled
+from .sql.compiler import Compiled  # noqa
+from .sql.compiler import TypeCompiler as TypeCompiler
+from .sql.compiler import TypeCompiler  # noqa
+from .util import immutabledict
+from .util.concurrency import await_
+from .util.typing import NotRequired
 
 if TYPE_CHECKING:
     from .base import Connection

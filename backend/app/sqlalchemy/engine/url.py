@@ -36,11 +36,11 @@ from urllib.parse import quote
 from urllib.parse import quote_plus
 from urllib.parse import unquote
 
-from .interfaces import Dialect
-from .. import exc
-from .. import util
-from ..dialects import plugins
-from ..dialects import registry
+from interfaces import Dialect
+from . import exc
+from . import util
+from .dialects import plugins
+from .dialects import registry
 
 
 class URL(NamedTuple):

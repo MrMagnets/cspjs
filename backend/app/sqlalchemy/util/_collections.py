@@ -38,13 +38,13 @@ from typing import Union
 from typing import ValuesView
 import weakref
 
-from ._collections_cy import IdentitySet as IdentitySet
-from ._collections_cy import OrderedSet as OrderedSet
-from ._collections_cy import unique_list as unique_list  # noqa: F401
-from ._immutabledict_cy import immutabledict as immutabledict
-from ._immutabledict_cy import ImmutableDictBase as ImmutableDictBase
-from ._immutabledict_cy import ReadOnlyContainer as ReadOnlyContainer
-from .typing import is_non_string_iterable
+from _collections_cy import IdentitySet as IdentitySet
+from _collections_cy import OrderedSet as OrderedSet
+from _collections_cy import unique_list as unique_list  # noqa: F401
+from _immutabledict_cy import immutabledict as immutabledict
+from _immutabledict_cy import ImmutableDictBase as ImmutableDictBase
+from _immutabledict_cy import ReadOnlyContainer as ReadOnlyContainer
+from typing import is_non_string_iterable
 
 _T = TypeVar("_T", bound=Any)
 _KT = TypeVar("_KT", bound=Any)

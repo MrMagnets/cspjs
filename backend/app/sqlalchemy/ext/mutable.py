@@ -395,26 +395,26 @@ from typing import Union
 import weakref
 from weakref import WeakKeyDictionary
 
-from .. import event
-from .. import inspect
-from .. import types
-from ..orm import Mapper
-from ..orm._typing import _ExternalEntityType
-from ..orm._typing import _O
-from ..orm._typing import _T
-from ..orm.attributes import AttributeEventToken
-from ..orm.attributes import flag_modified
-from ..orm.attributes import InstrumentedAttribute
-from ..orm.attributes import QueryableAttribute
-from ..orm.context import QueryContext
-from ..orm.decl_api import DeclarativeAttributeIntercept
-from ..orm.state import InstanceState
-from ..orm.unitofwork import UOWTransaction
-from ..sql._typing import _TypeEngineArgument
-from ..sql.base import SchemaEventTarget
-from ..sql.schema import Column
-from ..sql.type_api import TypeEngine
-from ..util import memoized_property
+from . import event
+from . import inspect
+from . import types
+from .orm import Mapper
+from .orm._typing import _ExternalEntityType
+from .orm._typing import _O
+from .orm._typing import _T
+from .orm.attributes import AttributeEventToken
+from .orm.attributes import flag_modified
+from .orm.attributes import InstrumentedAttribute
+from .orm.attributes import QueryableAttribute
+from .orm.context import QueryContext
+from .orm.decl_api import DeclarativeAttributeIntercept
+from .orm.state import InstanceState
+from .orm.unitofwork import UOWTransaction
+from .sql._typing import _TypeEngineArgument
+from .sql.base import SchemaEventTarget
+from .sql.schema import Column
+from .sql.type_api import TypeEngine
+from .util import memoized_property
 
 _KT = TypeVar("_KT")  # Key type.
 _VT = TypeVar("_VT")  # Value type.

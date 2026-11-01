@@ -19,17 +19,17 @@ from typing import overload
 from typing import Type
 from typing import Union
 
-from . import base
-from . import url as _url
-from .interfaces import DBAPIConnection
-from .mock import create_mock_engine
-from .. import event
-from .. import exc
-from .. import util
-from ..pool import _AdhocProxiedConnection
-from ..pool import ConnectionPoolEntry
-from ..sql import compiler
-from ..util import immutabledict
+from  import base
+from  import url as _url
+from interfaces import DBAPIConnection
+from mock import create_mock_engine
+from . import event
+from . import exc
+from . import util
+from .pool import _AdhocProxiedConnection
+from .pool import ConnectionPoolEntry
+from .sql import compiler
+from .util import immutabledict
 
 if typing.TYPE_CHECKING:
     from typing import Literal

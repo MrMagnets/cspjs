@@ -23,8 +23,8 @@ is as per ``psycopg2``.
 
 """  # noqa
 
-from .psycopg2 import PGDialect_psycopg2
-from ... import util
+from psycopg2 import PGDialect_psycopg2
+from .. import util
 
 
 class PGDialect_psycopg2cffi(PGDialect_psycopg2):

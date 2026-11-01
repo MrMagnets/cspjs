@@ -14,23 +14,23 @@ from typing import Optional
 from typing import TYPE_CHECKING
 from typing import Union
 
-from .array import ARRAY
-from .array import array as _pg_array
-from .operators import ASTEXT
-from .operators import CONTAINED_BY
-from .operators import CONTAINS
-from .operators import DELETE_PATH
-from .operators import HAS_ALL
-from .operators import HAS_ANY
-from .operators import HAS_KEY
-from .operators import JSONPATH_ASTEXT
-from .operators import PATH_EXISTS
-from .operators import PATH_MATCH
-from ... import types as sqltypes
-from ...sql import cast
-from ...sql.operators import OperatorClass
-from ...sql.sqltypes import _CT_JSON
-from ...sql.sqltypes import _T_JSON
+from array import ARRAY
+from array import array as _pg_array
+from operators import ASTEXT
+from operators import CONTAINED_BY
+from operators import CONTAINS
+from operators import DELETE_PATH
+from operators import HAS_ALL
+from operators import HAS_ANY
+from operators import HAS_KEY
+from operators import JSONPATH_ASTEXT
+from operators import PATH_EXISTS
+from operators import PATH_MATCH
+from .. import types as sqltypes
+from ..sql import cast
+from ..sql.operators import OperatorClass
+from ..sql.sqltypes import _CT_JSON
+from ..sql.sqltypes import _T_JSON
 
 if TYPE_CHECKING:
     from ...engine.interfaces import Dialect

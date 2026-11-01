@@ -26,22 +26,22 @@ import time
 import types
 from typing import Any
 
-from . import config
-from . import mock
-from .. import inspect
-from ..engine import Connection
-from ..schema import Column
-from ..schema import DropConstraint
-from ..schema import DropTable
-from ..schema import ForeignKeyConstraint
-from ..schema import MetaData
-from ..schema import Table
-from ..sql import schema
-from ..sql.sqltypes import Integer
-from ..util import decorator
-from ..util import defaultdict
-from ..util import has_refcount_gc
-from ..util import inspect_getfullargspec
+from  import config
+from  import mock
+from . import inspect
+from .engine import Connection
+from .schema import Column
+from .schema import DropConstraint
+from .schema import DropTable
+from .schema import ForeignKeyConstraint
+from .schema import MetaData
+from .schema import Table
+from .sql import schema
+from .sql.sqltypes import Integer
+from .util import decorator
+from .util import defaultdict
+from .util import has_refcount_gc
+from .util import inspect_getfullargspec
 
 if not has_refcount_gc:
 

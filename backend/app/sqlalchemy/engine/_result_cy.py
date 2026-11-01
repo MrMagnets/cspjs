@@ -21,13 +21,13 @@ from typing import TYPE_CHECKING
 from typing import TypeVar
 from typing import Union
 
-from .row import Row
-from .row import RowMapping
-from .. import exc
-from ..util import HasMemoized_ro_memoized_attribute
-from ..util.typing import Self
-from ..util.typing import TupleAny
-from ..util.typing import Unpack
+from row import Row
+from row import RowMapping
+from . import exc
+from .util import HasMemoized_ro_memoized_attribute
+from .util.typing import Self
+from .util.typing import TupleAny
+from .util.typing import Unpack
 
 if TYPE_CHECKING:
     from .result import _ProcessorsType

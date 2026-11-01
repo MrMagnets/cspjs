@@ -18,26 +18,26 @@ from typing import Tuple
 from typing import Type
 from typing import Union
 
-from . import coercions
-from . import functions
-from . import operators
-from . import roles
-from . import type_api
-from .elements import and_
-from .elements import BinaryExpression
-from .elements import ClauseElement
-from .elements import CollationClause
-from .elements import CollectionAggregate
-from .elements import ExpressionClauseList
-from .elements import False_
-from .elements import Null
-from .elements import OperatorExpression
-from .elements import or_
-from .elements import True_
-from .elements import UnaryExpression
-from .operators import OperatorType
-from .. import exc
-from .. import util
+from  import coercions
+from  import functions
+from  import operators
+from  import roles
+from  import type_api
+from elements import and_
+from elements import BinaryExpression
+from elements import ClauseElement
+from elements import CollationClause
+from elements import CollectionAggregate
+from elements import ExpressionClauseList
+from elements import False_
+from elements import Null
+from elements import OperatorExpression
+from elements import or_
+from elements import True_
+from elements import UnaryExpression
+from operators import OperatorType
+from . import exc
+from . import util
 
 _T = typing.TypeVar("_T", bound=Any)
 

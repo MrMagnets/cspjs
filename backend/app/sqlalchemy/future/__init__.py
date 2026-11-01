@@ -11,7 +11,7 @@ this module is legacy as 2.0 APIs are now standard.
 
 """
 
-from .engine import Connection as Connection
-from .engine import create_engine as create_engine
-from .engine import Engine as Engine
-from ..sql._selectable_constructors import select as select
+from engine import Connection as Connection
+from engine import create_engine as create_engine
+from engine import Engine as Engine
+from .sql._selectable_constructors import select as select

@@ -22,34 +22,34 @@ from typing import Type
 from typing import TYPE_CHECKING
 from typing import Union
 
-from . import mapperlib as mapperlib
-from ._typing import _O
-from .descriptor_props import Composite
-from .descriptor_props import Synonym
-from .interfaces import _AttributeOptions
-from .properties import MappedColumn
-from .properties import MappedSQLExpression
-from .properties import UnmappedColumn
-from .query import AliasOption
-from .relationships import _RelationshipArgumentType
-from .relationships import _RelationshipBackPopulatesArgument
-from .relationships import _RelationshipDeclared
-from .relationships import _RelationshipSecondaryArgument
-from .relationships import RelationshipProperty
-from .session import Session
-from .util import _ORMJoin
-from .util import AliasedClass
-from .util import AliasedInsp
-from .util import LoaderCriteriaOption
-from .. import sql
-from .. import util
-from ..exc import InvalidRequestError
-from ..sql._typing import _no_kw
-from ..sql.base import _NoArg
-from ..sql.base import SchemaEventTarget
-from ..sql.schema import _InsertSentinelColumnDefault
-from ..sql.schema import SchemaConst
-from ..sql.selectable import FromClause
+from  import mapperlib as mapperlib
+from _typing import _O
+from descriptor_props import Composite
+from descriptor_props import Synonym
+from interfaces import _AttributeOptions
+from properties import MappedColumn
+from properties import MappedSQLExpression
+from properties import UnmappedColumn
+from query import AliasOption
+from relationships import _RelationshipArgumentType
+from relationships import _RelationshipBackPopulatesArgument
+from relationships import _RelationshipDeclared
+from relationships import _RelationshipSecondaryArgument
+from relationships import RelationshipProperty
+from session import Session
+from util import _ORMJoin
+from util import AliasedClass
+from util import AliasedInsp
+from util import LoaderCriteriaOption
+from . import sql
+from . import util
+from .exc import InvalidRequestError
+from .sql._typing import _no_kw
+from .sql.base import _NoArg
+from .sql.base import SchemaEventTarget
+from .sql.schema import _InsertSentinelColumnDefault
+from .sql.schema import SchemaConst
+from .sql.selectable import FromClause
 
 if TYPE_CHECKING:
     from ._typing import _EntityType

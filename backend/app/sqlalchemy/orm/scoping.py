@@ -24,19 +24,19 @@ from typing import TYPE_CHECKING
 from typing import TypeVar
 from typing import Union
 
-from .session import _S
-from .session import Session
-from .. import exc as sa_exc
-from .. import util
-from ..util import create_proxy_methods
-from ..util import ScopedRegistry
-from ..util import ThreadLocalRegistry
-from ..util import warn
-from ..util import warn_deprecated
-from ..util.typing import Never
-from ..util.typing import TupleAny
-from ..util.typing import TypeVarTuple
-from ..util.typing import Unpack
+from session import _S
+from session import Session
+from . import exc as sa_exc
+from . import util
+from .util import create_proxy_methods
+from .util import ScopedRegistry
+from .util import ThreadLocalRegistry
+from .util import warn
+from .util import warn_deprecated
+from .util.typing import Never
+from .util.typing import TupleAny
+from .util.typing import TypeVarTuple
+from .util.typing import Unpack
 
 if TYPE_CHECKING:
     from ._typing import _EntityType

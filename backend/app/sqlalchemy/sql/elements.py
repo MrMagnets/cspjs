@@ -42,49 +42,49 @@ from typing import TYPE_CHECKING
 from typing import TypeVar
 from typing import Union
 
-from . import coercions
-from . import operators
-from . import roles
-from . import traversals
-from . import type_api
-from ._typing import has_schema_attr
-from ._typing import is_named_from_clause
-from ._typing import is_quoted_name
-from ._typing import is_tuple_type
-from .annotation import Annotated
-from .annotation import SupportsWrappingAnnotations
-from .base import _clone
-from .base import _expand_cloned
-from .base import _generative
-from .base import _NoArg
-from .base import Executable
-from .base import ExecutableStatement
-from .base import Generative
-from .base import HasMemoized
-from .base import Immutable
-from .base import NO_ARG
-from .base import SingletonConstant
-from .cache_key import MemoizedHasCacheKey
-from .cache_key import NO_CACHE
-from .coercions import _document_text_coercion  # noqa
-from .operators import ColumnOperators
-from .operators import OperatorClass
-from .traversals import HasCopyInternals
-from .visitors import cloned_traverse
-from .visitors import ExternallyTraversible
-from .visitors import InternalTraversal
-from .visitors import traverse
-from .visitors import Visitable
-from .. import exc
-from .. import inspection
-from .. import util
-from ..util import deprecated
-from ..util import HasMemoized_ro_memoized_attribute
-from ..util import TypingOnly
-from ..util.compat import Template
-from ..util.typing import Self
-from ..util.typing import TupleAny
-from ..util.typing import Unpack
+from  import coercions
+from  import operators
+from  import roles
+from  import traversals
+from  import type_api
+from _typing import has_schema_attr
+from _typing import is_named_from_clause
+from _typing import is_quoted_name
+from _typing import is_tuple_type
+from annotation import Annotated
+from annotation import SupportsWrappingAnnotations
+from base import _clone
+from base import _expand_cloned
+from base import _generative
+from base import _NoArg
+from base import Executable
+from base import ExecutableStatement
+from base import Generative
+from base import HasMemoized
+from base import Immutable
+from base import NO_ARG
+from base import SingletonConstant
+from cache_key import MemoizedHasCacheKey
+from cache_key import NO_CACHE
+from coercions import _document_text_coercion  # noqa
+from operators import ColumnOperators
+from operators import OperatorClass
+from traversals import HasCopyInternals
+from visitors import cloned_traverse
+from visitors import ExternallyTraversible
+from visitors import InternalTraversal
+from visitors import traverse
+from visitors import Visitable
+from . import exc
+from . import inspection
+from . import util
+from .util import deprecated
+from .util import HasMemoized_ro_memoized_attribute
+from .util import TypingOnly
+from .util.compat import Template
+from .util.typing import Self
+from .util.typing import TupleAny
+from .util.typing import Unpack
 
 if typing.TYPE_CHECKING:
     from ._typing import _ByArgument

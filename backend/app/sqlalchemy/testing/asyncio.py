@@ -16,8 +16,8 @@ from __future__ import annotations
 from functools import wraps
 import inspect
 
-from . import config
-from ..util.concurrency import _AsyncUtil
+from  import config
+from .util.concurrency import _AsyncUtil
 
 # may be set to False if the
 # --disable-asyncio flag is passed to the test runner.

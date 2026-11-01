@@ -16,8 +16,8 @@ from typing import Optional
 from typing import Type
 from typing import Union
 
-from . import url as _url
-from .. import util
+from  import url as _url
+from . import util
 
 if typing.TYPE_CHECKING:
     from .base import Engine

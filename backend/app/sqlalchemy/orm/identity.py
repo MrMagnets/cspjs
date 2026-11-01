@@ -21,8 +21,8 @@ from typing import TYPE_CHECKING
 from typing import TypeVar
 import weakref
 
-from . import util as orm_util
-from .. import exc as sa_exc
+from  import util as orm_util
+from . import exc as sa_exc
 
 if TYPE_CHECKING:
     from ._typing import _IdentityKeyType

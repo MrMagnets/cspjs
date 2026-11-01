@@ -37,65 +37,65 @@ from typing import TypeVar
 from typing import Union
 import weakref
 
-from . import attributes
-from . import bulk_persistence
-from . import context
-from . import descriptor_props
-from . import exc
-from . import identity
-from . import loading
-from . import query
-from . import state as statelib
-from ._typing import _O
-from ._typing import insp_is_mapper
-from ._typing import is_composite_class
-from ._typing import is_orm_option
-from ._typing import is_user_defined_option
-from .base import _class_to_mapper
-from .base import _none_set
-from .base import _state_mapper
-from .base import instance_str
-from .base import LoaderCallableStatus
-from .base import object_mapper
-from .base import object_state
-from .base import PassiveFlag
-from .base import state_str
-from .context import _ORMCompileState
-from .context import FromStatement
-from .identity import IdentityMap
-from .query import Query
-from .state import InstanceState
-from .state_changes import _StateChange
-from .state_changes import _StateChangeState
-from .state_changes import _StateChangeStates
-from .unitofwork import UOWTransaction
-from .. import engine
-from .. import exc as sa_exc
-from .. import sql
-from .. import util
-from ..engine import Connection
-from ..engine import Engine
-from ..engine.util import TransactionalContext
-from ..event import dispatcher
-from ..event import EventTarget
-from ..inspection import inspect
-from ..inspection import Inspectable
-from ..sql import coercions
-from ..sql import dml
-from ..sql import roles
-from ..sql import Select
-from ..sql import TableClause
-from ..sql import visitors
-from ..sql.base import _NoArg
-from ..sql.base import CompileState
-from ..sql.schema import Table
-from ..sql.selectable import ForUpdateArg
-from ..util import deprecated_params
-from ..util import IdentitySet
-from ..util.typing import Never
-from ..util.typing import TupleAny
-from ..util.typing import TypeVarTuple
-from ..util.typing import Unpack
+from  import attributes
+from  import bulk_persistence
+from  import context
+from  import descriptor_props
+from  import exc
+from  import identity
+from  import loading
+from  import query
+from  import state as statelib
+from _typing import _O
+from _typing import insp_is_mapper
+from _typing import is_composite_class
+from _typing import is_orm_option
+from _typing import is_user_defined_option
+from base import _class_to_mapper
+from base import _none_set
+from base import _state_mapper
+from base import instance_str
+from base import LoaderCallableStatus
+from base import object_mapper
+from base import object_state
+from base import PassiveFlag
+from base import state_str
+from context import _ORMCompileState
+from context import FromStatement
+from identity import IdentityMap
+from query import Query
+from state import InstanceState
+from state_changes import _StateChange
+from state_changes import _StateChangeState
+from state_changes import _StateChangeStates
+from unitofwork import UOWTransaction
+from . import engine
+from . import exc as sa_exc
+from . import sql
+from . import util
+from .engine import Connection
+from .engine import Engine
+from .engine.util import TransactionalContext
+from .event import dispatcher
+from .event import EventTarget
+from .inspection import inspect
+from .inspection import Inspectable
+from .sql import coercions
+from .sql import dml
+from .sql import roles
+from .sql import Select
+from .sql import TableClause
+from .sql import visitors
+from .sql.base import _NoArg
+from .sql.base import CompileState
+from .sql.schema import Table
+from .sql.selectable import ForUpdateArg
+from .util import deprecated_params
+from .util import IdentitySet
+from .util.typing import Never
+from .util.typing import TupleAny
+from .util.typing import TypeVarTuple
+from .util.typing import Unpack
 
 if typing.TYPE_CHECKING:
     from ._typing import _EntityType

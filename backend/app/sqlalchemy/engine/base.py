@@ -26,26 +26,26 @@ from typing import Type
 from typing import TypeVar
 from typing import Union
 
-from .interfaces import BindTyping
-from .interfaces import ConnectionEventsTarget
-from .interfaces import DBAPICursor
-from .interfaces import ExceptionContext
-from .interfaces import ExecuteStyle
-from .interfaces import ExecutionContext
-from .interfaces import IsolationLevel
-from .util import _distill_params_20
-from .util import _distill_raw_params
-from .util import TransactionalContext
-from .. import exc
-from .. import inspection
-from .. import log
-from .. import util
-from ..sql import compiler
-from ..sql import util as sql_util
-from ..util.typing import Never
-from ..util.typing import TupleAny
-from ..util.typing import TypeVarTuple
-from ..util.typing import Unpack
+from interfaces import BindTyping
+from interfaces import ConnectionEventsTarget
+from interfaces import DBAPICursor
+from interfaces import ExceptionContext
+from interfaces import ExecuteStyle
+from interfaces import ExecutionContext
+from interfaces import IsolationLevel
+from util import _distill_params_20
+from util import _distill_raw_params
+from util import TransactionalContext
+from . import exc
+from . import inspection
+from . import log
+from . import util
+from .sql import compiler
+from .sql import util as sql_util
+from .util.typing import Never
+from .util.typing import TupleAny
+from .util.typing import TypeVarTuple
+from .util.typing import Unpack
 
 if typing.TYPE_CHECKING:
     from . import CursorResult

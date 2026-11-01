@@ -47,24 +47,24 @@ from typing import TypeVar
 from typing import Union
 from typing import ValuesView
 
-from .. import ColumnElement
-from .. import exc
-from .. import inspect
-from .. import orm
-from .. import util
-from ..orm import collections
-from ..orm import InspectionAttrExtensionType
-from ..orm import interfaces
-from ..orm import ORMDescriptor
-from ..orm.base import SQLORMOperations
-from ..orm.interfaces import _AttributeOptions
-from ..orm.interfaces import _DCAttributeOptions
-from ..orm.interfaces import _DEFAULT_ATTRIBUTE_OPTIONS
-from ..sql import operators
-from ..sql import or_
-from ..sql.base import _NoArg
-from ..util.typing import Self
-from ..util.typing import SupportsKeysAndGetItem
+from . import ColumnElement
+from . import exc
+from . import inspect
+from . import orm
+from . import util
+from .orm import collections
+from .orm import InspectionAttrExtensionType
+from .orm import interfaces
+from .orm import ORMDescriptor
+from .orm.base import SQLORMOperations
+from .orm.interfaces import _AttributeOptions
+from .orm.interfaces import _DCAttributeOptions
+from .orm.interfaces import _DEFAULT_ATTRIBUTE_OPTIONS
+from .sql import operators
+from .sql import or_
+from .sql.base import _NoArg
+from .util.typing import Self
+from .util.typing import SupportsKeysAndGetItem
 
 if typing.TYPE_CHECKING:
     from ..orm.interfaces import MapperProperty

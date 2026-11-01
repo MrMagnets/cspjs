@@ -63,33 +63,33 @@ from typing import TYPE_CHECKING
 from typing import TypedDict
 from typing import Union
 
-from . import base
-from . import coercions
-from . import crud
-from . import elements
-from . import functions
-from . import operators
-from . import roles
-from . import schema
-from . import selectable
-from . import sqltypes
-from . import util as sql_util
-from ._typing import is_column_element
-from ._typing import is_dml
-from .base import _de_clone
-from .base import _from_objects
-from .base import _NONE_NAME
-from .base import _SentinelDefaultCharacterization
-from .base import NO_ARG
-from .elements import quoted_name
-from .sqltypes import TupleType
-from .visitors import prefix_anon_map
-from .. import exc
-from .. import util
-from ..util import FastIntFlag
-from ..util.typing import Self
-from ..util.typing import TupleAny
-from ..util.typing import Unpack
+from  import base
+from  import coercions
+from  import crud
+from  import elements
+from  import functions
+from  import operators
+from  import roles
+from  import schema
+from  import selectable
+from  import sqltypes
+from  import util as sql_util
+from _typing import is_column_element
+from _typing import is_dml
+from base import _de_clone
+from base import _from_objects
+from base import _NONE_NAME
+from base import _SentinelDefaultCharacterization
+from base import NO_ARG
+from elements import quoted_name
+from sqltypes import TupleType
+from visitors import prefix_anon_map
+from . import exc
+from . import util
+from .util import FastIntFlag
+from .util.typing import Self
+from .util.typing import TupleAny
+from .util.typing import Unpack
 
 if typing.TYPE_CHECKING:
     from .annotation import _AnnotationDict

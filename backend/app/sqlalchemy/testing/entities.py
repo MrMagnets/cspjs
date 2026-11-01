@@ -10,8 +10,8 @@
 from __future__ import annotations
 
 import sqlalchemy as sa
-from .. import exc as sa_exc
-from ..orm.writeonly import WriteOnlyCollection
+from . import exc as sa_exc
+from .orm.writeonly import WriteOnlyCollection
 
 _repr_stack = set()
 

@@ -1,4 +1,4 @@
-from ..utils import base64url_encode, ensure_binary
+from .utils import base64url_encode, ensure_binary
 
 
 class Key:

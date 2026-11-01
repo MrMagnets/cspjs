@@ -9,7 +9,7 @@
 
 from __future__ import annotations
 
-from .mock import MockConnection  # noqa
+from mock import MockConnection  # noqa
 
 
 class MockEngineStrategy:

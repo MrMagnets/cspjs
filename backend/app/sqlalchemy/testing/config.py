@@ -22,9 +22,9 @@ from typing import Tuple
 from typing import TypeVar
 from typing import Union
 
-from . import mock
-from . import requirements as _requirements
-from .util import fail
+from  import mock
+from  import requirements as _requirements
+from util import fail
 
 # default requirements; this is replaced by plugin_base when pytest
 # is run

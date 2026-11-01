@@ -30,7 +30,7 @@ from typing import Iterator
 from typing import Optional
 from typing import Union
 
-from . import compat
+from  import compat
 
 
 class code_writer_cmd:

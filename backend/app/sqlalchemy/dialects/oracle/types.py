@@ -12,11 +12,11 @@ from typing import Optional
 from typing import Type
 from typing import TYPE_CHECKING
 
-from ... import exc
-from ...sql import operators
-from ...sql import sqltypes
-from ...types import NVARCHAR
-from ...types import VARCHAR
+from .. import exc
+from ..sql import operators
+from ..sql import sqltypes
+from ..types import NVARCHAR
+from ..types import VARCHAR
 
 if TYPE_CHECKING:
     from ...engine.interfaces import Dialect

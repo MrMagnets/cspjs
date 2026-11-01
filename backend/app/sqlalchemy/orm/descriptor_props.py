@@ -33,36 +33,36 @@ from typing import TypeVar
 from typing import Union
 import weakref
 
-from . import attributes
-from . import util as orm_util
-from .base import _DeclarativeMapped
-from .base import DONT_SET
-from .base import LoaderCallableStatus
-from .base import Mapped
-from .base import PassiveFlag
-from .base import SQLORMOperations
-from .interfaces import _AttributeOptions
-from .interfaces import _IntrospectsAnnotations
-from .interfaces import _MapsColumns
-from .interfaces import MapperProperty
-from .interfaces import PropComparator
-from .util import de_stringify_annotation
-from .. import event
-from .. import exc as sa_exc
-from .. import schema
-from .. import sql
-from .. import util
-from ..sql import expression
-from ..sql import operators
-from ..sql.base import _NoArg
-from ..sql.elements import BindParameter
-from ..util.typing import de_optionalize_union_types
-from ..util.typing import includes_none
-from ..util.typing import is_fwd_ref
-from ..util.typing import is_pep593
-from ..util.typing import is_union
-from ..util.typing import TupleAny
-from ..util.typing import Unpack
+from  import attributes
+from  import util as orm_util
+from base import _DeclarativeMapped
+from base import DONT_SET
+from base import LoaderCallableStatus
+from base import Mapped
+from base import PassiveFlag
+from base import SQLORMOperations
+from interfaces import _AttributeOptions
+from interfaces import _IntrospectsAnnotations
+from interfaces import _MapsColumns
+from interfaces import MapperProperty
+from interfaces import PropComparator
+from util import de_stringify_annotation
+from . import event
+from . import exc as sa_exc
+from . import schema
+from . import sql
+from . import util
+from .sql import expression
+from .sql import operators
+from .sql.base import _NoArg
+from .sql.elements import BindParameter
+from .util.typing import de_optionalize_union_types
+from .util.typing import includes_none
+from .util.typing import is_fwd_ref
+from .util.typing import is_pep593
+from .util.typing import is_union
+from .util.typing import TupleAny
+from .util.typing import Unpack
 
 if typing.TYPE_CHECKING:
     from ._typing import _InstanceDict

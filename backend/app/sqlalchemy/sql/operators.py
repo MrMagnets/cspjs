@@ -55,8 +55,8 @@ from typing import TYPE_CHECKING
 from typing import TypeVar
 from typing import Union
 
-from .. import exc
-from .. import util
+from . import exc
+from . import util
 
 if typing.TYPE_CHECKING:
     from ._typing import ColumnExpressionArgument

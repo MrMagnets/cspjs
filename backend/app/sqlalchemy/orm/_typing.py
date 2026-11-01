@@ -20,14 +20,14 @@ from typing import TypeGuard
 from typing import TypeVar
 from typing import Union
 
-from ..engine.interfaces import _CoreKnownExecutionOptions
-from ..sql import roles
-from ..sql._orm_types import DMLStrategyArgument as DMLStrategyArgument
-from ..sql._orm_types import (
+from .engine.interfaces import _CoreKnownExecutionOptions
+from .sql import roles
+from .sql._orm_types import DMLStrategyArgument as DMLStrategyArgument
+from .sql._orm_types import (
     SynchronizeSessionArgument as SynchronizeSessionArgument,
 )
-from ..sql._typing import _HasClauseElement
-from ..sql.elements import ColumnElement
+from .sql._typing import _HasClauseElement
+from .sql.elements import ColumnElement
 
 if TYPE_CHECKING:
     from .attributes import _AttributeImpl

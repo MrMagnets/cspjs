@@ -16,9 +16,9 @@ except ImportError:
 
 from jose import jws
 
-from .constants import ALGORITHMS
-from .exceptions import ExpiredSignatureError, JWSError, JWTClaimsError, JWTError
-from .utils import calculate_at_hash, timedelta_total_seconds
+from constants import ALGORITHMS
+from exceptions import ExpiredSignatureError, JWSError, JWTClaimsError, JWTError
+from utils import calculate_at_hash, timedelta_total_seconds
 
 
 def encode(claims, key, algorithm=ALGORITHMS.HS256, headers=None, access_token=None):

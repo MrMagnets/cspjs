@@ -7,10 +7,10 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy import func, or_, select
 from sqlalchemy.orm import Session
 
-from ..database import get_db
-from ..deps import get_current_user, get_optional_user, require_admin
-from ..models import Problem, ProblemTag, SubQuestion, Submission, Tag, User, WrongQuestion
-from ..schemas import (
+from .database import get_db
+from .deps import get_current_user, get_optional_user, require_admin
+from .models import Problem, ProblemTag, SubQuestion, Submission, Tag, User, WrongQuestion
+from .schemas import (
     AnswerIn,
     AnswerItemResult,
     AnswerResult,
@@ -20,8 +20,8 @@ from ..schemas import (
     ReviewIn,
     SubQuestionIn,
 )
-from ..serializers import to_details, to_summary
-from ..services import is_correct, next_review_after_wrong
+from .serializers import to_details, to_summary
+from .services import is_correct, next_review_after_wrong
 
 router = APIRouter(tags=["题库"])
 

@@ -24,16 +24,16 @@ from typing import Set
 from typing import Tuple
 from typing import Type
 
-from . import operators
-from .cache_key import HasCacheKey
-from .visitors import _TraverseInternalsType
-from .visitors import anon_map
-from .visitors import ExternallyTraversible
-from .visitors import HasTraversalDispatch
-from .visitors import HasTraverseInternals
-from .. import util
-from ..util import langhelpers
-from ..util.typing import Self
+from  import operators
+from cache_key import HasCacheKey
+from visitors import _TraverseInternalsType
+from visitors import anon_map
+from visitors import ExternallyTraversible
+from visitors import HasTraversalDispatch
+from visitors import HasTraverseInternals
+from . import util
+from .util import langhelpers
+from .util.typing import Self
 
 SKIP_TRAVERSE = util.symbol("skip_traverse")
 COMPARE_FAILED = False

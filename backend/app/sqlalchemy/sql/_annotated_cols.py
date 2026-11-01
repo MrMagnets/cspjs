@@ -14,20 +14,20 @@ from typing import overload
 from typing import Protocol
 from typing import TYPE_CHECKING
 
-from . import sqltypes
-from ._typing import _T
-from ._typing import _Ts
-from .base import _NoArg
-from .base import ReadOnlyColumnCollection
-from .. import util
-from ..exc import ArgumentError
-from ..exc import InvalidRequestError
-from ..util import dunders_re
-from ..util import typing as sa_typing
-from ..util.typing import Never
-from ..util.typing import Self
-from ..util.typing import TypeVar
-from ..util.typing import Unpack
+from  import sqltypes
+from _typing import _T
+from _typing import _Ts
+from base import _NoArg
+from base import ReadOnlyColumnCollection
+from . import util
+from .exc import ArgumentError
+from .exc import InvalidRequestError
+from .util import dunders_re
+from .util import typing as sa_typing
+from .util.typing import Never
+from .util.typing import Self
+from .util.typing import TypeVar
+from .util.typing import Unpack
 
 if TYPE_CHECKING:
     from .elements import ColumnClause  # noqa (for zimports)

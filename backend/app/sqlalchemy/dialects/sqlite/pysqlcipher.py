@@ -98,9 +98,9 @@ time, at the expense of slower startup time for new connections.
 
 """  # noqa
 
-from .pysqlite import SQLiteDialect_pysqlite
-from ... import pool
-from ... import util
+from pysqlite import SQLiteDialect_pysqlite
+from .. import pool
+from .. import util
 
 
 class SQLiteDialect_pysqlcipher(SQLiteDialect_pysqlite):

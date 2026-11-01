@@ -53,13 +53,13 @@ from typing import Optional
 from typing import TYPE_CHECKING
 from typing import Union
 
-from .base import MySQLDialect
-from .base import MySQLExecutionContext
-from .types import TIME
-from ... import exc
-from ... import util
-from ...connectors.pyodbc import PyODBCConnector
-from ...sql.sqltypes import Time
+from base import MySQLDialect
+from base import MySQLExecutionContext
+from types import TIME
+from .. import exc
+from .. import util
+from ..connectors.pyodbc import PyODBCConnector
+from ..sql.sqltypes import Time
 
 if TYPE_CHECKING:
     from ...engine import Connection

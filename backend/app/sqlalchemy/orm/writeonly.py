@@ -36,27 +36,27 @@ from typing import TypeVar
 from typing import Union
 
 from sqlalchemy.sql import bindparam
-from . import attributes
-from . import interfaces
-from . import relationships
-from . import strategies
-from .base import ATTR_EMPTY
-from .base import DONT_SET
-from .base import NEVER_SET
-from .base import object_mapper
-from .base import PassiveFlag
-from .base import RelationshipDirection
-from .. import exc
-from .. import inspect
-from .. import log
-from .. import util
-from ..sql import delete
-from ..sql import insert
-from ..sql import select
-from ..sql import update
-from ..sql.dml import Delete
-from ..sql.dml import Insert
-from ..sql.dml import Update
+from  import attributes
+from  import interfaces
+from  import relationships
+from  import strategies
+from base import ATTR_EMPTY
+from base import DONT_SET
+from base import NEVER_SET
+from base import object_mapper
+from base import PassiveFlag
+from base import RelationshipDirection
+from . import exc
+from . import inspect
+from . import log
+from . import util
+from .sql import delete
+from .sql import insert
+from .sql import select
+from .sql import update
+from .sql.dml import Delete
+from .sql.dml import Insert
+from .sql.dml import Update
 
 if TYPE_CHECKING:
     from . import QueryableAttribute

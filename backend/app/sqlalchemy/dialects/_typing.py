@@ -12,11 +12,11 @@ from typing import Mapping
 from typing import Optional
 from typing import Union
 
-from ..sql import roles
-from ..sql.base import ColumnCollection
-from ..sql.schema import Column
-from ..sql.schema import ColumnCollectionConstraint
-from ..sql.schema import Index
+from .sql import roles
+from .sql.base import ColumnCollection
+from .sql.schema import Column
+from .sql.schema import ColumnCollectionConstraint
+from .sql.schema import Index
 
 _OnConflictConstraintT = Union[str, ColumnCollectionConstraint, Index, None]
 _OnConflictIndexElementsT = Optional[

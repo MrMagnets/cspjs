@@ -29,21 +29,21 @@ from typing import TypeVar
 from typing import Union
 import weakref
 
-from . import cache_key as _cache_key
-from . import coercions
-from . import elements
-from . import roles
-from . import schema
-from . import visitors
-from .base import _clone
-from .base import Executable
-from .base import ExecutableStatement
-from .base import Options
-from .cache_key import CacheConst
-from .operators import ColumnOperators
-from .. import exc
-from .. import inspection
-from .. import util
+from  import cache_key as _cache_key
+from  import coercions
+from  import elements
+from  import roles
+from  import schema
+from  import visitors
+from base import _clone
+from base import Executable
+from base import ExecutableStatement
+from base import Options
+from cache_key import CacheConst
+from operators import ColumnOperators
+from . import exc
+from . import inspection
+from . import util
 
 if TYPE_CHECKING:
     from .elements import BindParameter

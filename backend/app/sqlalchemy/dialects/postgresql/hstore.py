@@ -11,16 +11,16 @@ import re
 from typing import Any
 from typing import Optional
 
-from .array import ARRAY
-from .operators import CONTAINED_BY
-from .operators import CONTAINS
-from .operators import GETITEM
-from .operators import HAS_ALL
-from .operators import HAS_ANY
-from .operators import HAS_KEY
-from ... import types as sqltypes
-from ...sql import functions as sqlfunc
-from ...types import OperatorClass
+from array import ARRAY
+from operators import CONTAINED_BY
+from operators import CONTAINS
+from operators import GETITEM
+from operators import HAS_ALL
+from operators import HAS_ANY
+from operators import HAS_KEY
+from .. import types as sqltypes
+from ..sql import functions as sqlfunc
+from ..types import OperatorClass
 
 __all__ = ("HSTORE", "hstore")
 

@@ -56,14 +56,14 @@ from typing import TypeVar
 from typing import Union
 import weakref
 
-from . import legacy
-from . import registry
-from .registry import _ET
-from .registry import _EventKey
-from .registry import _ListenerFnType
-from .. import exc
-from .. import util
-from ..util.concurrency import AsyncAdaptedLock
+from  import legacy
+from  import registry
+from registry import _ET
+from registry import _EventKey
+from registry import _ListenerFnType
+from . import exc
+from . import util
+from .util.concurrency import AsyncAdaptedLock
 
 _T = TypeVar("_T", bound=Any)
 

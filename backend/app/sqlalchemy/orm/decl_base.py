@@ -33,48 +33,48 @@ from typing import TypeVar
 from typing import Union
 import weakref
 
-from . import attributes
-from . import clsregistry
-from . import exc as orm_exc
-from . import instrumentation
-from . import mapperlib
-from ._typing import _O
-from ._typing import attr_is_internal_proxy
-from .attributes import InstrumentedAttribute
-from .attributes import QueryableAttribute
-from .base import _is_mapped_class
-from .base import _is_unmapped_container
-from .base import InspectionAttr
-from .descriptor_props import CompositeProperty
-from .descriptor_props import SynonymProperty
-from .interfaces import _AttributeOptions
-from .interfaces import _DataclassArguments
-from .interfaces import _DCAttributeOptions
-from .interfaces import _IntrospectsAnnotations
-from .interfaces import _MappedAttribute
-from .interfaces import _MapsColumns
-from .interfaces import MapperProperty
-from .mapper import Mapper
-from .properties import ColumnProperty
-from .properties import MappedColumn
-from .properties import UnmappedColumn
-from .util import _extract_mapped_subtype
-from .util import _is_mapped_annotation
-from .util import _metadata_for_cls as _metadata_for_cls_fn
-from .util import class_mapper
-from .util import de_stringify_annotation
-from .. import exc
-from .. import util
-from ..sql import expression
-from ..sql._annotated_cols import TypedColumns
-from ..sql.base import _NoArg
-from ..sql.schema import Column
-from ..sql.schema import MetaData
-from ..sql.schema import Table
-from ..util import topological
-from ..util.typing import _AnnotationScanType
-from ..util.typing import is_fwd_ref
-from ..util.typing import is_literal
+from  import attributes
+from  import clsregistry
+from  import exc as orm_exc
+from  import instrumentation
+from  import mapperlib
+from _typing import _O
+from _typing import attr_is_internal_proxy
+from attributes import InstrumentedAttribute
+from attributes import QueryableAttribute
+from base import _is_mapped_class
+from base import _is_unmapped_container
+from base import InspectionAttr
+from descriptor_props import CompositeProperty
+from descriptor_props import SynonymProperty
+from interfaces import _AttributeOptions
+from interfaces import _DataclassArguments
+from interfaces import _DCAttributeOptions
+from interfaces import _IntrospectsAnnotations
+from interfaces import _MappedAttribute
+from interfaces import _MapsColumns
+from interfaces import MapperProperty
+from mapper import Mapper
+from properties import ColumnProperty
+from properties import MappedColumn
+from properties import UnmappedColumn
+from util import _extract_mapped_subtype
+from util import _is_mapped_annotation
+from util import _metadata_for_cls as _metadata_for_cls_fn
+from util import class_mapper
+from util import de_stringify_annotation
+from . import exc
+from . import util
+from .sql import expression
+from .sql._annotated_cols import TypedColumns
+from .sql.base import _NoArg
+from .sql.schema import Column
+from .sql.schema import MetaData
+from .sql.schema import Table
+from .util import topological
+from .util.typing import _AnnotationScanType
+from .util.typing import is_fwd_ref
+from .util.typing import is_literal
 
 if TYPE_CHECKING:
     from ._typing import _ClassDict

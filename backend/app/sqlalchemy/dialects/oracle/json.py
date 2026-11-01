@@ -12,10 +12,10 @@ from typing import Any
 from typing import TYPE_CHECKING
 from typing import TypeVar
 
-from ... import types as sqltypes
-from ...sql.base import _NoArg
-from ...sql.base import NO_ARG
-from ...sql.sqltypes import _T_JSON
+from .. import types as sqltypes
+from ..sql.base import _NoArg
+from ..sql.base import NO_ARG
+from ..sql.sqltypes import _T_JSON
 
 if TYPE_CHECKING:
     from ...engine.interfaces import Dialect

@@ -95,11 +95,11 @@ from typing import Literal
 from typing import Optional
 from typing import TYPE_CHECKING
 
-from .base import MySQLCompiler
-from .base import MySQLDialect
-from .base import MySQLExecutionContext
-from .base import MySQLIdentifierPreparer
-from ... import util
+from base import MySQLCompiler
+from base import MySQLDialect
+from base import MySQLExecutionContext
+from base import MySQLIdentifierPreparer
+from .. import util
 
 if TYPE_CHECKING:
 

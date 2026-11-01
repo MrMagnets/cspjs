@@ -13,7 +13,7 @@ from typing import Optional
 from typing import TYPE_CHECKING
 from typing import TypeVar
 
-from .. import util
+from . import util
 
 if TYPE_CHECKING:
     from ._typing import _PropagateAttrsType

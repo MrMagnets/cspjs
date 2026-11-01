@@ -27,20 +27,20 @@ from typing import TYPE_CHECKING
 from typing import TypeVar
 from typing import Union
 
-from . import exc
-from ._typing import _HasPathString
-from ._typing import _O
-from ._typing import insp_is_mapper
-from .. import exc as sa_exc
-from .. import inspection
-from .. import util
-from ..sql import roles
-from ..sql._typing import _T
-from ..sql._typing import _T_co
-from ..sql.elements import SQLColumnExpression
-from ..sql.elements import SQLCoreOperations
-from ..util import FastIntFlag
-from ..util.langhelpers import TypingOnly
+from  import exc
+from _typing import _HasPathString
+from _typing import _O
+from _typing import insp_is_mapper
+from . import exc as sa_exc
+from . import inspection
+from . import util
+from .sql import roles
+from .sql._typing import _T
+from .sql._typing import _T_co
+from .sql.elements import SQLColumnExpression
+from .sql.elements import SQLCoreOperations
+from .util import FastIntFlag
+from .util.langhelpers import TypingOnly
 
 if typing.TYPE_CHECKING:
     from ._typing import _EntityType

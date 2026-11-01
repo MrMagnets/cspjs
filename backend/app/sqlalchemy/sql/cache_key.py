@@ -26,17 +26,17 @@ from typing import Tuple
 from typing import Type
 from typing import Union
 
-from . import _cache_key_cy
-from ._cache_key_cy import CacheConst as CacheConst
-from ._cache_key_cy import CacheTraverseTarget as CacheTraverseTarget
-from .visitors import anon_map
-from .visitors import HasTraversalDispatch
-from .visitors import HasTraverseInternals
-from .visitors import InternalTraversal
-from .visitors import prefix_anon_map
-from .. import util
-from ..inspection import inspect
-from ..util import HasMemoized
+from  import _cache_key_cy
+from _cache_key_cy import CacheConst as CacheConst
+from _cache_key_cy import CacheTraverseTarget as CacheTraverseTarget
+from visitors import anon_map
+from visitors import HasTraversalDispatch
+from visitors import HasTraverseInternals
+from visitors import InternalTraversal
+from visitors import prefix_anon_map
+from . import util
+from .inspection import inspect
+from .util import HasMemoized
 
 if typing.TYPE_CHECKING:
     from .elements import BindParameter

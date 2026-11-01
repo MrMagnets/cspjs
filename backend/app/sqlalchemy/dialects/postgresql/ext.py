@@ -17,19 +17,19 @@ from typing import Tuple
 from typing import TYPE_CHECKING
 from typing import TypeVar
 
-from . import types
-from .array import ARRAY
-from ... import exc
-from ...sql import coercions
-from ...sql import elements
-from ...sql import expression
-from ...sql import functions
-from ...sql import roles
-from ...sql import schema
-from ...sql.base import SyntaxExtension
-from ...sql.schema import ColumnCollectionConstraint
-from ...sql.sqltypes import TEXT
-from ...sql.visitors import InternalTraversal
+from  import types
+from array import ARRAY
+from .. import exc
+from ..sql import coercions
+from ..sql import elements
+from ..sql import expression
+from ..sql import functions
+from ..sql import roles
+from ..sql import schema
+from ..sql.base import SyntaxExtension
+from ..sql.schema import ColumnCollectionConstraint
+from ..sql.sqltypes import TEXT
+from ..sql.visitors import InternalTraversal
 
 if TYPE_CHECKING:
     from ...sql._typing import _ColumnExpressionArgument

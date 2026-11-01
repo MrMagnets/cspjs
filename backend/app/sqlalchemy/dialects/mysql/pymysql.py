@@ -57,9 +57,9 @@ from typing import Type
 from typing import TYPE_CHECKING
 from typing import Union
 
-from .mysqldb import MySQLDialect_mysqldb
-from ... import util
-from ...util import langhelpers
+from mysqldb import MySQLDialect_mysqldb
+from .. import util
+from ..util import langhelpers
 
 if TYPE_CHECKING:
 

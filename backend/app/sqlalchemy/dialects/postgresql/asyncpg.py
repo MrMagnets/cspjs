@@ -194,36 +194,36 @@ from typing import Sequence
 from typing import Tuple
 from typing import TYPE_CHECKING
 
-from . import json
-from . import ranges
-from .array import ARRAY as PGARRAY
-from .base import _DECIMAL_TYPES
-from .base import _FLOAT_TYPES
-from .base import _INT_TYPES
-from .base import ENUM
-from .base import INTERVAL
-from .base import OID
-from .base import PGCompiler
-from .base import PGDialect
-from .base import PGExecutionContext
-from .base import PGIdentifierPreparer
-from .base import REGCLASS
-from .base import REGCONFIG
-from .bitstring import BitString
-from .types import BIT
-from .types import BYTEA
-from .types import CITEXT
-from ... import exc
-from ... import util
-from ...connectors.asyncio import AsyncAdapt_dbapi_connection
-from ...connectors.asyncio import AsyncAdapt_dbapi_cursor
-from ...connectors.asyncio import AsyncAdapt_dbapi_module
-from ...connectors.asyncio import AsyncAdapt_dbapi_ss_cursor
-from ...connectors.asyncio import AsyncAdapt_Error
-from ...connectors.asyncio import AsyncAdapt_terminate
-from ...engine import processors
-from ...sql import sqltypes
-from ...util.concurrency import await_
+from  import json
+from  import ranges
+from array import ARRAY as PGARRAY
+from base import _DECIMAL_TYPES
+from base import _FLOAT_TYPES
+from base import _INT_TYPES
+from base import ENUM
+from base import INTERVAL
+from base import OID
+from base import PGCompiler
+from base import PGDialect
+from base import PGExecutionContext
+from base import PGIdentifierPreparer
+from base import REGCLASS
+from base import REGCONFIG
+from bitstring import BitString
+from types import BIT
+from types import BYTEA
+from types import CITEXT
+from .. import exc
+from .. import util
+from ..connectors.asyncio import AsyncAdapt_dbapi_connection
+from ..connectors.asyncio import AsyncAdapt_dbapi_cursor
+from ..connectors.asyncio import AsyncAdapt_dbapi_module
+from ..connectors.asyncio import AsyncAdapt_dbapi_ss_cursor
+from ..connectors.asyncio import AsyncAdapt_Error
+from ..connectors.asyncio import AsyncAdapt_terminate
+from ..engine import processors
+from ..sql import sqltypes
+from ..util.concurrency import await_
 
 if TYPE_CHECKING:
     from ...engine.interfaces import _DBAPICursorDescription

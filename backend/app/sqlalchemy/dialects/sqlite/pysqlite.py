@@ -553,14 +553,14 @@ from typing import TYPE_CHECKING
 from typing import TypeVar
 from typing import Union
 
-from .base import DATE
-from .base import DATETIME
-from .base import SQLiteDialect
-from ... import exc
-from ... import pool
-from ... import types as sqltypes
-from ... import util
-from ...util.typing import Self
+from base import DATE
+from base import DATETIME
+from base import SQLiteDialect
+from .. import exc
+from .. import pool
+from .. import types as sqltypes
+from .. import util
+from ..util.typing import Self
 
 if TYPE_CHECKING:
     from ...engine.interfaces import ConnectArgsType

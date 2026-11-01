@@ -13,23 +13,23 @@ from typing import Optional
 from typing import Type
 from typing import TYPE_CHECKING
 
-from .reserved_words import RESERVED_WORDS_MARIADB
-from ... import exc
-from ... import schema as sa_schema
-from ... import util
-from ...engine import cursor as _cursor
-from ...engine import default
-from ...engine.default import DefaultDialect
-from ...engine.interfaces import TypeCompiler
-from ...sql import elements
-from ...sql import sqltypes
-from ...sql.compiler import DDLCompiler
-from ...sql.compiler import IdentifierPreparer
-from ...sql.compiler import SQLCompiler
-from ...sql.schema import SchemaConst
-from ...sql.sqltypes import _UUID_RETURN
-from ...sql.sqltypes import UUID
-from ...sql.sqltypes import Uuid
+from reserved_words import RESERVED_WORDS_MARIADB
+from .. import exc
+from .. import schema as sa_schema
+from .. import util
+from ..engine import cursor as _cursor
+from ..engine import default
+from ..engine.default import DefaultDialect
+from ..engine.interfaces import TypeCompiler
+from ..sql import elements
+from ..sql import sqltypes
+from ..sql.compiler import DDLCompiler
+from ..sql.compiler import IdentifierPreparer
+from ..sql.compiler import SQLCompiler
+from ..sql.schema import SchemaConst
+from ..sql.sqltypes import _UUID_RETURN
+from ..sql.sqltypes import UUID
+from ..sql.sqltypes import Uuid
 
 if TYPE_CHECKING:
     from .base import MySQLIdentifierPreparer

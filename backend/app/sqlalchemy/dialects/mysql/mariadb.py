@@ -9,8 +9,8 @@ from __future__ import annotations
 
 from typing import Any
 
-from .base import MySQLDialect
-from ...sql import sqltypes
+from base import MySQLDialect
+from ..sql import sqltypes
 
 
 class INET4(sqltypes.TypeEngine[str]):

@@ -21,10 +21,10 @@ from typing import Tuple
 from typing import Type
 from typing import TypeVar
 
-from .registry import _ET
-from .registry import _ListenerFnType
-from .. import util
-from ..util.compat import FullArgSpec
+from registry import _ET
+from registry import _ListenerFnType
+from . import util
+from .util.compat import FullArgSpec
 
 if typing.TYPE_CHECKING:
     from .attr import _ClsLevelDispatch

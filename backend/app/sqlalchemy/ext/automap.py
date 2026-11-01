@@ -731,17 +731,17 @@ from typing import TYPE_CHECKING
 from typing import TypeVar
 from typing import Union
 
-from .. import util
-from ..orm import backref
-from ..orm import declarative_base as _declarative_base
-from ..orm import exc as orm_exc
-from ..orm import interfaces
-from ..orm import relationship
-from ..orm.decl_base import _DeferredDeclarativeConfig
-from ..orm.mapper import _CONFIGURE_MUTEX
-from ..schema import ForeignKeyConstraint
-from ..sql import and_
-from ..util import Properties
+from . import util
+from .orm import backref
+from .orm import declarative_base as _declarative_base
+from .orm import exc as orm_exc
+from .orm import interfaces
+from .orm import relationship
+from .orm.decl_base import _DeferredDeclarativeConfig
+from .orm.mapper import _CONFIGURE_MUTEX
+from .schema import ForeignKeyConstraint
+from .sql import and_
+from .util import Properties
 
 if TYPE_CHECKING:
     from ..engine.base import Engine

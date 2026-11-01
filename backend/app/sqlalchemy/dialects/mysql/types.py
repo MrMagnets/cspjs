@@ -14,9 +14,9 @@ from typing import Optional
 from typing import TYPE_CHECKING
 from typing import Union
 
-from ... import exc
-from ... import util
-from ...sql import sqltypes
+from .. import exc
+from .. import util
+from ..sql import sqltypes
 
 if TYPE_CHECKING:
     from .base import MySQLDialect

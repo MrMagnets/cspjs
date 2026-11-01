@@ -27,13 +27,13 @@ from typing import TypeAlias
 from typing import TypeVar
 from typing import Union
 
-from . import roles
-from .. import exc
-from .. import util
-from ..inspection import Inspectable
-from ..util.typing import TupleAny
-from ..util.typing import TypeVarTuple
-from ..util.typing import Unpack
+from  import roles
+from . import exc
+from . import util
+from .inspection import Inspectable
+from .util.typing import TupleAny
+from .util.typing import TypeVarTuple
+from .util.typing import Unpack
 
 if TYPE_CHECKING:
     from datetime import date

@@ -44,16 +44,16 @@ from typing import TypeVar
 from typing import Union
 import weakref
 
-from . import base
-from . import collections
-from . import exc
-from . import interfaces
-from . import state
-from ._typing import _O
-from .attributes import _is_collection_attribute_impl
-from .. import util
-from ..event import EventTarget
-from ..util import HasMemoized
+from  import base
+from  import collections
+from  import exc
+from  import interfaces
+from  import state
+from _typing import _O
+from attributes import _is_collection_attribute_impl
+from . import util
+from .event import EventTarget
+from .util import HasMemoized
 
 if TYPE_CHECKING:
     from ._typing import _RegistryType

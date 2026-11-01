@@ -39,8 +39,8 @@ from typing import Optional
 from typing import Tuple
 from typing import TYPE_CHECKING
 
-from .visitors import InternalTraversal
-from .. import util
+from visitors import InternalTraversal
+from . import util
 
 if TYPE_CHECKING:
     from .elements import BindParameter

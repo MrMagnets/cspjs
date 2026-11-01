@@ -12,12 +12,12 @@ from typing import Optional
 from typing import Type
 from typing import Union
 
-from .base import ConnectionPoolEntry
-from .base import Pool
-from .base import PoolProxiedConnection
-from .base import PoolResetState
-from .. import event
-from .. import util
+from base import ConnectionPoolEntry
+from base import Pool
+from base import PoolProxiedConnection
+from base import PoolResetState
+from . import event
+from . import util
 
 if typing.TYPE_CHECKING:
     from ..engine import Engine

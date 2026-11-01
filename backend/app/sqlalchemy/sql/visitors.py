@@ -33,12 +33,12 @@ from typing import TYPE_CHECKING
 from typing import TypeVar
 from typing import Union
 
-from ._util_cy import anon_map as anon_map
-from ._util_cy import prefix_anon_map as prefix_anon_map  # noqa: F401
-from .. import exc
-from .. import util
-from ..util import langhelpers
-from ..util.typing import Self
+from _util_cy import anon_map as anon_map
+from _util_cy import prefix_anon_map as prefix_anon_map  # noqa: F401
+from . import exc
+from . import util
+from .util import langhelpers
+from .util.typing import Self
 
 if TYPE_CHECKING:
     from .annotation import _AnnotationDict

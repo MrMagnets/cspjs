@@ -177,24 +177,24 @@ from types import NoneType
 from typing import cast
 from typing import TYPE_CHECKING
 
-from . import ranges
-from ._psycopg_common import _PGDialect_common_psycopg
-from ._psycopg_common import _PGExecutionContext_common_psycopg
-from .base import INTERVAL
-from .base import PGCompiler
-from .base import PGIdentifierPreparer
-from .base import REGCONFIG
-from .json import JSON
-from .json import JSONB
-from .json import JSONPathType
-from .types import CITEXT
-from ... import util
-from ...connectors.asyncio import AsyncAdapt_dbapi_connection
-from ...connectors.asyncio import AsyncAdapt_dbapi_cursor
-from ...connectors.asyncio import AsyncAdapt_dbapi_module
-from ...connectors.asyncio import AsyncAdapt_dbapi_ss_cursor
-from ...sql import sqltypes
-from ...util.concurrency import await_
+from  import ranges
+from _psycopg_common import _PGDialect_common_psycopg
+from _psycopg_common import _PGExecutionContext_common_psycopg
+from base import INTERVAL
+from base import PGCompiler
+from base import PGIdentifierPreparer
+from base import REGCONFIG
+from json import JSON
+from json import JSONB
+from json import JSONPathType
+from types import CITEXT
+from .. import util
+from ..connectors.asyncio import AsyncAdapt_dbapi_connection
+from ..connectors.asyncio import AsyncAdapt_dbapi_cursor
+from ..connectors.asyncio import AsyncAdapt_dbapi_module
+from ..connectors.asyncio import AsyncAdapt_dbapi_ss_cursor
+from ..sql import sqltypes
+from ..util.concurrency import await_
 
 if TYPE_CHECKING:
     from typing import Iterable

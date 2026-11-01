@@ -16,13 +16,13 @@ from typing import Sequence
 from typing import TYPE_CHECKING
 from typing import Union
 
-from .enumerated import ENUM
-from .enumerated import SET
-from .types import DATETIME
-from .types import TIME
-from .types import TIMESTAMP
-from ... import types as sqltypes
-from ... import util
+from enumerated import ENUM
+from enumerated import SET
+from types import DATETIME
+from types import TIME
+from types import TIMESTAMP
+from .. import types as sqltypes
+from .. import util
 
 if TYPE_CHECKING:
     from .base import MySQLDialect

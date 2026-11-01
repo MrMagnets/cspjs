@@ -491,8 +491,8 @@ from typing import Type
 from typing import TYPE_CHECKING
 from typing import TypeVar
 
-from .. import exc
-from ..sql import sqltypes
+from . import exc
+from .sql import sqltypes
 
 if TYPE_CHECKING:
     from ..sql.compiler import SQLCompiler

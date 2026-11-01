@@ -33,19 +33,19 @@ from typing import Tuple
 from typing import TYPE_CHECKING
 from typing import Union
 
-from . import coercions
-from . import dml
-from . import elements
-from . import roles
-from .base import _DefaultDescriptionTuple
-from .dml import isinsert as _compile_state_isinsert
-from .elements import ColumnClause
-from .schema import default_is_clause_element
-from .schema import default_is_sequence
-from .selectable import Select
-from .selectable import TableClause
-from .. import exc
-from .. import util
+from  import coercions
+from  import dml
+from  import elements
+from  import roles
+from base import _DefaultDescriptionTuple
+from dml import isinsert as _compile_state_isinsert
+from elements import ColumnClause
+from schema import default_is_clause_element
+from schema import default_is_sequence
+from selectable import Select
+from selectable import TableClause
+from . import exc
+from . import util
 
 if TYPE_CHECKING:
     from .compiler import _BindNameForColProtocol

@@ -12,10 +12,10 @@ from datetime import datetime, timezone
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from .config import settings
-from .database import Base, SessionLocal, engine
-from .models import Problem, ProblemList, ProblemListItem, ProblemTag, SubQuestion, Tag, User
-from .security import hash_password
+from config import settings
+from database import Base, SessionLocal, engine
+from models import Problem, ProblemList, ProblemListItem, ProblemTag, SubQuestion, Tag, User
+from security import hash_password
 
 KNOWLEDGE_TAGS = [
     "程序阅读", "时间复杂度", "位运算", "递归", "排序", "图论",

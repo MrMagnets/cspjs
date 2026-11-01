@@ -33,14 +33,14 @@ from typing import Generator
 from typing import Optional
 from typing import Tuple
 
-from . import config
-from . import provision
-from .profiles_file import PlatformKey
-from .profiles_file import ProfilesFile
-from .profiles_file import TestKey
-from .util import gc_collect
-from ..util import freethreading
-from ..util import has_compiled_ext
+from  import config
+from  import provision
+from profiles_file import PlatformKey
+from profiles_file import ProfilesFile
+from profiles_file import TestKey
+from util import gc_collect
+from .util import freethreading
+from .util import has_compiled_ext
 
 try:
     import cProfile

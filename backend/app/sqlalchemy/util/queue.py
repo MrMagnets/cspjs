@@ -31,8 +31,8 @@ from typing import Generic
 from typing import Optional
 from typing import TypeVar
 
-from .concurrency import await_
-from .langhelpers import memoized_property
+from concurrency import await_
+from langhelpers import memoized_property
 
 _T = TypeVar("_T", bound=Any)
 __all__ = ["Empty", "Full", "Queue"]

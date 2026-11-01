@@ -129,11 +129,11 @@ from typing import TypeVar
 from typing import Union
 import weakref
 
-from .base import NO_KEY
-from .. import exc as sa_exc
-from .. import util
-from ..sql.base import NO_ARG
-from ..util.compat import inspect_getfullargspec
+from base import NO_KEY
+from . import exc as sa_exc
+from . import util
+from .sql.base import NO_ARG
+from .util.compat import inspect_getfullargspec
 
 if typing.TYPE_CHECKING:
     from .attributes import _CollectionAttributeImpl

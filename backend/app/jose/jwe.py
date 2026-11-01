@@ -4,11 +4,11 @@ import zlib
 from collections.abc import Mapping
 from struct import pack
 
-from . import jwk
-from .backends import get_random_bytes
-from .constants import ALGORITHMS, JWE_SIZE_LIMIT, ZIPS
-from .exceptions import JWEError, JWEParseError
-from .utils import base64url_decode, base64url_encode, ensure_binary
+from  import jwk
+from backends import get_random_bytes
+from constants import ALGORITHMS, JWE_SIZE_LIMIT, ZIPS
+from exceptions import JWEError, JWEParseError
+from utils import base64url_decode, base64url_encode, ensure_binary
 
 
 def encrypt(plaintext, key, encryption=ALGORITHMS.A256GCM, algorithm=ALGORITHMS.DIR, zip=None, cty=None, kid=None):

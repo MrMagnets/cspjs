@@ -30,16 +30,16 @@ from typing import TYPE_CHECKING
 from typing import TypeVar
 from typing import Union
 
-from . import roles
-from . import visitors
-from ._typing import is_from_clause
-from .base import ExecutableOption
-from .base import Options
-from .cache_key import HasCacheKey
-from .visitors import Visitable
-from .. import exc
-from .. import inspection
-from .. import util
+from  import roles
+from  import visitors
+from _typing import is_from_clause
+from base import ExecutableOption
+from base import Options
+from cache_key import HasCacheKey
+from visitors import Visitable
+from . import exc
+from . import inspection
+from . import util
 
 if typing.TYPE_CHECKING:
     # elements lambdas schema selectable are set by __init__
