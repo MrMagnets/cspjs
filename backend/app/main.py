@@ -4,10 +4,10 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse, Response
 
-from .config import settings
-from .database import Base, dialect_name_for_request, engine
-from .routers import auth, mock_exams, problem_lists, problems, stats, tags, wrong_questions
-from .seed import seed as run_seed
+from config import settings
+from database import Base, dialect_name_for_request, engine
+from routers import auth, mock_exams, problem_lists, problems, stats, tags, wrong_questions
+from seed import seed as run_seed
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
 logger = logging.getLogger("cspjs")
