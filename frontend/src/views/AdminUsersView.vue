@@ -11,6 +11,7 @@ const loading = ref(true)
 const keyword = ref('')
 const rows = ref([])
 const total = ref(0)
+const loadError = ref('')
 const pendingAvatars = ref([])
 const page = ref(1)
 const pageSize = 20
@@ -24,10 +25,26 @@ const titlePresets = ['金牌选手', '优秀出题人', '最佳新人', '作弊
 
 async function load() {
   loading.value = true
+  loadError.value = ''
   try {
-    const data = await adminUserApi.list({ search: keyword.value, page: page.value, page_size: pageSize })
-    rows.value = data.items || []
-    total.value = data.total || 0
+    const data = await adminUserApi.list({
+      search: keyword.value,
+      page: page.value,
+      page_size: pageSize,
+    })
+    // 兼容后端直接返回数组或 { items, total } 两种形式
+    if (Array.isArray(data)) {
+      rows.value = data
+      total.value = data.length
+    } else {
+      rows.value = Array.isArray(data?.items) ? data.items : []
+      total.value = Number(data?.total) || 0
+    }
+  } catch (err) {
+    rows.value = []
+    total.value = 0
+    loadError.value = err?.message || '用户列表加载失败'
+    ElMessage.error(loadError.value)
   } finally {
     loading.value = false
   }
@@ -87,7 +104,8 @@ async function saveTitle() {
   }
 }
 
-async function ban(row) {  updating.value = row.id
+async function ban(row) {
+  updating.value = row.id
   try {
     const updated = await adminUserApi.ban(row.id)
     Object.assign(row, updated)
@@ -142,7 +160,23 @@ onMounted(async () => {
     <div class="toolbar">
       <el-input v-model="keyword" placeholder="搜索用户名 / 称号" clearable style="max-width: 320px" @keyup.enter="search" />
       <el-button type="primary" @click="search">搜索</el-button>
+      <el-button @click="load">刷新</el-button>
     </div>
+
+    <el-alert
+      v-if="loadError"
+      type="error"
+      :closable="false"
+      show-icon
+      :title="loadError"
+      class="load-error"
+    >
+      <template #default>
+        请确认后端已部署最新代码，并执行 <code>python init_db.py --yes</code> 补齐
+        <code>users</code> 表字段（如 avatar_url、avatar_status、last_username_change、title）。
+        <el-button link type="primary" @click="load">重新加载</el-button>
+      </template>
+    </el-alert>
 
     <el-card v-if="pendingAvatars.length" shadow="never" class="avatar-review">
       <template #header>
@@ -167,9 +201,13 @@ onMounted(async () => {
         <el-table-column label="用户" min-width="180">
           <template #default="{ row }">
             <div class="user-cell">
-              <el-avatar :size="32">{{ row.username.slice(0, 1).toUpperCase() }}</el-avatar>
+              <el-avatar :size="32" :src="row.avatar_url || undefined">
+                {{ (row.username || '?').slice(0, 1).toUpperCase() }}
+              </el-avatar>
               <div>
-                <div :class="{ brown: row.title.includes('棕') }">{{ row.username }}</div>
+                <div :class="{ brown: (row.title || '').includes('作弊') || (row.title || '').includes('棕') }">
+                  {{ row.username || '未知用户' }}
+                </div>
                 <small class="muted">#{{ row.id }} · {{ fmt(row.created_at) }}</small>
               </div>
             </div>
@@ -201,9 +239,9 @@ onMounted(async () => {
             />
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="250" fixed="right">
+        <el-table-column label="操作" width="280" fixed="right">
           <template #default="{ row }">
-            <el-button size="small" @click="openTitle(row)">称号</el-button>
+            <el-button type="primary" size="small" plain @click="openTitle(row)">修改称号</el-button>
             <el-button
               v-if="row.status === 'banned'"
               type="danger"
@@ -266,6 +304,7 @@ onMounted(async () => {
 .toolbar { display: flex; gap: 10px; margin-bottom: 14px; }
 .user-cell { display: flex; align-items: center; gap: 10px; }
 .muted { color: var(--muted); }
+.load-error { margin-bottom: 14px; border-radius: 10px; }
 .brown { color: #8b5a2b; font-weight: 700; }
 .pager { display: flex; justify-content: flex-end; margin-top: 14px; }
 .avatar-review { margin-bottom: 14px; border-radius: 14px; }

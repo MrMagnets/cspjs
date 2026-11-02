@@ -6,7 +6,7 @@ from datetime import datetime, timedelta, timezone
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy import func, or_, select
-from sqlalchemy.exc import IntegrityError
+from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlalchemy.orm import Session
 
 from routers.audit import log_action
@@ -116,19 +116,25 @@ def admin_users(
     _: User = Depends(require_admin),
 ):
     stmt = select(User)
+    count_stmt = select(func.count()).select_from(User)
     if search.strip():
         kw = f"%{search.strip()}%"
-        stmt = stmt.where(or_(User.username.ilike(kw), User.title.ilike(kw)))
-    total = db.scalar(select(func.count()).select_from(stmt.subquery())) or 0
-    users = db.scalars(
-        stmt.order_by(User.status.desc(), User.id.desc()).offset((page - 1) * page_size).limit(page_size)
-    ).all()
-    return UserPage(
-        items=[UserOut.model_validate(u) for u in users],
-        total=total,
-        page=page,
-        page_size=page_size,
-    )
+        condition = or_(User.username.ilike(kw), User.title.ilike(kw))
+        stmt = stmt.where(condition)
+        count_stmt = count_stmt.where(condition)
+    try:
+        total = db.scalar(count_stmt) or 0
+        users = db.scalars(
+            stmt.order_by(User.status.desc(), User.id.desc()).offset((page - 1) * page_size).limit(page_size)
+        ).all()
+        items = [UserOut.model_validate(u) for u in users]
+    except SQLAlchemyError as exc:
+        db.rollback()
+        raise HTTPException(
+            status_code=500,
+            detail="用户表结构不完整，请先执行 python init_db.py --yes 补齐字段后重试",
+        ) from exc
+    return UserPage(items=items, total=total, page=page, page_size=page_size)
 
 
 @router.post("/admin/users/{user_id}/unban", response_model=UserOut)
