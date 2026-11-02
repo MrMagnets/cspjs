@@ -2,7 +2,10 @@
 import { onMounted, ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { adminUserApi } from '@/api'
+import { useAuthStore } from '@/stores/auth'
 import UserTitle from '@/components/UserTitle.vue'
+
+const auth = useAuthStore()
 
 const loading = ref(true)
 const keyword = ref('')
@@ -70,6 +73,10 @@ async function saveTitle() {
   try {
     const updated = await adminUserApi.setTitle(titleTarget.value.id, titleValue.value.trim())
     Object.assign(titleTarget.value, updated)
+    if (titleTarget.value.id === auth.user?.id) {
+      // 管理员改自己的称号，立即刷新 Header
+      await auth.fetchMe()
+    }
     titleVisible.value = false
     await load()
     ElMessage.success(updated.title ? `已授予称号：${updated.title}` : '称号已清空')

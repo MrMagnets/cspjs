@@ -14,7 +14,10 @@ const isAdmin = computed(() => role.value === 'admin')
 const isCheater = computed(() => /作弊|棕名/.test(rawTitle.value))
 
 const label = computed(() => {
-  if (isAdmin.value) return '紫名管理员'
+  if (isAdmin.value) {
+    const custom = rawTitle.value.trim()
+    return custom ? `紫名管理员 · ${custom}` : '紫名管理员'
+  }
   if (isCheater.value) return '作弊者'
   return rawTitle.value.trim()
 })
