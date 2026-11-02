@@ -107,6 +107,8 @@ export const adminUserApi = {
       method: 'POST',
       body: { can_create_problem: enabled },
     }),
+  setTitle: (id, title) =>
+    request(`/admin/users/${id}/title`, { method: 'POST', body: { title } }),
   ban: (id) => request(`/admin/users/${id}/ban`, { method: 'POST' }),
   avatars: (status = 'pending') => request('/admin/avatars', { params: { status } }),
   reviewAvatar: (id, action) =>

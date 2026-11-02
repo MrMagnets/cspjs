@@ -20,6 +20,7 @@ from schemas import (
     ChangeUsernameOut,
     CreatePermissionIn,
     RankingEntry,
+    TitleIn,
     UserOut,
     UserPage,
 )
@@ -173,6 +174,24 @@ def toggle_create_problem(
         raise HTTPException(status_code=400, detail="不能限制管理员账号")
     user.can_create_problem = payload.can_create_problem
     log_action(db, admin, "toggle_create_problem", "user", user.id, f"出题权限={payload.can_create_problem}")
+    db.commit()
+    db.refresh(user)
+    return UserOut.model_validate(user)
+
+
+@router.post("/admin/users/{user_id}/title", response_model=UserOut)
+def set_user_title(
+    user_id: int,
+    payload: TitleIn,
+    db: Session = Depends(get_db),
+    admin: User = Depends(require_admin),
+):
+    """授予 / 修改 / 清空用户称号（如：金牌选手、优秀出题人）。"""
+    user = db.get(User, user_id)
+    if user is None:
+        raise HTTPException(status_code=404, detail="用户不存在")
+    user.title = payload.title.strip()
+    log_action(db, admin, "set_title", "user", user.id, f"称号={user.title or '（清空）'}")
     db.commit()
     db.refresh(user)
     return UserOut.model_validate(user)

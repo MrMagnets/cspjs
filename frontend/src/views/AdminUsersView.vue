@@ -12,6 +12,12 @@ const pendingAvatars = ref([])
 const page = ref(1)
 const pageSize = 20
 const updating = ref(null)
+const titleVisible = ref(false)
+const titleTarget = ref(null)
+const titleValue = ref('')
+const titleSaving = ref(false)
+
+const titlePresets = ['金牌选手', '优秀出题人', '最佳新人', '作弊者']
 
 async function load() {
   loading.value = true
@@ -52,8 +58,29 @@ async function toggle(row, enabled) {
   }
 }
 
-async function ban(row) {
-  updating.value = row.id
+function openTitle(row) {
+  titleTarget.value = row
+  titleValue.value = row.title || ''
+  titleVisible.value = true
+}
+
+async function saveTitle() {
+  if (!titleTarget.value) return
+  titleSaving.value = true
+  try {
+    const updated = await adminUserApi.setTitle(titleTarget.value.id, titleValue.value.trim())
+    Object.assign(titleTarget.value, updated)
+    titleVisible.value = false
+    await load()
+    ElMessage.success(updated.title ? `已授予称号：${updated.title}` : '称号已清空')
+  } catch (err) {
+    ElMessage.error(err.message || '称号保存失败')
+  } finally {
+    titleSaving.value = false
+  }
+}
+
+async function ban(row) {  updating.value = row.id
   try {
     const updated = await adminUserApi.ban(row.id)
     Object.assign(row, updated)
@@ -167,8 +194,9 @@ onMounted(async () => {
             />
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="180" fixed="right">
+        <el-table-column label="操作" width="250" fixed="right">
           <template #default="{ row }">
+            <el-button size="small" @click="openTitle(row)">称号</el-button>
             <el-button
               v-if="row.status === 'banned'"
               type="danger"
@@ -192,6 +220,37 @@ onMounted(async () => {
         />
       </div>
     </el-card>
+
+    <el-dialog v-model="titleVisible" title="授予 / 修改称号" width="480px">
+      <el-form label-width="80px">
+        <el-form-item label="用户">
+          <strong>{{ titleTarget?.username }}</strong>
+          <span class="muted">#{{ titleTarget?.id }}</span>
+        </el-form-item>
+        <el-form-item label="称号">
+          <el-input v-model="titleValue" maxlength="64" show-word-limit placeholder="留空表示清空称号" />
+        </el-form-item>
+        <el-form-item label="快捷">
+          <div class="preset-row">
+            <el-tag
+              v-for="preset in titlePresets"
+              :key="preset"
+              class="preset"
+              :effect="titleValue === preset ? 'dark' : 'plain'"
+              @click="titleValue = preset"
+            >
+              {{ preset }}
+            </el-tag>
+            <el-tag class="preset" effect="plain" @click="titleValue = ''">清空</el-tag>
+          </div>
+        </el-form-item>
+      </el-form>
+      <p class="muted">称号会显示在 Header、排行榜、个人中心和讨论区；“作弊者”为棕色，“紫名管理员”由角色自动显示。</p>
+      <template #footer>
+        <el-button @click="titleVisible = false">取消</el-button>
+        <el-button type="primary" :loading="titleSaving" @click="saveTitle">保存称号</el-button>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -206,4 +265,6 @@ onMounted(async () => {
 .avatar-grid { display: grid; gap: 10px; }
 .avatar-item { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px dashed var(--border); }
 .avatar-meta { flex: 1; display: flex; flex-direction: column; }
+.preset-row { display: flex; gap: 8px; flex-wrap: wrap; }
+.preset { cursor: pointer; }
 </style>

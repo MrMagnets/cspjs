@@ -332,6 +332,10 @@ class CreatePermissionIn(BaseModel):
     can_create_problem: bool
 
 
+class TitleIn(BaseModel):
+    title: str = Field(default="", max_length=64)
+
+
 class ChangeUsernameIn(BaseModel):
     new_username: str
 
