@@ -17,19 +17,23 @@ router = APIRouter(prefix="/wrong-questions", tags=["错题本"])
 
 
 def _to_out(db: Session, wrong: WrongQuestion) -> WrongQuestionOut:
-    problem = wrong.problem
-    sq = wrong.sub_question
-    review_count = db.scalar(
-        select(func.count()).select_from(WrongReview).where(WrongReview.wrong_id == wrong.id)
-    ) or 0
+    """容错：题目/小题被删除时不能 500，返回可渲染的占位数据。"""
+    problem = getattr(wrong, "problem", None)
+    sq = getattr(wrong, "sub_question", None)
+    try:
+        review_count = db.scalar(
+            select(func.count()).select_from(WrongReview).where(WrongReview.wrong_id == wrong.id)
+        ) or 0
+    except Exception:  # noqa: BLE001
+        review_count = 0
     return WrongQuestionOut(
         id=wrong.id,
         problem_id=wrong.problem_id,
-        problem_title=problem.title if problem else "",
+        problem_title=problem.title if problem else "题目已删除",
         problem_type=problem.type if problem else "",
         sub_question_id=wrong.sub_question_id,
         sub_question_order=sq.order_no if sq else 0,
-        sub_question_content=sq.content_md if sq else "",
+        sub_question_content=sq.content_md if sq else "该小题已被删除",
         error_type=wrong.error_type,
         redo_status=wrong.redo_status,
         consecutive_pass=wrong.consecutive_pass,
@@ -40,7 +44,10 @@ def _to_out(db: Session, wrong: WrongQuestion) -> WrongQuestionOut:
 
 
 def _get_owned(db: Session, wrong_id: int, user: User) -> WrongQuestion:
-    wrong = db.get(WrongQuestion, wrong_id)
+    try:
+        wrong = db.get(WrongQuestion, wrong_id)
+    except Exception as exc:  # noqa: BLE001
+        raise HTTPException(status_code=400, detail="错题数据异常") from exc
     if wrong is None:
         raise HTTPException(status_code=404, detail="错题不存在")
     if wrong.user_id != user.id:
@@ -97,7 +104,13 @@ def list_wrong_questions(
     else:
         stmt = stmt.order_by(WrongQuestion.created_at.desc(), WrongQuestion.id.asc())
     rows = db.scalars(stmt.limit(limit)).all()
-    return [_to_out(db, w) for w in rows]
+    items: list[WrongQuestionOut] = []
+    for wrong in rows:
+        try:
+            items.append(_to_out(db, wrong))
+        except Exception:  # noqa: BLE001 - 单条坏数据不能拖垮整个错题本
+            continue
+    return items
 
 
 @router.get("/{wrong_id}", response_model=WrongQuestionOut)
@@ -156,8 +169,11 @@ def wrong_question_detail(
 ):
     """重做时需要完整题干与选项（含正确答案，用于前端判分后调用 review）。"""
     wrong = _get_owned(db, wrong_id, user)
-    problem = db.get(Problem, wrong.problem_id)
-    sq = db.get(SubQuestion, wrong.sub_question_id)
+    try:
+        problem = db.get(Problem, wrong.problem_id)
+        sq = db.get(SubQuestion, wrong.sub_question_id)
+    except Exception as exc:  # noqa: BLE001
+        raise HTTPException(status_code=400, detail="题目数据异常，请稍后重试") from exc
     if problem is None or sq is None:
         raise HTTPException(status_code=404, detail="题目已被删除")
     return {

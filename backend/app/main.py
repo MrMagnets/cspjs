@@ -35,7 +35,7 @@ from fastapi.responses import JSONResponse, Response  # noqa: E402
 
 from config import settings  # noqa: E402
 from database import Base, dialect_name_for_request, engine  # noqa: E402
-from routers import auth, mock_exams, problem_lists, problems, stats, tags, wrong_questions  # noqa: E402
+from routers import appeals, auth, contests, discussions, mock_exams, problem_lists, problems, stats, tags, users, wrong_questions  # noqa: E402
 from seed import seed as run_seed  # noqa: E402
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
@@ -171,7 +171,7 @@ async def unhandled_exception_handler(request: Request, exc: Exception):
     return JSONResponse({"detail": "服务器内部错误，请稍后重试"}, status_code=500)
 
 
-for module in (auth, tags, problems, problem_lists, wrong_questions, stats, mock_exams):
+for module in (auth, tags, problems, problem_lists, wrong_questions, stats, mock_exams, users, contests, discussions, appeals):
     app.include_router(module.router, prefix=settings.api_prefix)
 
 

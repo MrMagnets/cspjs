@@ -42,8 +42,11 @@ async function loadCounts() {
 async function load() {
   loading.value = true
   try {
-    items.value = await wrongApi.list({ scope: scope.value, limit: 100 })
+    const data = await wrongApi.list({ scope: scope.value, limit: 100 })
+    // 后端异常时可能返回 null / 非数组，必须归一化，否则模板空状态不渲染
+    items.value = Array.isArray(data) ? data.filter((item) => item && item.id) : []
   } catch (err) {
+    items.value = []
     ElMessage.error(err.message || '错题加载失败')
   } finally {
     loading.value = false
@@ -183,6 +186,13 @@ onMounted(async () => {
     </div>
 
     <div v-loading="loading" class="wrong-list">
+      <EmptyState
+        v-if="!loading && !items.length"
+        :title="scope === 'due' ? '今天没有待复习的错题' : scope === 'mastered' ? '还没有已掌握的错题' : '错题本还是空的'"
+        description="做错的题目会自动进入错题本，并按 1 / 3 / 7 天的间隔安排复习。"
+        action-text="去刷题"
+        @action="router.push({ name: 'problems' })"
+      />
       <article v-for="item in items" :key="item.id" class="wrong-item card">
         <div class="wi-head">
           <div class="wi-title-wrap">
@@ -245,14 +255,6 @@ onMounted(async () => {
         </div>
       </article>
     </div>
-
-    <EmptyState
-      v-if="!loading && !items.length"
-      :title="scope === 'due' ? '今天没有待复习的错题' : scope === 'mastered' ? '还没有已掌握的错题' : '错题本还是空的'"
-      description="做错的题目会自动进入错题本，并按 1 / 3 / 7 天的间隔安排复习。"
-      action-text="去刷题"
-      @action="router.push({ name: 'problems' })"
-    />
 
     <el-dialog v-model="redoVisible" title="错题重做" width="720px" top="6vh" align-center destroy-on-close>
       <div v-loading="redoLoading" class="redo-body">

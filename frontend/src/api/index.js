@@ -64,3 +64,49 @@ export const mockApi = {
 export const healthApi = {
   check: () => request('/health'),
 }
+
+export const rankingApi = {
+  list: (params) => request('/rankings', { params }),
+}
+
+export const contestApi = {
+  list: (params) => request('/contests', { params }),
+  detail: (id) => request(`/contests/${id}`),
+  create: (body) => request('/contests', { method: 'POST', body }),
+  antiCheat: (id, body) => request(`/contests/${id}/anti-cheat`, { method: 'POST', body }),
+  submit: (id, body) => request(`/contests/${id}/submit`, { method: 'POST', body }),
+  judge: (id, body) => request(`/contests/${id}/judge`, { method: 'POST', body }),
+}
+
+export const discussionApi = {
+  list: (params) => request('/discussions', { params }),
+  detail: (id) => request(`/discussions/${id}`),
+  create: (body) => request('/discussions', { method: 'POST', body }),
+  comment: (id, body) => request(`/discussions/${id}/comments`, { method: 'POST', body }),
+  report: (body) => request('/reports', { method: 'POST', body }),
+  reports: () => request('/admin/reports'),
+  resolveReport: (id) => request(`/admin/reports/${id}/resolve`, { method: 'POST' }),
+}
+
+export const appealApi = {
+  create: (body) => request('/appeals', { method: 'POST', body }),
+  mine: () => request('/appeals/me'),
+  all: () => request('/admin/appeals'),
+  review: (id, body) => request(`/admin/appeals/${id}/review`, { method: 'POST', body }),
+}
+
+export const adminUserApi = {
+  list: (params) => request('/admin/users', { params }),
+  unban: (id) => request(`/admin/users/${id}/unban`, { method: 'POST' }),
+  toggleCreate: (id, enabled) =>
+    request(`/admin/users/${id}/toggle-create-problem`, {
+      method: 'POST',
+      body: { can_create_problem: enabled },
+    }),
+  ban: (id) => request(`/admin/users/${id}/ban`, { method: 'POST' }),
+}
+
+export const userApi = {
+  changeName: (newUsername) =>
+    request('/users/change-name', { method: 'PUT', body: { new_username: newUsername } }),
+}

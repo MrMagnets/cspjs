@@ -5,7 +5,7 @@ from datetime import datetime, timezone
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy import func, or_, select
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload, selectinload
 
 from database import get_db
 from deps import get_current_user, get_optional_user, require_admin
@@ -28,13 +28,23 @@ router = APIRouter(tags=["题库"])
 
 # --------------------------------------------------------------------------- 内部工具
 def _load_problem(db: Session, problem_id: int) -> Problem:
-    problem = db.get(Problem, problem_id)
+    problem = db.scalars(
+        select(Problem)
+        .where(Problem.id == problem_id)
+        .options(
+            selectinload(Problem.sub_questions),
+            selectinload(Problem.tag_links),
+            joinedload(Problem.contributor),
+        )
+    ).unique().first()
     if problem is None:
         raise HTTPException(status_code=404, detail="题目不存在")
     return problem
 
 
 def _assert_can_view(problem: Problem, user: User | None) -> None:
+    if problem.pool_type != "P" and (user is None or user.role != "admin"):
+        raise HTTPException(status_code=403, detail="该题目属于 T / S 题库，仅管理员可见")
     if problem.status == "approved":
         return
     if user is None or (user.role != "admin" and user.id != problem.contributor_id):
@@ -174,11 +184,23 @@ def list_problems(
     exam: str | None = Query(None, description="CSP-J / CSP-S"),
     keyword: str | None = None,
     status_filter: str | None = Query(None, alias="status", description="approved/pending/rejected/mine/all"),
+    pool_type: str = Query("P", description="题库池：P 公开题 / T 团队题 / S 私有题"),
     mine: bool = False,
     page: int = Query(1, ge=1),
     page_size: int = Query(12, ge=1, le=50),
 ):
-    stmt = select(Problem)
+    pool_type = (pool_type or "P").upper()
+    if pool_type not in ("P", "T", "S"):
+        raise HTTPException(status_code=400, detail="pool_type 只能是 P / T / S")
+    if pool_type != "P" and (user is None or user.role != "admin"):
+        raise HTTPException(status_code=403, detail="只有管理员可以访问 T / S 题库")
+
+    stmt = select(Problem).options(
+        selectinload(Problem.sub_questions),
+        selectinload(Problem.tag_links),
+        joinedload(Problem.contributor),
+    )
+    stmt = stmt.where(Problem.pool_type == pool_type)
 
     wanted_status = (status_filter or "approved").lower()
     if mine:
@@ -257,12 +279,16 @@ def create_problem(
     user: User = Depends(get_current_user),
 ):
     is_admin = user.role == "admin"
+    if not user.can_create_problem and not is_admin:
+        raise HTTPException(status_code=403, detail="你的出题权限已被管理员关闭，请联系管理员")
     problem = Problem(
         title=payload.title.strip(),
         type=payload.type,
         source_tag=payload.source_tag,
         source_year=payload.source_year,
         source_exam=payload.source_exam,
+        pool_type=payload.pool_type,
+        problem_number=payload.problem_number,
         content_md=payload.content_md,
         answer_md=payload.answer_md,
         status="approved" if is_admin else "pending",
@@ -273,6 +299,9 @@ def create_problem(
     _replace_sub_questions(db, problem, payload.sub_questions)
     _apply_tags(db, problem, payload.tag_ids)
     db.add(problem)
+    db.flush()
+    if not problem.problem_number:
+        problem.problem_number = f"{problem.pool_type}{problem.id:05d}"
     db.commit()
     db.refresh(problem)
     return to_details(db, problem)
@@ -293,6 +322,9 @@ def update_problem(
     problem.source_tag = payload.source_tag
     problem.source_year = payload.source_year
     problem.source_exam = payload.source_exam
+    if user.role == "admin":
+        problem.pool_type = payload.pool_type
+        problem.problem_number = payload.problem_number or problem.problem_number
     problem.content_md = payload.content_md
     problem.answer_md = payload.answer_md
 

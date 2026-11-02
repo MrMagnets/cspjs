@@ -24,10 +24,18 @@ def tags_map(db: Session, tag_ids: set[int]) -> dict[int, TagOut]:
 
 def problem_tags(db: Session, problem: models.Problem, cache: dict[int, TagOut] | None = None) -> list[TagOut]:
     cache = cache if cache is not None else {}
-    missing = {link.tag_id for link in problem.tag_links} - cache.keys()
+    result: list[TagOut] = []
+    missing: set[int] = set()
+    for link in problem.tag_links:
+        tag = getattr(link, "tag", None)
+        if tag is not None:
+            result.append(TagOut.model_validate(tag))
+        else:
+            missing.add(link.tag_id)
     if missing:
         cache.update(tags_map(db, missing))
-    return [cache[link.tag_id] for link in problem.tag_links if link.tag_id in cache]
+        result.extend(cache[tid] for tid in sorted(missing) if tid in cache)
+    return result
 
 
 def to_summary(
@@ -42,6 +50,8 @@ def to_summary(
         source_tag=problem.source_tag,
         source_year=problem.source_year,
         source_exam=problem.source_exam,
+        pool_type=problem.pool_type,
+        problem_number=problem.problem_number,
         status=problem.status,
         contributor_id=problem.contributor_id,
         contributor_name=problem.contributor.username if problem.contributor else None,

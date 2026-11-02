@@ -16,7 +16,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from database import get_db
-from deps import get_current_user
+from deps import get_current_user_lenient
 from models import User
 from schemas import LoginIn, RegisterIn, UserOut
 from security import create_access_token, hash_password, verify_password
@@ -91,5 +91,5 @@ def login(payload: LoginIn, db: Session = Depends(get_db)):
 
 
 @router.get("/me", response_model=UserOut)
-def me(user: User = Depends(get_current_user)):
+def me(user: User = Depends(get_current_user_lenient)):
     return UserOut.model_validate(user)

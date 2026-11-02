@@ -26,6 +26,13 @@ class UserOut(ORMModel):
     id: int
     username: str
     role: str
+    monkey_score: int = 0
+    credit_score: int = 100
+    status: str = "normal"
+    ban_until: datetime | None = None
+    title: str = ""
+    can_create_problem: bool = True
+    last_username_change: datetime | None = None
     created_at: datetime
 
 
@@ -90,6 +97,8 @@ class ProblemIn(BaseModel):
     source_tag: Literal["original", "real", "adapted"] = "original"
     source_year: int | None = None
     source_exam: Literal["CSP-J", "CSP-S"] | None = None
+    pool_type: Literal["P", "T", "S"] = "P"
+    problem_number: str | None = None
     content_md: str = ""
     answer_md: str = ""
     tag_ids: list[int] = Field(default_factory=list)
@@ -125,6 +134,8 @@ class ProblemSummary(BaseModel):
     source_tag: str
     source_year: int | None
     source_exam: str | None
+    pool_type: str = "P"
+    problem_number: str | None = None
     status: str
     contributor_id: int
     contributor_name: str | None = None
@@ -306,3 +317,186 @@ class MockExamResult(MockExamSummary):
     by_type: list[TypeStat] = Field(default_factory=list)
     by_tag: list[TagStat] = Field(default_factory=list)
     duration_seconds: int | None = None
+
+# ---------------- 用户 / 排行榜 ----------------
+class UserPage(BaseModel):
+    items: list[UserOut]
+    total: int
+    page: int
+    page_size: int
+
+
+class CreatePermissionIn(BaseModel):
+    can_create_problem: bool
+
+
+class ChangeUsernameIn(BaseModel):
+    new_username: str
+
+
+class ChangeUsernameOut(BaseModel):
+    message: str
+    user: UserOut
+
+
+class RankingEntry(BaseModel):
+    rank: int
+    user_id: int
+    username: str
+    title: str = ""
+    monkey_score: int = 0
+    credit_score: int = 100
+    status: str = "normal"
+    solved_count: int = 0
+
+
+# ---------------- 比赛 ----------------
+class ContestProblemIn(BaseModel):
+    problem_id: int
+    order_no: int = 1
+    score: int = 10
+
+
+class ContestIn(BaseModel):
+    title: str = Field(min_length=2, max_length=200)
+    description: str = ""
+    contest_type: Literal["personal", "official"] = "official"
+    start_at: datetime
+    end_at: datetime
+    duration_minutes: int = 120
+    problems: list[ContestProblemIn] = Field(default_factory=list)
+
+
+class ContestProblemOut(BaseModel):
+    problem_id: int
+    title: str
+    type: str
+    order_no: int
+    score: int
+    content_md: str = ""
+    sub_questions: list[SubQuestionPublic] = Field(default_factory=list)
+
+
+class ContestSummary(BaseModel):
+    id: int
+    title: str
+    contest_type: str
+    status: str
+    start_at: datetime
+    end_at: datetime
+    duration_minutes: int
+    problem_count: int = 0
+    participant_count: int = 0
+
+
+class ContestResultOut(BaseModel):
+    user_id: int
+    username: str
+    score: int
+    cheat_count: int
+    status: str
+    submitted_at: datetime | None = None
+
+
+class ContestDetail(ContestSummary):
+    description: str = ""
+    problems: list[ContestProblemOut] = Field(default_factory=list)
+    my_result: ContestResultOut | None = None
+    results: list[ContestResultOut] = Field(default_factory=list)
+
+
+class AntiCheatIn(BaseModel):
+    event: str = "visibilitychange"
+    detail: str = ""
+
+
+class ContestAnswersIn(BaseModel):
+    answers: dict[str, str] = Field(default_factory=dict)
+    time_spent: int = 0
+
+
+class ContestJudgeIn(BaseModel):
+    user_id: int
+    cheat: bool = True
+    reason: str = ""
+
+
+# ---------------- 讨论 / 评论 / 举报 ----------------
+class DiscussionIn(BaseModel):
+    title: str = Field(min_length=2, max_length=200)
+    content_md: str = Field(min_length=1)
+    category: Literal["站务", "学术", "题目"] = "学术"
+    problem_id: int | None = None
+
+
+class CommentIn(BaseModel):
+    content_md: str = Field(min_length=1, max_length=20000)
+
+
+class DiscussionSummary(BaseModel):
+    id: int
+    title: str
+    category: str
+    author_id: int
+    author_name: str = ""
+    is_pinned: bool = False
+    is_locked: bool = False
+    comment_count: int = 0
+    created_at: datetime
+    updated_at: datetime
+
+
+class CommentOut(BaseModel):
+    id: int
+    author_id: int
+    author_name: str = ""
+    content_md: str
+    created_at: datetime
+
+
+class DiscussionDetail(DiscussionSummary):
+    content_md: str
+    problem_id: int | None = None
+    comments: list[CommentOut] = Field(default_factory=list)
+
+
+class ReportIn(BaseModel):
+    target_type: Literal["problem", "discussion", "comment"]
+    target_id: int
+    reason: str = Field(min_length=2, max_length=500)
+
+
+class ReportOut(BaseModel):
+    id: int
+    reporter_id: int
+    reporter_name: str = ""
+    target_type: str
+    target_id: int
+    reason: str
+    status: str
+    created_at: datetime
+
+
+# ---------------- 申诉 ----------------
+class AppealIn(BaseModel):
+    contest_id: int | None = None
+    reason: str = Field(min_length=2, max_length=2000)
+    video_url: str = Field(min_length=5, max_length=512)
+
+
+class AppealReviewIn(BaseModel):
+    action: Literal["approve", "reject"]
+    note: str = ""
+
+
+class AppealOut(BaseModel):
+    id: int
+    user_id: int
+    username: str = ""
+    contest_id: int | None = None
+    reason: str
+    video_url: str
+    status: str
+    admin_note: str = ""
+    created_at: datetime
+    reviewed_at: datetime | None = None
