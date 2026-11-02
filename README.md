@@ -244,9 +244,22 @@ psql "$DATABASE_URL" -f backend/sql/migrations/2026_11_avatar.sql
 | `submissions` | `time_spent`、`contest_id` |
 | 新增 | `contests`、`contest_problems`、`contest_results`、`cheat_logs` |
 | 新增 | `discussions`、`comments`、`reports` |
-| 新增 | `appeals` |
+| 新增 | `appeals`、`audit_logs` |
 
 迁移前请备份 Neon 数据库；生产环境建议使用 Neon 分支先在预发验证。
+
+### 一键同步缺失表 / 字段（推荐）
+
+```bash
+cd backend
+export DATABASE_URL='postgresql://...'
+python init_db.py --dry-run    # 打印将执行的 DDL
+python init_db.py --yes        # 创建缺失表、补齐缺失字段
+```
+
+`init_db.py` 会读取 `models.py`，只做加法：`CREATE TABLE IF NOT EXISTS`、`ALTER TABLE ADD COLUMN`，不会删除数据或改类型。日常迭代加字段时优先用它，避免手动拼 SQL。
+
+如果团队需要版本化迁移，可在 `backend/` 接入 Alembic：`alembic init migrations`，把 `env.py` 的 `target_metadata` 指向 `models.Base.metadata`，之后用 `alembic revision --autogenerate -m "..."` 生成版本。当前项目保留 SQL 迁移 + `init_db.py` 两套方案，Neon 上二者都可重复执行。
 
 ---
 
@@ -257,9 +270,10 @@ psql "$DATABASE_URL" -f backend/sql/migrations/2026_11_avatar.sql
 | 认证 | `POST /api/auth/register`、`POST /api/auth/login`、`GET /api/auth/me` |
 | 题库 | `GET /api/problems?pool_type=P`、`GET /api/problems/{id}`、`POST /api/problems`、`POST /api/problems/{id}/answer` |
 | 错题 | `GET /api/wrong-questions`、`GET /api/wrong-questions/{id}/detail`、`POST /api/wrong-questions/{id}/review` |
-| 比赛 | `GET /api/contests`、`GET /api/contests/{id}`、`POST /api/contests/{id}/anti-cheat`、`POST /api/contests/{id}/submit`、`POST /api/contests/{id}/judge` |
+| 比赛 | `GET /api/contests`、`GET /api/contests/{id}`、`PUT/DELETE /api/contests/{id}`、`POST /api/contests/{id}/anti-cheat`、`POST /api/contests/{id}/submit`、`POST /api/contests/{id}/judge` |
 | 讨论 | `GET/POST /api/discussions`、`GET /api/discussions/{id}`、`POST /api/discussions/{id}/comments`、`POST /api/reports`、`POST /api/admin/discussions/{id}/pin` |
 | 头像 | `PUT /api/users/avatar`、`GET /api/admin/avatars`、`POST /api/admin/avatars/{id}/review` |
+| 审计 | `GET /api/admin/audit-logs` |
 | 申诉 | `POST /api/appeals`、`GET /api/appeals/me`、`GET /api/admin/appeals`、`POST /api/admin/appeals/{id}/review` |
 | 排行榜 | `GET /api/rankings` |
 | 用户管理 | `GET /api/admin/users`、`POST /api/admin/users/{id}/unban`、`POST /api/admin/users/{id}/toggle-create-problem` |

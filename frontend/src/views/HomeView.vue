@@ -66,9 +66,7 @@ onMounted(async () => {
   <div class="page">
     <section class="hero">
       <div class="hero-content">
-        <p class="eyebrow">CSP-J/S 第一轮认证</p>
         <h1>CSP-J/S 初赛训练</h1>
-        <p class="hero-desc">覆盖单项选择、阅读程序、完善程序三类题型。</p>
         <div class="hero-actions">
           <el-button type="primary" size="large" @click="router.push({ name: 'problems' })">
             开始训练
@@ -76,9 +74,6 @@ onMounted(async () => {
           <el-button size="large" @click="router.push({ name: auth.isLoggedIn ? 'mock-exams' : 'login' })">
             模拟考试
           </el-button>
-        </div>
-        <div class="hero-meta">
-          <span>{{ total }} 道题目</span>
         </div>
       </div>
 

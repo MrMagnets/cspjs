@@ -3,13 +3,14 @@ from __future__ import annotations
 
 from datetime import datetime, timezone
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select
 from sqlalchemy.orm import Session, joinedload
 
 from database import get_db
-from deps import get_current_user, get_current_user_lenient, require_admin
+from deps import get_current_user_lenient, require_admin
 from models import Appeal, Contest, ContestResult, User
+from routers.audit import log_action
 from schemas import AppealIn, AppealOut, AppealReviewIn
 
 router = APIRouter(tags=["申诉"])
@@ -88,11 +89,14 @@ def review_appeal(
     db: Session = Depends(get_db),
     admin: User = Depends(require_admin),
 ):
-    appeal = db.get(Appeal, appeal_id)
+    appeal = db.scalars(
+        select(Appeal).where(Appeal.id == appeal_id).options(joinedload(Appeal.user))
+    ).unique().first()
     if appeal is None:
         raise HTTPException(status_code=404, detail="申诉不存在")
     if appeal.status != "pending":
         raise HTTPException(status_code=400, detail="该申诉已处理")
+
     appeal.status = "approved" if payload.action == "approve" else "rejected"
     appeal.admin_id = admin.id
     appeal.admin_note = payload.note
@@ -115,6 +119,8 @@ def review_appeal(
             )
             if result is not None and result.status == "cheating":
                 result.status = "submitted"
+
+    log_action(db, admin, f"appeal_{payload.action}", "appeal", appeal.id, f"申诉审核：{payload.note[:200]}")
     db.commit()
     db.refresh(appeal)
     return _out(appeal)

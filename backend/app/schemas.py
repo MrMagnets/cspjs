@@ -403,9 +403,20 @@ class ContestResultOut(BaseModel):
 
 class ContestDetail(ContestSummary):
     description: str = ""
+    creator_name: str = ""
     problems: list[ContestProblemOut] = Field(default_factory=list)
     my_result: ContestResultOut | None = None
     results: list[ContestResultOut] = Field(default_factory=list)
+
+
+class ContestUpdateIn(BaseModel):
+    title: str | None = None
+    description: str | None = None
+    contest_type: Literal["personal", "official"] | None = None
+    start_at: datetime | None = None
+    end_at: datetime | None = None
+    duration_minutes: int | None = None
+    problems: list[ContestProblemIn] | None = None
 
 
 class AntiCheatIn(BaseModel):
@@ -517,3 +528,14 @@ class AppealOut(BaseModel):
     admin_note: str = ""
     created_at: datetime
     reviewed_at: datetime | None = None
+
+
+class AuditLogOut(BaseModel):
+    id: int
+    admin_id: int | None = None
+    admin_name: str = ""
+    action: str
+    target_type: str = ""
+    target_id: int | None = None
+    detail: str = ""
+    created_at: datetime

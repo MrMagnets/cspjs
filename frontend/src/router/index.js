@@ -52,16 +52,48 @@ const routes = [
     meta: { title: '我的投稿', requiresAuth: true },
   },
   {
-    path: '/admin/review',
-    name: 'admin-review',
-    component: () => import('@/views/AdminReviewView.vue'),
-    meta: { title: '题目审核', requiresAuth: true, requiresAdmin: true },
-  },
-  {
-    path: '/admin/tags',
-    name: 'admin-tags',
-    component: () => import('@/views/TagsAdminView.vue'),
-    meta: { title: '标签管理', requiresAuth: true, requiresAdmin: true },
+    path: '/admin',
+    component: () => import('@/views/AdminDashboardView.vue'),
+    meta: { title: '管理后台', requiresAuth: true, requiresAdmin: true },
+    children: [
+      { path: '', redirect: { name: 'admin-users' } },
+      {
+        path: 'users',
+        name: 'admin-users',
+        component: () => import('@/views/AdminUsersView.vue'),
+        meta: { title: '用户管理' },
+      },
+      {
+        path: 'contests',
+        name: 'admin-contests',
+        component: () => import('@/views/AdminContestsView.vue'),
+        meta: { title: '比赛管理' },
+      },
+      {
+        path: 'appeals',
+        name: 'admin-appeals',
+        component: () => import('@/views/AppealsView.vue'),
+        meta: { title: '申诉审核' },
+      },
+      {
+        path: 'audit',
+        name: 'admin-audit',
+        component: () => import('@/views/AdminAuditView.vue'),
+        meta: { title: '陶片放逐' },
+      },
+      {
+        path: 'review',
+        name: 'admin-review',
+        component: () => import('@/views/AdminReviewView.vue'),
+        meta: { title: '题目审核' },
+      },
+      {
+        path: 'tags',
+        name: 'admin-tags',
+        component: () => import('@/views/TagsAdminView.vue'),
+        meta: { title: '标签管理' },
+      },
+    ],
   },
   {
     path: '/lists',
@@ -146,12 +178,6 @@ const routes = [
     name: 'appeals',
     component: () => import('@/views/AppealsView.vue'),
     meta: { title: '申诉中心', requiresAuth: true },
-  },
-  {
-    path: '/admin/users',
-    name: 'admin-users',
-    component: () => import('@/views/AdminUsersView.vue'),
-    meta: { title: '用户管理', requiresAuth: true, requiresAdmin: true },
   },
   {
     path: '/:pathMatch(.*)*',

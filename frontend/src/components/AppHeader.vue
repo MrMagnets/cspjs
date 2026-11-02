@@ -23,9 +23,7 @@ const navItems = computed(() => {
     { name: 'stats', label: '统计', to: { name: 'stats' } },
   ]
   if (auth.isAdmin) {
-    items.push({ name: 'admin-users', label: '用户管理', to: { name: 'admin-users' } })
-    items.push({ name: 'admin-review', label: '审核', to: { name: 'admin-review' } })
-    items.push({ name: 'admin-tags', label: '标签', to: { name: 'admin-tags' } })
+    items.push({ name: 'admin-users', label: '管理后台', to: { name: 'admin-users' } })
   }
   return items
 })
@@ -108,9 +106,7 @@ function goLogin() {
                 <el-dropdown-item command="submit">投稿新题</el-dropdown-item>
                 <el-dropdown-item command="appeals">申诉中心</el-dropdown-item>
                 <template v-if="auth.isAdmin">
-                  <el-dropdown-item command="users" divided>用户管理</el-dropdown-item>
-                  <el-dropdown-item command="review">题目审核</el-dropdown-item>
-                  <el-dropdown-item command="tags">标签管理</el-dropdown-item>
+                  <el-dropdown-item command="users" divided>管理后台</el-dropdown-item>
                 </template>
                 <el-dropdown-item command="logout" divided>退出登录</el-dropdown-item>
               </el-dropdown-menu>

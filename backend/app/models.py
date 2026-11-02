@@ -240,6 +240,8 @@ class Contest(Base):
     created_by: Mapped[int | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
     created_at: Mapped[datetime] = mapped_column(UTCDateTime, default=utcnow, nullable=False)
 
+    creator: Mapped[User | None] = relationship(foreign_keys=[created_by], lazy="joined")
+
     problems: Mapped[list["ContestProblem"]] = relationship(
         cascade="all, delete-orphan", order_by="ContestProblem.order_no", lazy="selectin"
     )
@@ -375,3 +377,21 @@ class Appeal(Base):
 
     user: Mapped[User] = relationship(foreign_keys=[user_id], lazy="joined")
     contest: Mapped[Contest | None] = relationship(lazy="joined")
+
+
+class AuditLog(Base):
+    """陶片放逐：管理员操作审计。"""
+
+    __tablename__ = "audit_logs"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    admin_id: Mapped[int | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
+    action: Mapped[str] = mapped_column(String(64), nullable=False)
+    target_type: Mapped[str] = mapped_column(String(32), nullable=False, default="")
+    target_id: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    detail: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    created_at: Mapped[datetime] = mapped_column(UTCDateTime, default=utcnow, nullable=False)
+
+    admin: Mapped[User | None] = relationship(foreign_keys=[admin_id], lazy="joined")
+
+    __table_args__ = (Index("ix_audit_logs_created_at", "created_at"),)

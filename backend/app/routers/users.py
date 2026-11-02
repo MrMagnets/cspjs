@@ -1,4 +1,4 @@
-"""用户 / 排行榜 / 管理员用户管理。"""
+"""用户 / 排行榜 / 管理员用户管理 / 头像 / 改名。"""
 from __future__ import annotations
 
 import re
@@ -9,6 +9,7 @@ from sqlalchemy import func, or_, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
+from routers.audit import log_action
 from database import get_db
 from deps import get_current_user, require_admin
 from models import Submission, User
@@ -28,7 +29,7 @@ router = APIRouter(tags=["用户"])
 
 @router.get("/rankings", response_model=list[RankingEntry])
 def rankings(db: Session = Depends(get_db), limit: int = Query(50, ge=1, le=200)):
-    """按小猴值排行；一次性聚合做题数，避免逐用户查询（N+1）。"""
+    """按小猴值排行；一次性聚合做题数，避免逐用户查询。"""
     solved_subq = (
         select(Submission.user_id, func.count(func.distinct(Submission.problem_id)).label("solved"))
         .where(Submission.is_correct.is_(True), Submission.mock_exam_id.is_(None))
@@ -66,6 +67,7 @@ def change_username(
 ):
     """修改用户名：普通用户 30 天冷却，管理员不受限制。"""
     new_username = payload.new_username.strip()
+
     if not 3 <= len(new_username) <= 20:
         raise HTTPException(status_code=400, detail="用户名长度需为 3–20 个字符")
     if not re.fullmatch(r"[A-Za-z0-9_\u4e00-\u9fa5-]+", new_username):
@@ -83,10 +85,7 @@ def change_username(
         if last.tzinfo is None:
             last = last.replace(tzinfo=timezone.utc)
         if now - last < timedelta(days=30):
-            raise HTTPException(
-                status_code=400,
-                detail="修改失败：30天内只能修改一次用户名",
-            )
+            raise HTTPException(status_code=400, detail="修改失败：30天内只能修改一次用户名")
 
     user.username = new_username
     user.last_username_change = now
@@ -131,6 +130,80 @@ def admin_users(
     )
 
 
+@router.post("/admin/users/{user_id}/unban", response_model=UserOut)
+def unban_user(
+    user_id: int,
+    db: Session = Depends(get_db),
+    admin: User = Depends(require_admin),
+):
+    user = db.get(User, user_id)
+    if user is None:
+        raise HTTPException(status_code=404, detail="用户不存在")
+
+    user.status = "normal"
+    user.ban_until = None
+    cleaned = (user.title or "")
+    for word in ("作弊者", "作弊", "棕名"):
+        cleaned = cleaned.replace(word, "")
+    user.title = cleaned.strip()
+    user.credit_score = 100
+    user.can_create_problem = True
+    log_action(db, admin, "unban_user", "user", user.id, "解封并恢复信用分 100")
+
+    try:
+        db.commit()
+    except Exception as exc:  # noqa: BLE001 - 解封失败不能静默
+        db.rollback()
+        raise HTTPException(status_code=500, detail="解封失败，请稍后重试") from exc
+    db.refresh(user)
+    return UserOut.model_validate(user)
+
+
+@router.post("/admin/users/{user_id}/toggle-create-problem", response_model=UserOut)
+def toggle_create_problem(
+    user_id: int,
+    payload: CreatePermissionIn,
+    db: Session = Depends(get_db),
+    admin: User = Depends(require_admin),
+):
+    user = db.get(User, user_id)
+    if user is None:
+        raise HTTPException(status_code=404, detail="用户不存在")
+    if user.role == "admin":
+        raise HTTPException(status_code=400, detail="不能限制管理员账号")
+    user.can_create_problem = payload.can_create_problem
+    log_action(db, admin, "toggle_create_problem", "user", user.id, f"出题权限={payload.can_create_problem}")
+    db.commit()
+    db.refresh(user)
+    return UserOut.model_validate(user)
+
+
+@router.post("/admin/users/{user_id}/ban", response_model=UserOut)
+def ban_user(
+    user_id: int,
+    db: Session = Depends(get_db),
+    admin: User = Depends(require_admin),
+):
+    user = db.get(User, user_id)
+    if user is None:
+        raise HTTPException(status_code=404, detail="用户不存在")
+    if user.role == "admin":
+        raise HTTPException(status_code=400, detail="不能封禁管理员账号")
+    user.status = "banned"
+    user.credit_score = 50
+    user.title = "作弊者"
+    user.can_create_problem = False
+    log_action(db, admin, "ban_user", "user", user.id, "严重封禁：信用分 50 / 作弊者")
+    try:
+        db.commit()
+    except Exception as exc:  # noqa: BLE001
+        db.rollback()
+        raise HTTPException(status_code=500, detail="封禁失败，请稍后重试") from exc
+    db.refresh(user)
+    return UserOut.model_validate(user)
+
+
+# --------------------------------------------------------------------------- 头像
 @router.put("/users/avatar", response_model=UserOut)
 def update_avatar(
     payload: AvatarIn,
@@ -140,7 +213,6 @@ def update_avatar(
     if not payload.avatar_url.startswith(("http://", "https://")):
         raise HTTPException(status_code=400, detail="头像链接必须以 http(s):// 开头")
     user.avatar_url = payload.avatar_url
-    # 管理员头像直接通过；普通用户进入待审核
     user.avatar_status = "approved" if user.role == "admin" else "pending"
     db.commit()
     db.refresh(user)
@@ -164,81 +236,13 @@ def review_avatar(
     user_id: int,
     payload: AvatarReviewIn,
     db: Session = Depends(get_db),
-    _: User = Depends(require_admin),
+    admin: User = Depends(require_admin),
 ):
     user = db.get(User, user_id)
     if user is None:
         raise HTTPException(status_code=404, detail="用户不存在")
     user.avatar_status = "approved" if payload.action == "approve" else "rejected"
+    log_action(db, admin, "avatar_review", "user", user.id, f"头像审核：{user.avatar_status}")
     db.commit()
-    db.refresh(user)
-    return UserOut.model_validate(user)
-
-
-@router.post("/admin/users/{user_id}/unban", response_model=UserOut)
-def unban_user(
-    user_id: int,
-    db: Session = Depends(get_db),
-    _: User = Depends(require_admin),
-):
-    user = db.get(User, user_id)
-    if user is None:
-        raise HTTPException(status_code=404, detail="用户不存在")
-    user.status = "normal"
-    user.ban_until = None
-    # 移除“作弊/棕名”相关字样，保留其他自定义称号
-    cleaned = (user.title or "")
-    for word in ("作弊者", "作弊", "棕名"):
-        cleaned = cleaned.replace(word, "")
-    user.title = cleaned.strip()
-    user.credit_score = 100
-    user.can_create_problem = True
-    try:
-        db.commit()
-    except Exception as exc:  # noqa: BLE001 - 不能静默吞掉解封失败
-        db.rollback()
-        raise HTTPException(status_code=500, detail="解封失败，请稍后重试") from exc
-    db.refresh(user)
-    return UserOut.model_validate(user)
-
-
-@router.post("/admin/users/{user_id}/toggle-create-problem", response_model=UserOut)
-def toggle_create_problem(
-    user_id: int,
-    payload: CreatePermissionIn,
-    db: Session = Depends(get_db),
-    _: User = Depends(require_admin),
-):
-    user = db.get(User, user_id)
-    if user is None:
-        raise HTTPException(status_code=404, detail="用户不存在")
-    if user.role == "admin":
-        raise HTTPException(status_code=400, detail="不能限制管理员账号")
-    user.can_create_problem = payload.can_create_problem
-    db.commit()
-    db.refresh(user)
-    return UserOut.model_validate(user)
-
-
-@router.post("/admin/users/{user_id}/ban", response_model=UserOut)
-def ban_user(
-    user_id: int,
-    db: Session = Depends(get_db),
-    _: User = Depends(require_admin),
-):
-    user = db.get(User, user_id)
-    if user is None:
-        raise HTTPException(status_code=404, detail="用户不存在")
-    if user.role == "admin":
-        raise HTTPException(status_code=400, detail="不能封禁管理员账号")
-    user.status = "banned"
-    user.credit_score = 50
-    user.title = "作弊者"
-    user.can_create_problem = False
-    try:
-        db.commit()
-    except Exception as exc:  # noqa: BLE001
-        db.rollback()
-        raise HTTPException(status_code=500, detail="封禁失败，请稍后重试") from exc
     db.refresh(user)
     return UserOut.model_validate(user)

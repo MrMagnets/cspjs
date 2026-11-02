@@ -80,6 +80,7 @@ a:hover {
 }
 
 .page-title .sub {
+  display: none;
   font-size: 13px;
   font-weight: 400;
   color: var(--muted);

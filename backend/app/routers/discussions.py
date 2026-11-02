@@ -1,15 +1,16 @@
-"""讨论区 / 评论 / 举报。"""
+"""讨论区 / 评论 / 举报 / 管理员置顶。"""
 from __future__ import annotations
 
 from datetime import datetime, timezone
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
-from sqlalchemy import func, select
+from sqlalchemy import select
 from sqlalchemy.orm import Session, selectinload
 
 from database import get_db
 from deps import get_current_user, require_admin
 from models import Comment, Discussion, Problem, Report, User
+from routers.audit import log_action
 from schemas import (
     CommentIn,
     CommentOut,
@@ -24,7 +25,7 @@ from schemas import (
 router = APIRouter(tags=["讨论"])
 
 
-def _summary(discussion: Discussion, comment_count: int | None = None) -> DiscussionSummary:
+def _summary(discussion: Discussion) -> DiscussionSummary:
     return DiscussionSummary(
         id=discussion.id,
         title=discussion.title,
@@ -33,7 +34,7 @@ def _summary(discussion: Discussion, comment_count: int | None = None) -> Discus
         author_name=discussion.author.username if discussion.author else "已注销用户",
         is_pinned=discussion.is_pinned,
         is_locked=discussion.is_locked,
-        comment_count=comment_count if comment_count is not None else len(discussion.comments),
+        comment_count=len(discussion.comments),
         created_at=discussion.created_at,
         updated_at=discussion.updated_at,
     )
@@ -141,12 +142,13 @@ def pin_discussion(
     discussion_id: int,
     payload: PinIn,
     db: Session = Depends(get_db),
-    _: User = Depends(require_admin),
+    admin: User = Depends(require_admin),
 ):
     discussion = db.get(Discussion, discussion_id)
     if discussion is None:
         raise HTTPException(status_code=404, detail="帖子不存在")
     discussion.is_pinned = payload.is_pinned
+    log_action(db, admin, "pin_discussion", "discussion", discussion.id, f"置顶={payload.is_pinned}")
     db.commit()
     db.refresh(discussion)
     return _detail(discussion)
@@ -217,6 +219,7 @@ def resolve_report(
     report.status = "resolved"
     report.resolved_by = admin.id
     report.resolved_at = datetime.now(timezone.utc)
+    log_action(db, admin, "resolve_report", "report", report.id, "处理举报")
     db.commit()
     db.refresh(report)
     return ReportOut(

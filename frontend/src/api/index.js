@@ -73,6 +73,8 @@ export const contestApi = {
   list: (params) => request('/contests', { params }),
   detail: (id) => request(`/contests/${id}`),
   create: (body) => request('/contests', { method: 'POST', body }),
+  update: (id, body) => request(`/contests/${id}`, { method: 'PUT', body }),
+  remove: (id) => request(`/contests/${id}`, { method: 'DELETE' }),
   antiCheat: (id, body) => request(`/contests/${id}/anti-cheat`, { method: 'POST', body }),
   submit: (id, body) => request(`/contests/${id}/submit`, { method: 'POST', body }),
   judge: (id, body) => request(`/contests/${id}/judge`, { method: 'POST', body }),
@@ -116,4 +118,8 @@ export const userApi = {
     request('/users/change-name', { method: 'PUT', body: { new_username: newUsername } }),
   updateAvatar: (avatarUrl) =>
     request('/users/avatar', { method: 'PUT', body: { avatar_url: avatarUrl } }),
+}
+
+export const auditApi = {
+  list: () => request('/admin/audit-logs'),
 }

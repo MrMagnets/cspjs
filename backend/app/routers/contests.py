@@ -1,4 +1,4 @@
-"""比赛：列表、详情、防切屏、交卷、管理员判定。"""
+"""比赛：说明、列表、防切屏、交卷、管理员编辑 / 删除 / 判定。"""
 from __future__ import annotations
 
 from datetime import datetime, timezone
@@ -9,7 +9,8 @@ from sqlalchemy.orm import Session, joinedload, selectinload
 
 from database import get_db
 from deps import get_current_user, get_optional_user, require_admin
-from models import CheatLog, Contest, ContestProblem, ContestResult, Problem, SubQuestion, Submission, User
+from models import CheatLog, Contest, ContestProblem, ContestResult, Problem, Submission, User
+from routers.audit import log_action
 from schemas import (
     AntiCheatIn,
     ContestAnswersIn,
@@ -19,6 +20,7 @@ from schemas import (
     ContestProblemOut,
     ContestResultOut,
     ContestSummary,
+    ContestUpdateIn,
     SubQuestionPublic,
 )
 
@@ -75,6 +77,7 @@ def _load_contest(db: Session, contest_id: int) -> Contest:
             .selectinload(ContestProblem.problem)
             .selectinload(Problem.sub_questions),
             selectinload(Contest.results).joinedload(ContestResult.user),
+            joinedload(Contest.creator),
         )
     ).unique().first()
     if contest is None:
@@ -130,6 +133,67 @@ def create_contest(
     return get_contest(contest.id, db=db, user=user)
 
 
+@router.put("/contests/{contest_id}", response_model=ContestDetail)
+def update_contest(
+    contest_id: int,
+    payload: ContestUpdateIn,
+    db: Session = Depends(get_db),
+    admin: User = Depends(require_admin),
+):
+    contest = db.get(Contest, contest_id)
+    if contest is None:
+        raise HTTPException(status_code=404, detail="比赛不存在")
+
+    start = _utc(payload.start_at) if payload.start_at else _utc(contest.start_at)
+    end = _utc(payload.end_at) if payload.end_at else _utc(contest.end_at)
+    if end <= start:
+        raise HTTPException(status_code=400, detail="结束时间必须晚于开始时间")
+
+    if payload.title is not None:
+        contest.title = payload.title.strip()
+    if payload.description is not None:
+        contest.description = payload.description
+    if payload.contest_type is not None:
+        contest.contest_type = payload.contest_type
+    if payload.start_at is not None:
+        contest.start_at = start
+    if payload.end_at is not None:
+        contest.end_at = end
+    if payload.duration_minutes is not None:
+        contest.duration_minutes = payload.duration_minutes
+
+    if payload.problems is not None:
+        ids = [item.problem_id for item in payload.problems]
+        existing = set(db.scalars(select(Problem.id).where(Problem.id.in_(ids))).all()) if ids else set()
+        missing = [pid for pid in ids if pid not in existing]
+        if missing:
+            raise HTTPException(status_code=400, detail=f"题目不存在：{missing}")
+        contest.problems.clear()
+        for item in payload.problems:
+            contest.problems.append(
+                ContestProblem(problem_id=item.problem_id, order_no=item.order_no, score=item.score)
+            )
+
+    log_action(db, admin, "update_contest", "contest", contest_id, f"更新比赛：{contest.title}")
+    db.commit()
+    return get_contest(contest_id, db=db, user=admin)
+
+
+@router.delete("/contests/{contest_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_contest(
+    contest_id: int,
+    db: Session = Depends(get_db),
+    admin: User = Depends(require_admin),
+):
+    contest = db.get(Contest, contest_id)
+    if contest is None:
+        raise HTTPException(status_code=404, detail="比赛不存在")
+    title = contest.title
+    db.delete(contest)
+    log_action(db, admin, "delete_contest", "contest", contest_id, f"删除比赛：{title}")
+    db.commit()
+
+
 @router.get("/contests/{contest_id}", response_model=ContestDetail)
 def get_contest(
     contest_id: int,
@@ -166,6 +230,7 @@ def get_contest(
     return ContestDetail(
         **_summary(contest).model_dump(),
         description=contest.description,
+        creator_name=contest.creator.username if contest.creator else "官方",
         problems=problems,
         my_result=_result_out(my_result) if my_result else None,
         results=[_result_out(r) for r in results],
@@ -221,8 +286,6 @@ def submit_contest(
     contest = _load_contest(db, contest_id)
     if _status_of(contest) == "upcoming":
         raise HTTPException(status_code=400, detail="比赛尚未开始")
-    if _status_of(contest) == "ended":
-        pass  # 允许补交，由管理员判定
 
     result = db.scalar(
         select(ContestResult).where(
@@ -265,7 +328,6 @@ def submit_contest(
     result.score = score
     result.status = "submitted"
     result.submitted_at = datetime.now(timezone.utc)
-    # 个人赛不计入小猴值；官方赛计入
     if contest.contest_type == "official":
         user.monkey_score += score
     db.commit()
@@ -288,6 +350,7 @@ def judge_contest(
         raise HTTPException(status_code=404, detail="用户不存在")
     if target.role == "admin":
         raise HTTPException(status_code=400, detail="不能对管理员执行作弊判定或封禁")
+
     result = db.scalar(
         select(ContestResult).where(
             ContestResult.contest_id == contest_id, ContestResult.user_id == target.id
@@ -302,7 +365,6 @@ def judge_contest(
         target.credit_score = 50
         target.title = "作弊者"
         target.can_create_problem = False
-        # 普通作弊保留账号（棕名）；severe=true 才是严重封禁
         if payload.severe:
             target.status = "banned"
             target.ban_until = None
@@ -320,6 +382,15 @@ def judge_contest(
         )
     else:
         result.status = "submitted"
+
+    log_action(
+        db,
+        admin,
+        "judge_contest",
+        "contest",
+        contest_id,
+        f"判定用户 {target.username}：{'作弊' if payload.cheat else '通过'}{'（严重）' if payload.severe else ''}",
+    )
     db.commit()
     db.refresh(result)
     return _result_out(result)
