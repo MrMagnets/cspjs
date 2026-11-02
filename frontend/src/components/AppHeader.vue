@@ -4,6 +4,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { useAuthStore } from '@/stores/auth'
 import { useConfirmDialog } from '@/composables/useConfirmDialog'
+import UserTitle from '@/components/UserTitle.vue'
 
 const auth = useAuthStore()
 const route = useRoute()
@@ -30,7 +31,10 @@ const navItems = computed(() => {
 })
 
 const isActive = (to) => route.name === to.name
-const brown = computed(() => auth.user?.title?.includes('棕') || auth.user?.status === 'banned')
+const brown = computed(() => /作弊|棕名/.test(auth.user?.title || ''))
+const avatarUrl = computed(() =>
+  auth.user?.avatar_url && auth.user?.avatar_status === 'approved' ? auth.user.avatar_url : '',
+)
 
 async function handleLogout() {
   const ok = await confirm({
@@ -90,10 +94,12 @@ function goLogin() {
           </el-button>
           <el-dropdown trigger="click" @command="onCommand">
             <span class="user-chip" :class="{ 'is-brown': brown }">
-              <span class="avatar">{{ auth.username.slice(0, 1).toUpperCase() }}</span>
+              <span class="avatar">
+                <img v-if="avatarUrl" :src="avatarUrl" alt="avatar" />
+                <template v-else>{{ auth.username.slice(0, 1).toUpperCase() }}</template>
+              </span>
               <span class="user-name">{{ auth.username }}</span>
-              <span v-if="brown" class="role-badge brown-badge">{{ auth.user?.title || '棕名' }}</span>
-              <span v-else-if="auth.isAdmin" class="role-badge">管理员</span>
+              <UserTitle :user="auth.user" />
             </span>
             <template #dropdown>
               <el-dropdown-menu>
@@ -158,7 +164,8 @@ function goLogin() {
 .submit-btn { border-radius: 8px; }
 .user-chip { display: inline-flex; align-items: center; gap: 7px; cursor: pointer; padding: 4px 8px; border-radius: 999px; background: #f7f9fd; }
 .user-chip.is-brown { background: #f3e7da; }
-.avatar { display: grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; background: #1d4ed8; color: #fff; font-size: 12px; font-weight: 700; }
+.avatar { display: grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; background: #1d4ed8; color: #fff; font-size: 12px; font-weight: 700; overflow: hidden; }
+.avatar img { width: 100%; height: 100%; object-fit: cover; }
 .user-chip.is-brown .avatar { background: #8b5a2b; }
 .user-name { font-size: 13px; color: var(--text-strong); max-width: 110px; overflow: hidden; text-overflow: ellipsis; }
 .user-chip.is-brown .user-name { color: #8b5a2b; font-weight: 700; }

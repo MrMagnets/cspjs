@@ -5,7 +5,7 @@ from datetime import datetime, timezone
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 
 from database import get_db
 from deps import get_current_user, get_current_user_lenient, require_admin
@@ -20,6 +20,7 @@ def _out(appeal: Appeal) -> AppealOut:
         id=appeal.id,
         user_id=appeal.user_id,
         username=appeal.user.username if appeal.user else "",
+        title=appeal.user.title if appeal.user else "",
         contest_id=appeal.contest_id,
         reason=appeal.reason,
         video_url=appeal.video_url,
@@ -58,7 +59,12 @@ def my_appeals(
     db: Session = Depends(get_db),
     user: User = Depends(get_current_user_lenient),
 ):
-    rows = db.scalars(select(Appeal).where(Appeal.user_id == user.id).order_by(Appeal.created_at.desc())).all()
+    rows = db.scalars(
+        select(Appeal)
+        .where(Appeal.user_id == user.id)
+        .options(joinedload(Appeal.user))
+        .order_by(Appeal.created_at.desc())
+    ).unique().all()
     return [_out(a) for a in rows]
 
 
@@ -67,7 +73,11 @@ def all_appeals(
     db: Session = Depends(get_db),
     _: User = Depends(require_admin),
 ):
-    rows = db.scalars(select(Appeal).order_by(Appeal.status.asc(), Appeal.created_at.desc())).all()
+    rows = db.scalars(
+        select(Appeal)
+        .options(joinedload(Appeal.user))
+        .order_by(Appeal.status.asc(), Appeal.created_at.desc())
+    ).unique().all()
     return [_out(a) for a in rows]
 
 

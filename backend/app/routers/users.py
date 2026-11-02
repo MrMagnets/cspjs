@@ -13,6 +13,8 @@ from database import get_db
 from deps import get_current_user, require_admin
 from models import Submission, User
 from schemas import (
+    AvatarIn,
+    AvatarReviewIn,
     ChangeUsernameIn,
     ChangeUsernameOut,
     CreatePermissionIn,
@@ -45,6 +47,7 @@ def rankings(db: Session = Depends(get_db), limit: int = Query(50, ge=1, le=200)
             rank=idx,
             user_id=user.id,
             username=user.username,
+            role=user.role,
             title=user.title,
             monkey_score=user.monkey_score,
             credit_score=user.credit_score,
@@ -128,6 +131,50 @@ def admin_users(
     )
 
 
+@router.put("/users/avatar", response_model=UserOut)
+def update_avatar(
+    payload: AvatarIn,
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_user),
+):
+    if not payload.avatar_url.startswith(("http://", "https://")):
+        raise HTTPException(status_code=400, detail="头像链接必须以 http(s):// 开头")
+    user.avatar_url = payload.avatar_url
+    # 管理员头像直接通过；普通用户进入待审核
+    user.avatar_status = "approved" if user.role == "admin" else "pending"
+    db.commit()
+    db.refresh(user)
+    return UserOut.model_validate(user)
+
+
+@router.get("/admin/avatars", response_model=list[UserOut])
+def pending_avatars(
+    avatar_status: str = Query("pending", alias="status"),
+    db: Session = Depends(get_db),
+    _: User = Depends(require_admin),
+):
+    stmt = select(User).where(User.avatar_url.is_not(None))
+    if avatar_status in ("pending", "approved", "rejected"):
+        stmt = stmt.where(User.avatar_status == avatar_status)
+    return [UserOut.model_validate(u) for u in db.scalars(stmt.order_by(User.id.desc())).all()]
+
+
+@router.post("/admin/avatars/{user_id}/review", response_model=UserOut)
+def review_avatar(
+    user_id: int,
+    payload: AvatarReviewIn,
+    db: Session = Depends(get_db),
+    _: User = Depends(require_admin),
+):
+    user = db.get(User, user_id)
+    if user is None:
+        raise HTTPException(status_code=404, detail="用户不存在")
+    user.avatar_status = "approved" if payload.action == "approve" else "rejected"
+    db.commit()
+    db.refresh(user)
+    return UserOut.model_validate(user)
+
+
 @router.post("/admin/users/{user_id}/unban", response_model=UserOut)
 def unban_user(
     user_id: int,
@@ -139,10 +186,18 @@ def unban_user(
         raise HTTPException(status_code=404, detail="用户不存在")
     user.status = "normal"
     user.ban_until = None
-    user.title = ""
-    user.credit_score = 100  # 解封直接恢复满分信用
+    # 移除“作弊/棕名”相关字样，保留其他自定义称号
+    cleaned = (user.title or "")
+    for word in ("作弊者", "作弊", "棕名"):
+        cleaned = cleaned.replace(word, "")
+    user.title = cleaned.strip()
+    user.credit_score = 100
     user.can_create_problem = True
-    db.commit()
+    try:
+        db.commit()
+    except Exception as exc:  # noqa: BLE001 - 不能静默吞掉解封失败
+        db.rollback()
+        raise HTTPException(status_code=500, detail="解封失败，请稍后重试") from exc
     db.refresh(user)
     return UserOut.model_validate(user)
 
@@ -157,6 +212,8 @@ def toggle_create_problem(
     user = db.get(User, user_id)
     if user is None:
         raise HTTPException(status_code=404, detail="用户不存在")
+    if user.role == "admin":
+        raise HTTPException(status_code=400, detail="不能限制管理员账号")
     user.can_create_problem = payload.can_create_problem
     db.commit()
     db.refresh(user)
@@ -172,10 +229,16 @@ def ban_user(
     user = db.get(User, user_id)
     if user is None:
         raise HTTPException(status_code=404, detail="用户不存在")
+    if user.role == "admin":
+        raise HTTPException(status_code=400, detail="不能封禁管理员账号")
     user.status = "banned"
     user.credit_score = 50
-    user.title = "棕名"
+    user.title = "作弊者"
     user.can_create_problem = False
-    db.commit()
+    try:
+        db.commit()
+    except Exception as exc:  # noqa: BLE001
+        db.rollback()
+        raise HTTPException(status_code=500, detail="封禁失败，请稍后重试") from exc
     db.refresh(user)
     return UserOut.model_validate(user)

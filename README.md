@@ -232,13 +232,14 @@ curl -i -X POST https://<pages>/api/auth/login \
 ```bash
 psql "$DATABASE_URL" -f backend/sql/migrations/2026_11_community.sql
 psql "$DATABASE_URL" -f backend/sql/migrations/2026_11_username_change.sql
+psql "$DATABASE_URL" -f backend/sql/migrations/2026_11_avatar.sql
 ```
 
 迁移脚本使用 `ADD COLUMN IF NOT EXISTS` / `CREATE TABLE IF NOT EXISTS`，可重复执行。主要变化：
 
 | 表 | 变化 |
 | --- | --- |
-| `users` | `monkey_score`、`credit_score`、`status`、`ban_until`、`title`、`can_create_problem`、`last_username_change` |
+| `users` | `monkey_score`、`credit_score`、`status`、`ban_until`、`title`、`can_create_problem`、`last_username_change`、`avatar_url`、`avatar_status` |
 | `problems` | `pool_type`（P/T/S）、`problem_number`（唯一） |
 | `submissions` | `time_spent`、`contest_id` |
 | 新增 | `contests`、`contest_problems`、`contest_results`、`cheat_logs` |
@@ -257,7 +258,8 @@ psql "$DATABASE_URL" -f backend/sql/migrations/2026_11_username_change.sql
 | 题库 | `GET /api/problems?pool_type=P`、`GET /api/problems/{id}`、`POST /api/problems`、`POST /api/problems/{id}/answer` |
 | 错题 | `GET /api/wrong-questions`、`GET /api/wrong-questions/{id}/detail`、`POST /api/wrong-questions/{id}/review` |
 | 比赛 | `GET /api/contests`、`GET /api/contests/{id}`、`POST /api/contests/{id}/anti-cheat`、`POST /api/contests/{id}/submit`、`POST /api/contests/{id}/judge` |
-| 讨论 | `GET/POST /api/discussions`、`GET /api/discussions/{id}`、`POST /api/discussions/{id}/comments`、`POST /api/reports` |
+| 讨论 | `GET/POST /api/discussions`、`GET /api/discussions/{id}`、`POST /api/discussions/{id}/comments`、`POST /api/reports`、`POST /api/admin/discussions/{id}/pin` |
+| 头像 | `PUT /api/users/avatar`、`GET /api/admin/avatars`、`POST /api/admin/avatars/{id}/review` |
 | 申诉 | `POST /api/appeals`、`GET /api/appeals/me`、`GET /api/admin/appeals`、`POST /api/admin/appeals/{id}/review` |
 | 排行榜 | `GET /api/rankings` |
 | 用户管理 | `GET /api/admin/users`、`POST /api/admin/users/{id}/unban`、`POST /api/admin/users/{id}/toggle-create-problem` |

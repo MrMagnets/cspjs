@@ -32,6 +32,8 @@ class UserOut(ORMModel):
     ban_until: datetime | None = None
     title: str = ""
     can_create_problem: bool = True
+    avatar_url: str | None = None
+    avatar_status: str = "approved"
     last_username_change: datetime | None = None
     created_at: datetime
 
@@ -343,6 +345,7 @@ class RankingEntry(BaseModel):
     rank: int
     user_id: int
     username: str
+    role: str = "user"
     title: str = ""
     monkey_score: int = 0
     credit_score: int = 100
@@ -418,6 +421,7 @@ class ContestAnswersIn(BaseModel):
 class ContestJudgeIn(BaseModel):
     user_id: int
     cheat: bool = True
+    severe: bool = False
     reason: str = ""
 
 
@@ -477,6 +481,18 @@ class ReportOut(BaseModel):
     created_at: datetime
 
 
+class PinIn(BaseModel):
+    is_pinned: bool
+
+
+class AvatarIn(BaseModel):
+    avatar_url: str = Field(min_length=5, max_length=512)
+
+
+class AvatarReviewIn(BaseModel):
+    action: Literal["approve", "reject"]
+
+
 # ---------------- 申诉 ----------------
 class AppealIn(BaseModel):
     contest_id: int | None = None
@@ -493,6 +509,7 @@ class AppealOut(BaseModel):
     id: int
     user_id: int
     username: str = ""
+    title: str = ""
     contest_id: int | None = None
     reason: str
     video_url: str

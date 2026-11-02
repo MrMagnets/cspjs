@@ -53,6 +53,17 @@ async function create() {
   }
 }
 
+async function pinThread(item, event) {
+  event?.stopPropagation()
+  try {
+    const updated = await discussionApi.pin(item.id, !item.is_pinned)
+    item.is_pinned = updated.is_pinned
+    ElMessage.success(item.is_pinned ? '已置顶' : '已取消置顶')
+  } catch (err) {
+    ElMessage.error(err.message || '操作失败')
+  }
+}
+
 function fmt(dt) {
   return new Date(dt).toLocaleString('zh-CN', { hour12: false })
 }
@@ -91,6 +102,9 @@ onMounted(load)
           </div>
         </div>
         <span class="arrow">›</span>
+        <el-button v-if="auth.isAdmin" size="small" :type="d.is_pinned ? 'warning' : 'default'" text @click.stop="pinThread(d, $event)">
+          {{ d.is_pinned ? '取消置顶' : '置顶' }}
+        </el-button>
       </article>
       <el-empty v-if="!items.length" description="这个分类还没有帖子" />
     </div>

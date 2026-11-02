@@ -2,6 +2,7 @@
 import { computed, onMounted, ref } from 'vue'
 import { rankingApi } from '@/api'
 import EmptyState from '@/components/EmptyState.vue'
+import UserTitle from '@/components/UserTitle.vue'
 
 const loading = ref(true)
 const rows = ref([])
@@ -64,6 +65,7 @@ onMounted(async () => {
                 <span class="avatar">{{ item.username.slice(0, 1).toUpperCase() }}</span>
               </div>
               <div class="winner-name" :class="titleClass(item.title)">{{ item.username }}</div>
+              <UserTitle :user="item" />
               <el-tag size="small" effect="dark" round :color="medal[item.rank]?.color" style="border: none">
                 {{ medal[item.rank]?.label }}
               </el-tag>
@@ -90,9 +92,7 @@ onMounted(async () => {
               <div class="user-cell">
                 <el-avatar :size="30">{{ row.username.slice(0, 1).toUpperCase() }}</el-avatar>
                 <span :class="titleClass(row.title)">{{ row.username }}</span>
-                <el-tag v-if="row.title" size="small" :type="row.title.includes('棕') ? 'danger' : 'warning'">
-                  {{ row.title }}
-                </el-tag>
+                <UserTitle :user="row" />
               </div>
             </template>
           </el-table-column>

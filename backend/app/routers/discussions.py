@@ -16,6 +16,7 @@ from schemas import (
     DiscussionDetail,
     DiscussionIn,
     DiscussionSummary,
+    PinIn,
     ReportIn,
     ReportOut,
 )
@@ -133,6 +134,22 @@ def add_comment(
         content_md=comment.content_md,
         created_at=comment.created_at,
     )
+
+
+@router.post("/admin/discussions/{discussion_id}/pin", response_model=DiscussionDetail)
+def pin_discussion(
+    discussion_id: int,
+    payload: PinIn,
+    db: Session = Depends(get_db),
+    _: User = Depends(require_admin),
+):
+    discussion = db.get(Discussion, discussion_id)
+    if discussion is None:
+        raise HTTPException(status_code=404, detail="帖子不存在")
+    discussion.is_pinned = payload.is_pinned
+    db.commit()
+    db.refresh(discussion)
+    return _detail(discussion)
 
 
 @router.post("/reports", response_model=ReportOut, status_code=201)

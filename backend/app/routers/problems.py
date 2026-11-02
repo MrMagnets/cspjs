@@ -84,6 +84,26 @@ def _apply_tags(db: Session, problem: Problem, tag_ids: list[int]) -> None:
     problem.tag_links = [ProblemTag(tag_id=tid) for tid in sorted(valid_ids)]
 
 
+def _next_problem_number(db: Session, pool_type: str) -> str:
+    """按题库独立编号：P0001 / T0001 / S0001。"""
+    prefix = (pool_type or "P").upper()
+    rows = db.scalars(
+        select(Problem.problem_number).where(
+            Problem.pool_type == prefix,
+            Problem.problem_number.is_not(None),
+        )
+    ).all()
+    max_no = 0
+    for value in rows:
+        if value and value.startswith(prefix) and value[len(prefix):].isdigit():
+            max_no = max(max_no, int(value[len(prefix):]))
+    candidate = f"{prefix}{max_no + 1:04d}"
+    while db.scalar(select(Problem.id).where(Problem.problem_number == candidate)) is not None:
+        max_no += 1
+        candidate = f"{prefix}{max_no + 1:04d}"
+    return candidate
+
+
 def _sub_map(problem: Problem) -> dict[int, SubQuestion]:
     return {sq.id: sq for sq in problem.sub_questions}
 
@@ -281,14 +301,15 @@ def create_problem(
     is_admin = user.role == "admin"
     if not user.can_create_problem and not is_admin:
         raise HTTPException(status_code=403, detail="你的出题权限已被管理员关闭，请联系管理员")
+    pool_type = payload.pool_type if is_admin else "P"
     problem = Problem(
         title=payload.title.strip(),
         type=payload.type,
         source_tag=payload.source_tag,
         source_year=payload.source_year,
         source_exam=payload.source_exam,
-        pool_type=payload.pool_type,
-        problem_number=payload.problem_number,
+        pool_type=pool_type,
+        problem_number=_next_problem_number(db, pool_type),
         content_md=payload.content_md,
         answer_md=payload.answer_md,
         status="approved" if is_admin else "pending",
@@ -299,9 +320,6 @@ def create_problem(
     _replace_sub_questions(db, problem, payload.sub_questions)
     _apply_tags(db, problem, payload.tag_ids)
     db.add(problem)
-    db.flush()
-    if not problem.problem_number:
-        problem.problem_number = f"{problem.pool_type}{problem.id:05d}"
     db.commit()
     db.refresh(problem)
     return to_details(db, problem)
@@ -323,8 +341,9 @@ def update_problem(
     problem.source_year = payload.source_year
     problem.source_exam = payload.source_exam
     if user.role == "admin":
+        if payload.pool_type != problem.pool_type:
+            problem.problem_number = _next_problem_number(db, payload.pool_type)
         problem.pool_type = payload.pool_type
-        problem.problem_number = payload.problem_number or problem.problem_number
     problem.content_md = payload.content_md
     problem.answer_md = payload.answer_md
 

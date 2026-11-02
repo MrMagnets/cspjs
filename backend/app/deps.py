@@ -43,10 +43,10 @@ def get_current_user(
     if user is None:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="用户不存在")
     _clear_expired_ban(user, db)
-    if user.status == "banned":
+    if user.role != "admin" and user.status == "banned":
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail=f"账号已被封禁{f'（{user.title}）' if user.title else ''}，可在申诉中心提交录像申诉",
+            detail="您的账号已被封禁，可前往申诉中心提交录像申诉",
         )
     return user
 

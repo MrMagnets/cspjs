@@ -98,19 +98,24 @@ def list_contests(
 def create_contest(
     payload: ContestIn,
     db: Session = Depends(get_db),
-    admin: User = Depends(require_admin),
+    user: User = Depends(get_current_user),
 ):
     if _utc(payload.end_at) <= _utc(payload.start_at):
         raise HTTPException(status_code=400, detail="结束时间必须晚于开始时间")
+    contest_type = payload.contest_type
+    if user.role != "admin":
+        if contest_type == "official":
+            raise HTTPException(status_code=403, detail="官方赛需联系管理员申办")
+        contest_type = "personal"
     contest = Contest(
         title=payload.title.strip(),
         description=payload.description,
-        contest_type=payload.contest_type,
+        contest_type=contest_type,
         status="upcoming",
         start_at=_utc(payload.start_at),
         end_at=_utc(payload.end_at),
         duration_minutes=payload.duration_minutes,
-        created_by=admin.id,
+        created_by=user.id,
     )
     problem_ids = [item.problem_id for item in payload.problems]
     existing = set(db.scalars(select(Problem.id).where(Problem.id.in_(problem_ids))).all()) if problem_ids else set()
@@ -122,7 +127,7 @@ def create_contest(
         )
     db.add(contest)
     db.commit()
-    return get_contest(contest.id, db=db, user=admin)
+    return get_contest(contest.id, db=db, user=user)
 
 
 @router.get("/contests/{contest_id}", response_model=ContestDetail)
@@ -281,6 +286,8 @@ def judge_contest(
     target = db.get(User, payload.user_id)
     if target is None:
         raise HTTPException(status_code=404, detail="用户不存在")
+    if target.role == "admin":
+        raise HTTPException(status_code=400, detail="不能对管理员执行作弊判定或封禁")
     result = db.scalar(
         select(ContestResult).where(
             ContestResult.contest_id == contest_id, ContestResult.user_id == target.id
@@ -291,11 +298,17 @@ def judge_contest(
         db.add(result)
 
     if payload.cheat:
-        target.status = "banned"
         target.monkey_score = 0
         target.credit_score = 50
-        target.title = "棕名"
+        target.title = "作弊者"
         target.can_create_problem = False
+        # 普通作弊保留账号（棕名）；severe=true 才是严重封禁
+        if payload.severe:
+            target.status = "banned"
+            target.ban_until = None
+        else:
+            target.status = "normal"
+            target.ban_until = None
         result.status = "cheating"
         db.add(
             CheatLog(

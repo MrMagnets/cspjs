@@ -3,10 +3,13 @@ import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { userApi } from '@/api'
 import { useAuthStore } from '@/stores/auth'
+import UserTitle from '@/components/UserTitle.vue'
 
 const auth = useAuthStore()
 const newUsername = ref('')
+const avatarInput = ref('')
 const saving = ref(false)
+const avatarSaving = ref(false)
 const loading = ref(true)
 const now = ref(Date.now())
 let timer = null
@@ -36,6 +39,37 @@ const lastChangeText = computed(() => {
   if (!lastChangeAt.value) return '从未修改过'
   return new Date(lastChangeAt.value).toLocaleString('zh-CN', { hour12: false })
 })
+
+const avatarUrl = computed(() =>
+  auth.user?.avatar_url && auth.user?.avatar_status === 'approved' ? auth.user.avatar_url : '',
+)
+const avatarStatusText = computed(() => {
+  if (!auth.user?.avatar_url) return '未设置'
+  return { pending: '审核中', approved: '已通过', rejected: '未通过' }[auth.user.avatar_status] || '未知'
+})
+
+async function submitAvatar() {
+  const url = avatarInput.value.trim()
+  if (!/^https?:\/\//.test(url)) {
+    ElMessage.warning('头像链接必须以 http(s):// 开头')
+    return
+  }
+  avatarSaving.value = true
+  try {
+    await userApi.updateAvatar(url)
+    await auth.fetchMe()
+    avatarInput.value = ''
+    ElMessageBox.alert(
+      isAdmin.value ? '头像已更新。' : '头像已提交，管理员审核通过后生效。',
+      '提交成功',
+      { type: 'success' },
+    )
+  } catch (err) {
+    ElMessage.error(err.message || '头像提交失败')
+  } finally {
+    avatarSaving.value = false
+  }
+}
 
 function fmtDate(value) {
   if (!value) return '—'
@@ -103,15 +137,13 @@ onBeforeUnmount(() => {
     <template v-else-if="auth.user">
       <section class="profile-hero">
         <div class="hero-avatar" :class="{ brown: isBanned }">
-          {{ auth.user.username.slice(0, 1).toUpperCase() }}
+          <img v-if="avatarUrl" :src="avatarUrl" alt="avatar" />
+          <template v-else>{{ auth.user.username.slice(0, 1).toUpperCase() }}</template>
         </div>
         <div class="hero-main">
           <div class="hero-name-row">
             <h1 :class="{ brown: isBanned }">{{ auth.user.username }}</h1>
-            <el-tag v-if="auth.user.title" :type="isBanned ? 'danger' : 'warning'" effect="dark" round>
-              {{ auth.user.title }}
-            </el-tag>
-            <el-tag v-if="auth.isAdmin" type="primary" effect="plain" round>管理员</el-tag>
+            <UserTitle :user="auth.user" />
           </div>
           <p class="hero-meta">
             注册于 {{ fmtDate(auth.user.created_at) }} · 上次改名：{{ lastChangeText }}
@@ -139,6 +171,24 @@ onBeforeUnmount(() => {
           </el-tag>
         </div>
       </div>
+
+      <el-card shadow="never" class="rename-card avatar-card">
+        <template #header>
+          <div class="card-head">
+            <div>
+              <strong>头像</strong>
+              <p>支持外链图片；普通用户提交后需管理员审核，管理员直接生效。</p>
+            </div>
+            <el-tag :type="auth.user.avatar_status === 'approved' ? 'success' : 'warning'" effect="plain">
+              {{ avatarStatusText }}
+            </el-tag>
+          </div>
+        </template>
+        <div class="avatar-form">
+          <el-input v-model="avatarInput" placeholder="https://example.com/avatar.png" clearable />
+          <el-button type="primary" :loading="avatarSaving" @click="submitAvatar">提交头像</el-button>
+        </div>
+      </el-card>
 
       <el-card shadow="never" class="rename-card">
         <template #header>
@@ -223,8 +273,9 @@ onBeforeUnmount(() => {
 .hero-avatar {
   display: grid; place-items: center; width: 76px; height: 76px; border-radius: 22px;
   background: linear-gradient(135deg, #1d4ed8, #60a5fa); color: #fff; font-size: 32px; font-weight: 800;
-  box-shadow: 0 12px 28px rgba(37, 99, 235, .25);
+  box-shadow: 0 12px 28px rgba(37, 99, 235, .25); overflow: hidden; flex: none;
 }
+.hero-avatar img { width: 100%; height: 100%; object-fit: cover; }
 .hero-avatar.brown { background: linear-gradient(135deg, #7a4a1d, #b0895f); }
 .hero-main { flex: 1; min-width: 0; }
 .hero-name-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
@@ -240,6 +291,8 @@ onBeforeUnmount(() => {
 .stat-card strong { font-size: 24px; }
 .stat-card strong.danger { color: #dc2626; }
 .rename-card { border-radius: 16px; }
+.avatar-card { margin-bottom: 16px; }
+.avatar-form { display: flex; gap: 10px; }
 .card-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
 .card-head p { margin: 4px 0 0; color: var(--muted); font-size: 12px; }
 .tip { margin-bottom: 12px; border-radius: 10px; }

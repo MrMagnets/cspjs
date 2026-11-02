@@ -73,6 +73,8 @@ class User(Base):
     ban_until: Mapped[datetime | None] = mapped_column(UTCDateTime, nullable=True)
     title: Mapped[str] = mapped_column(String(64), nullable=False, default="")
     can_create_problem: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
+    avatar_url: Mapped[str | None] = mapped_column(String(512), nullable=True)
+    avatar_status: Mapped[str] = mapped_column(String(16), nullable=False, default="approved")
     last_username_change: Mapped[datetime | None] = mapped_column(UTCDateTime, nullable=True)
     created_at: Mapped[datetime] = mapped_column(UTCDateTime, default=utcnow, nullable=False)
 

@@ -31,6 +31,7 @@ const form = reactive({
   source_tag: 'original',
   source_year: null,
   source_exam: 'CSP-J',
+  pool_type: 'P',
   content_md: '',
   answer_md: '',
   tag_ids: [],
@@ -129,6 +130,7 @@ async function loadProblem() {
     form.source_tag = data.source_tag
     form.source_year = data.source_year
     form.source_exam = data.source_exam
+    form.pool_type = data.pool_type || 'P'
     form.content_md = data.content_md
     form.answer_md = data.answer_md
     form.tag_ids = (data.tags || []).map((t) => t.id)
@@ -200,6 +202,7 @@ async function save() {
       source_tag: form.source_tag,
       source_year: form.source_year || null,
       source_exam: form.source_exam || null,
+      pool_type: form.pool_type,
       content_md: form.content_md,
       answer_md: form.answer_md,
       tag_ids: form.tag_ids,
@@ -290,6 +293,14 @@ onMounted(async () => {
                   <el-option label="CSP-J" value="CSP-J" />
                   <el-option label="CSP-S" value="CSP-S" />
                 </el-select>
+              </el-form-item>
+
+              <el-form-item v-if="auth.isAdmin" label="题库池">
+                <el-radio-group v-model="form.pool_type">
+                  <el-radio-button value="P">P 公开</el-radio-button>
+                  <el-radio-button value="T">T 团队</el-radio-button>
+                  <el-radio-button value="S">S 私有</el-radio-button>
+                </el-radio-group>
               </el-form-item>
             </div>
 

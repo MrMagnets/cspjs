@@ -84,6 +84,8 @@ export const discussionApi = {
   create: (body) => request('/discussions', { method: 'POST', body }),
   comment: (id, body) => request(`/discussions/${id}/comments`, { method: 'POST', body }),
   report: (body) => request('/reports', { method: 'POST', body }),
+  pin: (id, isPinned) =>
+    request(`/admin/discussions/${id}/pin`, { method: 'POST', body: { is_pinned: isPinned } }),
   reports: () => request('/admin/reports'),
   resolveReport: (id) => request(`/admin/reports/${id}/resolve`, { method: 'POST' }),
 }
@@ -104,9 +106,14 @@ export const adminUserApi = {
       body: { can_create_problem: enabled },
     }),
   ban: (id) => request(`/admin/users/${id}/ban`, { method: 'POST' }),
+  avatars: (status = 'pending') => request('/admin/avatars', { params: { status } }),
+  reviewAvatar: (id, action) =>
+    request(`/admin/avatars/${id}/review`, { method: 'POST', body: { action } }),
 }
 
 export const userApi = {
   changeName: (newUsername) =>
     request('/users/change-name', { method: 'PUT', body: { new_username: newUsername } }),
+  updateAvatar: (avatarUrl) =>
+    request('/users/avatar', { method: 'PUT', body: { avatar_url: avatarUrl } }),
 }

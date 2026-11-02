@@ -61,6 +61,7 @@ export async function request(path, { method = 'GET', body, params, headers = {}
       method,
       headers: finalHeaders,
       body: body !== undefined ? JSON.stringify(body) : undefined,
+      cache: 'no-store',
     })
   } catch (err) {
     throw new ApiError('网络异常，请确认后端服务已启动', 0, err)

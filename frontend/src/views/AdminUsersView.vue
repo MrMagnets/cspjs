@@ -2,11 +2,13 @@
 import { onMounted, ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { adminUserApi } from '@/api'
+import UserTitle from '@/components/UserTitle.vue'
 
 const loading = ref(true)
 const keyword = ref('')
 const rows = ref([])
 const total = ref(0)
+const pendingAvatars = ref([])
 const page = ref(1)
 const pageSize = 20
 const updating = ref(null)
@@ -27,6 +29,7 @@ async function unban(row) {
   try {
     const updated = await adminUserApi.unban(row.id)
     Object.assign(row, updated)
+    await load()
     ElMessage.success(`${row.username} 已解封，信用分恢复 100`)
   } catch (err) {
     ElMessage.error(err.message || '解封失败')
@@ -54,11 +57,30 @@ async function ban(row) {
   try {
     const updated = await adminUserApi.ban(row.id)
     Object.assign(row, updated)
+    await load()
     ElMessage.warning(`${row.username} 已被封禁`)
   } catch (err) {
     ElMessage.error(err.message || '封禁失败')
   } finally {
     updating.value = null
+  }
+}
+
+async function loadAvatars() {
+  try {
+    pendingAvatars.value = (await adminUserApi.avatars('pending')) || []
+  } catch {
+    pendingAvatars.value = []
+  }
+}
+
+async function reviewAvatar(row, action) {
+  try {
+    await adminUserApi.reviewAvatar(row.id, action)
+    ElMessage.success(action === 'approve' ? '头像已通过' : '头像已驳回')
+    await loadAvatars()
+  } catch (err) {
+    ElMessage.error(err.message || '审核失败')
   }
 }
 
@@ -71,7 +93,9 @@ function search() {
   load()
 }
 
-onMounted(load)
+onMounted(async () => {
+  await Promise.all([load(), loadAvatars()])
+})
 </script>
 
 <template>
@@ -86,6 +110,24 @@ onMounted(load)
       <el-button type="primary" @click="search">搜索</el-button>
     </div>
 
+    <el-card v-if="pendingAvatars.length" shadow="never" class="avatar-review">
+      <template #header>
+        <strong>待审核头像</strong>
+        <span class="muted">（{{ pendingAvatars.length }}）</span>
+      </template>
+      <div class="avatar-grid">
+        <div v-for="u in pendingAvatars" :key="u.id" class="avatar-item">
+          <el-avatar :size="56" :src="u.avatar_url" />
+          <div class="avatar-meta">
+            <strong>{{ u.username }}</strong>
+            <small class="muted">#{{ u.id }}</small>
+          </div>
+          <el-button type="success" size="small" @click="reviewAvatar(u, 'approve')">通过</el-button>
+          <el-button type="danger" size="small" plain @click="reviewAvatar(u, 'reject')">驳回</el-button>
+        </div>
+      </div>
+    </el-card>
+
     <el-card shadow="never">
       <el-table v-loading="loading" :data="rows" stripe>
         <el-table-column label="用户" min-width="180">
@@ -99,12 +141,9 @@ onMounted(load)
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="称号" width="110">
+        <el-table-column label="称号" width="150">
           <template #default="{ row }">
-            <el-tag v-if="row.title" :type="row.title.includes('棕') ? 'danger' : 'warning'" effect="plain">
-              {{ row.title }}
-            </el-tag>
-            <span v-else class="muted">—</span>
+            <UserTitle :user="row" />
           </template>
         </el-table-column>
         <el-table-column label="状态" width="120">
@@ -163,4 +202,8 @@ onMounted(load)
 .muted { color: var(--muted); }
 .brown { color: #8b5a2b; font-weight: 700; }
 .pager { display: flex; justify-content: flex-end; margin-top: 14px; }
+.avatar-review { margin-bottom: 14px; border-radius: 14px; }
+.avatar-grid { display: grid; gap: 10px; }
+.avatar-item { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px dashed var(--border); }
+.avatar-meta { flex: 1; display: flex; flex-direction: column; }
 </style>

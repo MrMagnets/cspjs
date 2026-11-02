@@ -3,6 +3,7 @@ import { computed, onMounted, reactive, ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { appealApi, contestApi } from '@/api'
 import { useAuthStore } from '@/stores/auth'
+import UserTitle from '@/components/UserTitle.vue'
 
 const auth = useAuthStore()
 const tab = ref('mine')
@@ -87,7 +88,7 @@ async function judgeCheat(row) {
     return
   }
   try {
-    await contestApi.judge(row.contest_id, { user_id: row.user_id, cheat: true, reason: '申诉复核维持作弊判定' })
+    await contestApi.judge(row.contest_id, { user_id: row.user_id, cheat: true, severe: true, reason: '申诉复核维持作弊判定' })
     await appealApi.review(row.id, { action: 'reject', note: '申诉驳回：管理员复核维持作弊判定' })
     ElMessage.warning('已判定作弊并驳回申诉')
     await load()
@@ -122,7 +123,9 @@ onMounted(load)
       <article v-for="a in list" :key="a.id" class="appeal card">
         <div class="a-head">
           <el-tag :type="statusMeta[a.status]?.type" effect="dark">{{ statusMeta[a.status]?.label || a.status }}</el-tag>
-          <strong>{{ a.username || `用户 #${a.user_id}` }}</strong>
+          <strong>{{ a.username || '未知用户' }}</strong>
+          <UserTitle :user="{ role: 'user', title: a.title }" />
+          <span v-if="a.user_id" class="muted">#{{ a.user_id }}</span>
           <span class="time">{{ fmt(a.created_at) }}</span>
         </div>
         <p class="reason">{{ a.reason }}</p>
@@ -163,6 +166,7 @@ onMounted(load)
 .appeal { padding: 18px; border-radius: 14px; }
 .a-head { display: flex; align-items: center; gap: 10px; }
 .a-head .time { margin-left: auto; color: var(--muted); font-size: 12px; }
+.muted { color: var(--muted); font-size: 12px; }
 .reason { margin: 12px 0 8px; white-space: pre-wrap; }
 .video { color: #2563eb; font-size: 13px; }
 .note { margin-top: 10px; padding: 8px 10px; border-radius: 8px; background: #f7f9fd; color: var(--muted); font-size: 13px; }
